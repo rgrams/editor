@@ -23,11 +23,11 @@ function script.init(self)
 	self.first = true
 end
 
-local function getObjList(self, obj)
-	local list = {}
+local function getObjList(self, obj, list)
+	list = list or {}
 	if obj.children then
 		for i,child in ipairs(obj.children) do
-			getObjList(self, child)
+			getObjList(self, child, list)
 			table.insert(list, child)
 		end
 	end
@@ -39,9 +39,11 @@ local function refreshHoverList(self, except)
 	local objList = getObjList(self, world)
 	for i,obj in ipairs(objList) do
 		if obj ~= except then
-			local dist = vector.dist(self.mwx, self.mwy, obj.pos.x, obj.pos.y)
+			local ox, oy = obj:toWorld(0, 0)
+			local dist = vector.dist(self.mwx, self.mwy, ox, oy)
 			if dist < hitDist then
-				self.hoverList[obj] = { x = obj.pos.x - self.mwx, y = obj.pos.y - self.mwy }
+				local mlx, mly = obj:toLocal(self.mwx, self.mwy)
+				self.hoverList[obj] = { x = mlx, y = mly }
 			end
 		end
 	end
@@ -59,16 +61,19 @@ function script.update(self, dt)
 
 	if not self.drag and not self.isTyping then
 		refreshHoverList(self)
-		self.obj, self.dragOffset = next(self.hoverList)
+		self.obj, self.lastDragLPos = next(self.hoverList)
 	elseif self.drag then -- Drag.
-		local obj,offset = self.obj, self.dragOffset
+		local obj,last = self.obj, self.lastDragLPos
 		if obj then
-			local x, y = self.mwx + offset.x, self.mwy + offset.y
+			local wx, wy = self.mwx, self.mwy
+			lx, ly = obj:toLocal(wx, wy)
+			local ldx, ldy = lx - last.x, ly - last.y
+			obj.pos.x, obj.pos.y = obj.pos.x + ldx, obj.pos.y + ldy
+			-- Snap local position.
 			if Input.get("snap").value == 1 then
-				x = math.round(x, snapIncrement)
-				y = math.round(y, snapIncrement)
+				obj.pos.x = math.round(obj.pos.x, snapIncrement)
+				obj.pos.y = math.round(obj.pos.y, snapIncrement)
 			end
-			obj.pos.x, obj.pos.y = x, y
 		end
 	end
 
@@ -96,7 +101,8 @@ function script.draw(self)
 	local o = self.obj
 	if o then
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.circle("line", o.pos.x, o.pos.y, 20, 16)
+		local x, y = o:toWorld(0, 0)
+		love.graphics.circle("line", x, y, 20, 16)
 	end
 
 	if self.isReparenting then
