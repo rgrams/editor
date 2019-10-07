@@ -165,8 +165,11 @@ function script.draw(self)
 end
 
 local function reparent(self)
-	if self.obj and self.obj ~= self.objToReparent then
-		scene:setParent(self.objToReparent, self.obj, true)
+	if self.obj ~= self.objToReparent then
+		local targetParent = self.obj or world
+		if self.objToReparent ~= targetParent.parent then -- Don't parent object to its own child.
+			scene:setParent(self.objToReparent, targetParent, true)
+		end
 	end
 end
 
