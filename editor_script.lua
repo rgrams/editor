@@ -106,9 +106,9 @@ function script.draw(self)
 	end
 
 	if self.isReparenting then
-		local x, y = self.objToReparent.pos.x, self.objToReparent.pos.y
+		local x, y = self.objToReparent:toWorld(0, 0)
 		love.graphics.setColor(0, 0.7, 1, 0.6)
-		love.graphics.circle("line",x , y, 15, 16)
+		love.graphics.circle("line", x, y, 15, 16)
 	end
 
 	local tlx, tly = Camera.current:screenToWorld(0, 0)
