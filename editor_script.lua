@@ -24,10 +24,25 @@ function script.init(self)
 end
 
 local function getObjList(self, obj)
+	local list = {}
 	if obj.children then
 		for i,child in ipairs(obj.children) do
 			getObjList(self, child)
-			table.insert(self.objList, child)
+			table.insert(list, child)
+		end
+	end
+	return list
+end
+
+local function refreshHoverList(self, except)
+	self.hoverList = {}
+	local objList = getObjList(self, world)
+	for i,obj in ipairs(objList) do
+		if obj ~= except then
+			local dist = vector.dist(self.mwx, self.mwy, obj.pos.x, obj.pos.y)
+			if dist < hitDist then
+				self.hoverList[obj] = { x = obj.pos.x - self.mwx, y = obj.pos.y - self.mwy }
+			end
 		end
 	end
 end
@@ -43,15 +58,7 @@ function script.update(self, dt)
 	self.mwx, self.mwy = Camera.current:screenToWorld(self.msx, self.msy)
 
 	if not self.drag and not self.isTyping then
-		self.hoverList = {}
-		self.objList = {}
-		getObjList(self, world)
-		for i,obj in ipairs(self.objList) do
-			local dist = vector.dist(self.mwx, self.mwy, obj.pos.x, obj.pos.y)
-			if dist < hitDist then
-				self.hoverList[obj] = { x = obj.pos.x - self.mwx, y = obj.pos.y - self.mwy }
-			end
-		end
+		refreshHoverList(self)
 		self.obj, self.dragOffset = next(self.hoverList)
 	elseif self.drag then -- Drag.
 		local obj,offset = self.obj, self.dragOffset
@@ -90,6 +97,12 @@ function script.draw(self)
 	if o then
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.circle("line", o.pos.x, o.pos.y, 20, 16)
+	end
+
+	if self.isReparenting then
+		local x, y = self.objToReparent.pos.x, self.objToReparent.pos.y
+		love.graphics.setColor(0, 0.7, 1, 0.6)
+		love.graphics.circle("line",x , y, 15, 16)
 	end
 
 	local tlx, tly = Camera.current:screenToWorld(0, 0)
@@ -145,6 +158,12 @@ function script.draw(self)
 	love.graphics.setLineWidth(1)
 end
 
+local function reparent(self)
+	if self.obj and self.obj ~= self.objToReparent then
+		scene:setParent(self.objToReparent, self.obj, true)
+	end
+end
+
 function script.input(self, name, value, change)
 	if self.isTyping then
 		if name == "text" then
@@ -167,6 +186,15 @@ function script.input(self, name, value, change)
 				scene:remove(self.obj)
 				self.obj = nil
 			end
+		elseif name == "reparent" then
+			if change == 1 and self.obj and not self.drag then
+				self.isReparenting = true
+				self.objToReparent = self.obj
+			elseif change == -1 then
+				if self.isReparenting then  reparent(self)  end
+				self.isReparenting = false
+				self.objToReparent = nil
+			end
 		elseif name == "rename" and change == 1 then
 			if self.obj then
 				self.isTyping = true
@@ -174,9 +202,16 @@ function script.input(self, name, value, change)
 			end
 		elseif name == "left click" then
 			if change == 1 then
-				self.drag = true
+				if self.isReparenting then
+					reparent(self)
+					self.isReparenting = false
+					self.objToReparent = nil
+				else
+					self.drag = true
+				end
 			elseif change == -1 then
 				self.drag = nil
+				self.dropTarget = nil
 			end
 		elseif name == "zoom" then
 			Camera.current:zoomIn(value * zoomRate)

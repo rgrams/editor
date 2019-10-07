@@ -29,6 +29,10 @@ function script.draw(self)
 			love.graphics.print(self.editor.text, 300, 200)
 		end
 	end
+	if self.editor.isReparenting then
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.print("REPARENTING OBJECT", 300, 200)
+	end
 end
 
 return script
