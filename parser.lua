@@ -10,7 +10,9 @@ local function getObjVal(obj, key, subKey)
 	else  return obj[key]  end
 end
 
-local function encodeObject(obj)
+local function encodeObject(obj, indentLevel)
+	indentLevel = indentLevel or 0
+	local indent = string.rep("\t", indentLevel)
 	local class = obj.className
 	local conArgs = classConstructorArgs[class] or classConstructorArgs.Object
 	local s = class .. "("
@@ -51,19 +53,47 @@ local function encodeObject(obj)
 	end
 	if mods then
 		s = "mod(" .. s .. ", { "
-		for k,v in pairs(mods) do
-			s = s .. k .. " = " .. objToString(v) .. ", "
+		if mods.name then
+			s = s .. "name = \"" .. mods.name .. "\", "
+		end
+		if mods.children then
+			s = s .. "children = {\n"
+			for i,child in ipairs(mods.children) do
+				s = s .. encodeObject(child, indentLevel + 1) .. ",\n"
+			end
+			s = string.sub(s, 1, -3) .. "\n" .. indent .. "}, "
 		end
 		s = string.sub(s, 1, -3) .. " })"
 	end
-	print(s)
+	s = indent .. s
+	return s
 end
 
+local prefix = "\nlocal function new(_)\n"
+
+local suffix = "\nend\n\nreturn setmetatable({}, { __call = new })\n"
+
 function M.encode(root)
-	encodeObject(root)
+	local str = encodeObject(root, 1)
+	str = prefix .. str .. suffix
+	print(str)
+	return str
 end
 
 function M.decode(text)
 end
 
 return M
+
+--[[ EXAMPLE:
+root = mod(
+	Object(), { name = "root", script = { hitstop }, children = {
+		mod(World(0, settings.gravity, false), {script = { game_manager }, children = {
+			mod(Camera(110, -45, 0, settings.viewArea), {
+				debugDraw = false, name = "Game Camera",
+				follow_lerp_speed = settings.cameraFollowSpeed
+			})
+		}})
+	}}
+)
+--]]
