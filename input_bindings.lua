@@ -5,6 +5,12 @@ local bindings = {
 	{ "reset", "button", "scancode", "delete" },
 	{ "pause", "button", "key", "rshift" },
 
+	{ "save object", "button", "scancode", ";" },
+	{ "rename", "button", "scancode", "f2" },
+	{ "text", "text", "text", "text" },
+	{ "backspace", "button", "scancode", "backspace" },
+	{ "confirm", "button", "scancode", "return" },
+
 	{ "add object", "button", "scancode", "a" },
 	{ "left click", "button", "mouse", 1 },
 	{ "snap", "button", "scancode", "lshift" },

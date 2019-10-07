@@ -21,6 +21,7 @@ function script.init(self)
 	self.lastmwx, self.lastmwy = 0, 0
 	self.lastmsx, self.lastmsy = 0, 0
 	self.first = true
+
 end
 
 local function getObjList(self, obj)
@@ -35,13 +36,14 @@ end
 function script.update(self, dt)
 	if self.first then
 		self.gui = scene:get("/root/gui")
+		self.gui.editor = self
 		self.first = false
 	end
 
 	self.msx, self.msy = love.mouse.getPosition()
 	self.mwx, self.mwy = Camera.current:screenToWorld(self.msx, self.msy)
 
-	if not self.drag then
+	if not self.drag and not self.isTyping then
 		self.hoverList = {}
 		self.objList = {}
 		getObjList(self, world)
@@ -51,8 +53,9 @@ function script.update(self, dt)
 				self.hoverList[obj] = { x = obj.pos.x - self.mwx, y = obj.pos.y - self.mwy }
 			end
 		end
-	else -- Drag.
-		local obj,offset = next(self.hoverList)
+		self.obj, self.dragOffset = next(self.hoverList)
+	elseif self.drag then -- Drag.
+		local obj,offset = self.obj, self.dragOffset
 		if obj then
 			local x, y = self.mwx + offset.x, self.mwy + offset.y
 			if Input.get("snap").value == 1 then
@@ -62,8 +65,6 @@ function script.update(self, dt)
 			obj.pos.x, obj.pos.y = x, y
 		end
 	end
-
-	self.gui:call("showProperties", next(self.hoverList))
 
 	if self.panning then
 		local dx, dy = self.msx - self.lastmsx, self.msy - self.lastmsy
@@ -86,7 +87,7 @@ local function getSmallestPowerOf2(x)
 end
 
 function script.draw(self)
-	local o = next(self.hoverList)
+	local o = self.obj
 	if o then
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.circle("line", o.pos.x, o.pos.y, 20, 16)
@@ -146,23 +147,43 @@ function script.draw(self)
 end
 
 function script.input(self, name, value, change)
-	if name == "quit" then
-		love.event.quit(0)
-	elseif name == "add object" and change == 1 then
-		scene:add(Object(self.mwx, self.mwy), world)
-	elseif name == "left click" then
-		if change == 1 then
-			self.drag = true
-		elseif change == -1 then
-			self.drag = nil
+	if self.isTyping then
+		if name == "text" then
+			self.text = self.text .. value
+		elseif name == "backspace" then
+			self.text = string.sub(self.text, 1, -2)
+		elseif name == "confirm" then
+			self.isTyping = false
+			self.obj.name = self.text
+		elseif name == "quit" and change == 1 then
+			self.isTyping = false
 		end
-	elseif name == "zoom" then
-		Camera.current:zoomIn(value * zoomRate)
-	elseif name == "pan" then
-		if value == 1 then
-			self.panning = { x = Camera.current.pos.x, y = Camera.current.pos.y }
-		else
-			self.panning = nil
+	else
+		if name == "add object" and change == 1 then
+			scene:add(Object(self.mwx, self.mwy), world)
+		elseif name == "save object" and change == 1 then
+			if self.obj then  parser.encode(self.obj)  end
+		elseif name == "rename" and change == 1 then
+			if self.obj then
+				self.isTyping = true
+				self.text = ""
+			end
+		elseif name == "left click" then
+			if change == 1 then
+				self.drag = true
+			elseif change == -1 then
+				self.drag = nil
+			end
+		elseif name == "zoom" then
+			Camera.current:zoomIn(value * zoomRate)
+		elseif name == "pan" then
+			if value == 1 then
+				self.panning = { x = Camera.current.pos.x, y = Camera.current.pos.y }
+			else
+				self.panning = nil
+			end
+		elseif name == "quit" and change == 1 then
+			love.event.quit(0)
 		end
 	end
 end
