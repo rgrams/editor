@@ -1,6 +1,8 @@
 
 local script = {}
 
+local parser = require "parser"
+
 local hitDist = 20
 local snapIncrement = 8
 local zoomRate = 0.1
