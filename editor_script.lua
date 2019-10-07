@@ -21,7 +21,6 @@ function script.init(self)
 	self.lastmwx, self.lastmwy = 0, 0
 	self.lastmsx, self.lastmsy = 0, 0
 	self.first = true
-
 end
 
 local function getObjList(self, obj)
@@ -163,6 +162,11 @@ function script.input(self, name, value, change)
 			scene:add(Object(self.mwx, self.mwy), world)
 		elseif name == "save object" and change == 1 then
 			if self.obj then  parser.encode(self.obj)  end
+		elseif name == "delete object" and change == 1 then
+			if self.obj then
+				scene:remove(self.obj)
+				self.obj = nil
+			end
 		elseif name == "rename" and change == 1 then
 			if self.obj then
 				self.isTyping = true

@@ -12,6 +12,8 @@ local bindings = {
 	{ "confirm", "button", "scancode", "return" },
 
 	{ "add object", "button", "scancode", "a" },
+	{ "delete object", "button", "scancode", "delete" },
+
 	{ "left click", "button", "mouse", 1 },
 	{ "snap", "button", "scancode", "lshift" },
 	{ "zoom", "axis", "mouse", "wheel y" },
