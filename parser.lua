@@ -1,4 +1,7 @@
 
+-- Encodes an object or tree of objects into a lua module that can be
+-- __called directly to recreate the object(s).
+
 local M = {}
 
 local objToString = require "philtre.lib.object-to-string"
@@ -13,12 +16,13 @@ end
 local function encodeObject(obj, indentLevel)
 	indentLevel = indentLevel or 0
 	local indent = string.rep("\t", indentLevel)
+
 	local class = obj.className
-	local conArgs = classConstructorArgs[class] or classConstructorArgs.Object
+	local constructArgs = classConstructorArgs[class] or classConstructorArgs.Object
 	local s = class .. "("
 	local args = {}
 	-- Get values of constructor args from the object.
-	for i,v in ipairs(conArgs) do
+	for i,v in ipairs(constructArgs) do
 		local key, defaultVal, subKey = v[1], v[2], v[3]
 		local val = getObjVal(obj, key, subKey)
 		if val == defaultVal then  val = "nil"  end -- If they are the default value
@@ -38,7 +42,7 @@ local function encodeObject(obj, indentLevel)
 	end
 	s = s .. ")"
 
-	local conArgKeys = classConstructorArgs.keys[class] or classConstructorArgs[key].Object
+	local conArgKeys = classConstructorArgs.keys[class] or classConstructorArgs.keys.Object
 	local modKeys = classConstructorArgs.modKeys
 	local mods
 	for k,v in pairs(obj) do
@@ -55,6 +59,10 @@ local function encodeObject(obj, indentLevel)
 		s = "mod(" .. s .. ", { "
 		if mods.name then
 			s = s .. "name = \"" .. mods.name .. "\", "
+		end
+		if mods._script then
+			print("has script")
+			s = s .. "script = { " .. table.concat(mods._script, ", ") .. "}, "
 		end
 		if mods.children then
 			s = s .. "children = {\n"
@@ -80,20 +88,4 @@ function M.encode(root)
 	return str
 end
 
-function M.decode(text)
-end
-
 return M
-
---[[ EXAMPLE:
-root = mod(
-	Object(), { name = "root", script = { hitstop }, children = {
-		mod(World(0, settings.gravity, false), {script = { game_manager }, children = {
-			mod(Camera(110, -45, 0, settings.viewArea), {
-				debugDraw = false, name = "Game Camera",
-				follow_lerp_speed = settings.cameraFollowSpeed
-			})
-		}})
-	}}
-)
---]]
