@@ -65,5 +65,5 @@ function love.draw()
 end
 
 function love.resize(w, h)
-	Camera.windowResizedAll(0, 0, w, h)
+	Camera.setAllViewports(0, 0, w, h)
 end
