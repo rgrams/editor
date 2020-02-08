@@ -188,6 +188,7 @@ local function saveFile(fileName, text)
 end
 
 function script.input(self, name, value, change)
+	shouldUpdate = true
 	if self.isTyping then
 		if name == "text" then
 			self.text = self.text .. value
