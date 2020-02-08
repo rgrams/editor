@@ -7,6 +7,7 @@ local bindings = {
 
 	{ "save object", "button", "scancode", ";" },
 	{ "rename", "button", "scancode", "f2" },
+	{ "set script", "button", "scancode", "s" },
 	{ "text", "text", "text", "text" },
 	{ "backspace", "button", "scancode", "backspace" },
 	{ "confirm", "button", "scancode", "return" },

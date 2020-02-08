@@ -173,15 +173,40 @@ local function reparent(self)
 	end
 end
 
+local function saveFile(fileName, text)
+	print("saving file: " .. fileName)
+	local file, err = io.open(fileName, "w")
+	if not file then
+		print(err)
+		return
+	else
+		file:write(text)
+		file:close()
+		print("success", file)
+		return true
+	end
+end
+
 function script.input(self, name, value, change)
 	if self.isTyping then
 		if name == "text" then
 			self.text = self.text .. value
 		elseif name == "backspace" then
 			self.text = string.sub(self.text, 1, -2)
-		elseif name == "confirm" then
+		elseif name == "confirm" and change == 1 then
+			print("confirm " .. self.typingFor)
+			if self.typingFor == "rename" then
+				self.obj.name = self.text
+			elseif self.typingFor == "script" then
+				self.obj._script = self.obj._script or {}
+				self.obj._script[1] = self.text
+			elseif self.typingFor == "save" then
+				local text = parser.encode(self.obj)
+				print(text)
+				saveFile(self.text, text)
+			end
 			self.isTyping = false
-			self.obj.name = self.text
+			self.typingFor = nil
 		elseif name == "quit" and change == 1 then
 			self.isTyping = false
 		end
@@ -189,7 +214,12 @@ function script.input(self, name, value, change)
 		if name == "add object" and change == 1 then
 			scene:add(Object(self.mwx, self.mwy), world)
 		elseif name == "save object" and change == 1 then
-			if self.obj then  parser.encode(self.obj)  end
+			if self.obj then
+				parser.encode(self.obj)
+				-- self.isTyping = true
+				-- self.typingFor = "save"
+				-- self.text = ""
+			end
 		elseif name == "delete object" and change == 1 then
 			if self.obj then
 				scene:remove(self.obj)
@@ -207,7 +237,15 @@ function script.input(self, name, value, change)
 		elseif name == "rename" and change == 1 then
 			if self.obj then
 				self.isTyping = true
+				self.typingFor = "rename"
 				self.text = ""
+			end
+		elseif name == "set script" and change == 1 then
+			if self.obj then
+				self.isTyping = true
+				self.typingFor = "script"
+				self.text = ""
+				if self.obj._script then  self.text = self.obj._script[1] or ""  end
 			end
 		elseif name == "left click" then
 			if change == 1 then
