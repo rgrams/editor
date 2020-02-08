@@ -2,3 +2,8 @@
 	path = philtre
 	url = https://github.com/JoshuaGrams/philtre2d.git
 	branch = master
+
+[submodule "ruu"]
+	path = ruu
+	url = https://github.com/rgrams/love-ruu.git
+	branch = master
