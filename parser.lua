@@ -8,6 +8,11 @@ local objToString = require "philtre.lib.object-to-string"
 local classProperties = require "class-properties"
 local classConstructorArgs = require "class-constructor-args"
 
+local function stringifyTable(t)
+	print("stringifyTable")
+	return "{" .. table.concat(t, ", ") .. "}"
+end
+
 local function getObjVal(obj, key, subKey)
 	if subKey then  return obj[key][subKey]
 	else  return obj[key]  end
@@ -23,9 +28,11 @@ local function encodeObject(obj, indentLevel)
 	local args = {}
 	-- Get values of constructor args from the object.
 	for i,v in ipairs(constructArgs) do
-		local key, defaultVal, subKey = v[1], v[2], v[3]
-		local val = getObjVal(obj, key, subKey)
-		if val == defaultVal then  val = "nil"  end -- If they are the default value
+		local key, defaultVal, subKey, getterFunc = unpack(v)
+		local getterFunc = getterFunc or getObjVal
+		local val = getterFunc(obj, key, subKey)
+		if val == defaultVal then  val = "nil"
+		elseif type(val) == "table" then  val = stringifyTable(val)  end
 		table.insert(args, val)
 	end
 	-- Remove excess args at the end that are default values.
@@ -35,12 +42,8 @@ local function encodeObject(obj, indentLevel)
 			args[i] = nil
 		end
 	end
-	-- Add args to string.
-	for i,v in ipairs(args) do
-		s = s .. v
-		if i ~= #args then  s = s .. ", "  end
-	end
-	s = s .. ")"
+	-- Add args list to string.
+	s = s .. table.concat(args, ", ") .. ")"
 
 	local conArgKeys = classConstructorArgs.keys[class] or classConstructorArgs.keys.Object
 	local modKeys = classConstructorArgs.modKeys
@@ -49,6 +52,8 @@ local function encodeObject(obj, indentLevel)
 		if not conArgKeys[k] and modKeys[k] then
 			if k == "name" and v == class then
 				-- Don't include name if it hasn't changed.
+			elseif k == "children" and #v < 1 then
+				-- Forget child list if it's empty (if it had a child and it was removed).
 			else
 				mods = mods or {}
 				mods[k] = v

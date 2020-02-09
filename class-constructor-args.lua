@@ -9,6 +9,8 @@
 
 local M = {}
 
+local NO_DEFAULT = {}
+
 local function shallowCopy(t)
 	local t2 = {}
 	for k,v in pairs(t) do
@@ -16,26 +18,61 @@ local function shallowCopy(t)
 	end
 end
 
+local function getAssetParams(obj, key)
+	local params = new.paramsFor[obj[key]]
+	assert(params, "Couldn't get parameters for asset: '" .. tostring(asset) .. "'.")
+	if #params == 1 then  params = params[1]  end
+	return params
+end
+
+local function getImageOffset(obj, key)
+	local o = obj[key]
+	local imgW, imgH = obj.image:getDimensions()
+	if key == "ox" then
+		return o / imgW
+	else
+		return o / imgH
+	end
+end
+
+local function getQuadParams(obj, key)
+	return obj[quad]:getViewport()
+end
+
 M.Object = {
-	-- key, default value, sub-key
+	-- key, default value, sub-key, getterFunc
 		-- sub-key is used if the argument is in a table on the object (like x and y pos).
 	{"pos", 0, "x"}, {"pos", 0, "y"}, {"angle", 0},
 	{"sx", 1}, {"sy", 1}, {"kx", 0}, {"ky", 0}
 }
 
---[[
+-- [[
 
 M.Sprite = {
-	image, -- ...this gets more complicated...
+	{"image", NO_DEFAULT, false, getAssetParams},
 	{"pos", 0, "x"}, {"pos", 0, "y"}, {"angle", 0},
 	{"sx", 1}, {"sy", 1},
 	{"color", 1, 1}, {"color", 1, 2}, {"color", 1, 3}, {"color", 1, 4},
-	{"ox", 0.5}, {"oy", 0.5} -- Can be input as strings ("center", etc.), but keep as fractions.
+	{"ox", 0.5, false, getImageOffset}, {"oy", 0.5, false, getImageOffset},
 	{"kx", 0}, {"ky", 0}
 }
 
 M.Text = {
-	-- How to get font filename and size?
+	{"text", ""},
+	{"font", NO_DEFAULT, false, getAssetParams},
+	{"pos", 0, "x"}, {"pos", 0, "y"}, {"angle", 0},
+	{"wrapLimit"}, {"hAlign", "left"},
+	{"sx", 1}, {"sy", 1}, {"kx", 0}, {"ky", 0},
+}
+
+M.Quad = {
+	{"image", NO_DEFAULT, false, getAssetParams},
+	{"quad", NO_DEFAULT, false, getQuadParams},
+	{"pos", 0, "x"}, {"pos", 0, "y"}, {"angle", 0},
+	{"sx", 1}, {"sy", 1},
+	{"color", 1, 1}, {"color", 1, 2}, {"color", 1, 3}, {"color", 1, 4},
+	{"ox", 0.5, false, getImageOffset}, {"oy", 0.5, false, getImageOffset},
+	{"kx", 0}, {"ky", 0},
 }
 
 --]]
