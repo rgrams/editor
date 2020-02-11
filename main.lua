@@ -23,9 +23,12 @@ function love.load()
 	Input.bind(require("input_bindings"))
 	scene = SceneTree(drawLayers, defaultLayer)
 
-	root = Root(designW, designH)
-	scene:add(root)
-	scene:add(Camera(0, 0, 0, 1, "expand view")) -- For rendering inside the viewport only.
+	local rootObjects = Root(designW, designH)
+	root = rootObjects[1]
+	for i,obj in ipairs(rootObjects) do
+		print(obj)
+		scene:add(obj)
+	end
 end
 
 function love.update(dt)

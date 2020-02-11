@@ -3,6 +3,7 @@ local Panel = require "theme.widgets.Panel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
 local interface = require "interface"
+local viewport_background = require "viewport_background"
 
 local function new(w, h)
 	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}
@@ -37,7 +38,13 @@ local function new(w, h)
 			}})
 		}})
 	}})
-	return root
+	local viewportCamera = Camera(0, 0, 0, 1, "expand view")
+	local viewportBackground = mod(Object(0, 0), {
+		name = "viewportBackground",
+		layer = "viewportBackground",
+		script = {viewport_background}
+	})
+	return {root, viewportCamera, viewportBackground}
 end
 
 return new
