@@ -12,7 +12,7 @@ local root
 local designW, designH = love.window.getMode()
 
 local drawLayers = {
-	gui = { "panels", "widgets", "text", "popupPanels", "popupWidgets", "popupText", "gui debug" },
+	gui = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" },
 	editScene = { "entities" },
 }
 local defaultLayer = "panels"
