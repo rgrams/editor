@@ -1,14 +1,17 @@
 
 local script = {}
 
+local settings = require "settings"
+
 local snapIncrement = 8
 local desiredMaxGridLines = 48
 local bigGridEvery = 4
 local gridNumberScale = 1
-local gridColor = { 0.5, 0.5, 0.5, 0.35 }
-local bigGridColor = { 0.5, 0.5, 0.5, 0.55 }
-local gridNumberColor = { 0.7, 0.7, 0.7, 1 }
-local axisColor = { 0.8, 0.8, 0.8, 0.6 }
+local gridColor = settings.gridColor
+local bigGridColor = settings.bigGridColor
+local gridNumberColor = settings.gridNumberColor
+local yAxisColor = settings.yAxisColor
+local xAxisColor = settings.xAxisColor
 
 local viewportPath = "/root/mainColumn/mainRow/viewport"
 
@@ -75,8 +78,9 @@ function script.draw(self)
 	end
 
 	-- Draw origin axis lines.
-	love.graphics.setColor(axisColor)
+	love.graphics.setColor(xAxisColor)
 	love.graphics.line(0, tly, 0, bry)
+	love.graphics.setColor(yAxisColor)
 	love.graphics.line(tlx, 0, brx, 0)
 
 	love.graphics.setLineWidth(1)

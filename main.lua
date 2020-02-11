@@ -3,6 +3,7 @@ require "philtre.init"  -- Load all engine components into global variables.
 require "philtre.lib.math-patch"
 vector = require "philtre.lib.vec2xy"
 gui = require "philtre.gui.all"
+local settings = require "settings"
 
 require "run"
 
@@ -21,12 +22,12 @@ local defaultLayer = "panels"
 function love.load()
 	Input.init()
 	Input.bind(require("input_bindings"))
+	love.graphics.setBackgroundColor(settings.viewportBackgroundColor)
 	scene = SceneTree(drawLayers, defaultLayer)
 
 	local rootObjects = Root(designW, designH)
 	root = rootObjects[1]
 	for i,obj in ipairs(rootObjects) do
-		print(obj)
 		scene:add(obj)
 	end
 end
