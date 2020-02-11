@@ -177,4 +177,23 @@ function Panel.unfocus(self)  end
 function Panel.press(self)  end
 function Panel.release(self)  end
 
+--##############################  RESIZE-HANDLE  ##############################
+local ResizeHandle = Class:extend()
+M.ResizeHandle = ResizeHandle
+
+function ResizeHandle.init(self)  end
+
+function ResizeHandle.hover(self)
+	love.mouse.setCursor(love.mouse.getSystemCursor("sizewe"))
+end
+
+function ResizeHandle.unhover(self)
+	love.mouse.setCursor(love.mouse.getSystemCursor("arrow"))
+end
+
+function ResizeHandle.focus(self)  end
+function ResizeHandle.unfocus(self)  end
+function ResizeHandle.press(self)  end
+function ResizeHandle.release(self)  end
+
 return M

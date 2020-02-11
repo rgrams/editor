@@ -20,12 +20,17 @@ function script.init(self)
 	ruu:makePanel(leftPanel, true)
 	local rightPanel = scene:get("/root/mainColumn/mainRow/rightPanel")
 	ruu:makePanel(rightPanel, true)
+
+	local rightPanelHandle = scene:get("/root/mainColumn/mainRow/rightPanel/resizeHandle")
+	ruu:makeButton(rightPanelHandle, true, nil, "ResizeHandle")
+	local leftPanelHandle = scene:get("/root/mainColumn/mainRow/leftPanel/resizeHandle")
+	ruu:makeButton(leftPanelHandle, true, nil, "ResizeHandle")
 end
 
 local dirs = { up = "up", down = "down", left = "left", right = "right" }
 
 function script.input(self, name, value, change)
-	if name == "click" then
+	if name == "left click" then
 		ruu:input("click", nil, change)
 	elseif name == "enter" then
 		ruu:input("enter", nil, change)
