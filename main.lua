@@ -24,6 +24,8 @@ function love.load()
 
 	root = Root(designW, designH)
 	scene:add(root)
+	local camera = Camera(0, 0, 0, 1, "expand view") -- For rendering inside the viewport only.
+	scene:add(camera)
 end
 
 function love.update(dt)
@@ -32,7 +34,7 @@ end
 
 function love.draw()
    scene:draw("editScene")
-	scene:callRecursive("debugDraw", "gui debug")
+	-- scene:callRecursive("debugDraw", "gui debug")
 	scene:draw("gui")
 	scene.draw_order:clear("gui debug")
 end

@@ -1,24 +1,11 @@
 
 local basePath = (...):gsub('[^%.]+$', '')
+print(basePath)
 local Class = require("ruu.base widgets.base-class")
 
 local M = {}
 
-local tex = {
-	Button_Normal = new.image("widget theme/tex/Button_Normal.png"),
-	Button_Hovered = new.image("widget theme/tex/Button_Hovered.png"),
-	Button_Pressed = new.image("widget theme/tex/Button_Pressed.png"),
-	ToggleButton_Normal = new.image("widget theme/tex/ToggleButton_Normal.png"),
-	ToggleButton_Hovered = new.image("widget theme/tex/ToggleButton_Hovered.png"),
-	ToggleButton_Pressed = new.image("widget theme/tex/ToggleButton_Pressed.png"),
-	ToggleButtonCheck = new.image("widget theme/tex/ToggleButtonCheck.png"),
-	RadioButton_Checked = new.image("widget theme/tex/RadioButton_Checked.png"),
-	RadioButton_Unchecked = new.image("widget theme/tex/RadioButton_Unchecked.png"),
-	SliderBar_Normal = new.image("widget theme/tex/SliderBar_Normal.png"),
-	SliderBar_Hovered = new.image("widget theme/tex/SliderBar_Hovered.png"),
-	SliderBar_Pressed = new.image("widget theme/tex/SliderBar_Pressed.png"),
-	Panel = new.image("widget theme/tex/Panel.png"),
-}
+local tex = require(basePath .. "textures")
 
 -- [[
 --##############################  BUTTON  ##############################
