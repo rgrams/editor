@@ -9,7 +9,6 @@ local classProperties = require "class-properties"
 local classConstructorArgs = require "class-constructor-args"
 
 local function stringifyTable(t)
-	print("stringifyTable")
 	return "{" .. table.concat(t, ", ") .. "}"
 end
 
