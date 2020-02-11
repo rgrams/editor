@@ -13,6 +13,7 @@ local designW, designH = love.window.getMode()
 
 local drawLayers = {
 	gui = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" },
+	viewportBackground = { "viewportBackground" },
 	editScene = { "entities" },
 }
 local defaultLayer = "panels"
@@ -24,8 +25,7 @@ function love.load()
 
 	root = Root(designW, designH)
 	scene:add(root)
-	local camera = Camera(0, 0, 0, 1, "expand view") -- For rendering inside the viewport only.
-	scene:add(camera)
+	scene:add(Camera(0, 0, 0, 1, "expand view")) -- For rendering inside the viewport only.
 end
 
 function love.update(dt)
@@ -33,7 +33,10 @@ function love.update(dt)
 end
 
 function love.draw()
+	Camera.current:applyTransform()
+	scene:draw("viewportBackground")
    scene:draw("editScene")
+	Camera.current:resetTransform()
 	-- scene:callRecursive("debugDraw", "gui debug")
 	scene:draw("gui")
 	scene.draw_order:clear("gui debug")
@@ -46,6 +49,7 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.resize(w, h)
+	Camera.setAllViewports(0, 0, w, h)
 	root:parentResized(designW, designH, w, h, 1)
 	shouldRedraw = true
 end

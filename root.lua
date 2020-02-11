@@ -2,17 +2,19 @@
 local Panel = require "theme.widgets.Panel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
+local interface = require "interface"
+
 local function new(w, h)
 	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}
 	local mainRowChildren = mainColumnChildren
 
 	-- Screen offset node.
-	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", children = {
+	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", script = interface, children = {
 		-- Main Column
 		mod(gui.Column(0, false, mainColumnChildren, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
 			-- Menu Bar
 			mod(gui.Row(1, false, nil, 0, 0, 0, w, 24, 0, 0, 0, 0, {"fill", "none"}), {name = "menuBar", children = {
-				Panel(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill", "menuBarPanel")
+				Panel(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill", "panel")
 			}}),
 			-- Main Row
 			mod(gui.Row(0, false, mainRowChildren, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "mainRow", children = {

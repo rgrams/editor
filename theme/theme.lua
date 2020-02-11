@@ -1,13 +1,11 @@
 
 local basePath = (...):gsub('[^%.]+$', '')
-print(basePath)
 local Class = require("ruu.base widgets.base-class")
 
 local M = {}
 
 local tex = require(basePath .. "textures")
 
--- [[
 --##############################  BUTTON  ##############################
 local Button = Class:extend()
 M.Button = Button
@@ -166,6 +164,17 @@ function InputField.setText(self, isPlaceholder)
 	local alpha = isPlaceholder and 0.5 or 1
 	self.textObj.color[4] = alpha
 end
---]]
+
+--##############################  PANEL  ##############################
+local Panel = Class:extend()
+M.Panel = Panel
+
+function Panel.init(self)  end
+function Panel.hover(self)  end
+function Panel.unhover(self)  end
+function Panel.focus(self)  end
+function Panel.unfocus(self)  end
+function Panel.press(self)  end
+function Panel.release(self)  end
 
 return M
