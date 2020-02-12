@@ -12,7 +12,7 @@ local function new(w, h)
 	local mainRowChildren = mainColumnChildren
 
 	-- Screen offset node.
-	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", script = interface, children = {
+	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = interface, children = {
 		-- Main Column
 		mod(gui.Column(0, false, mainColumnChildren, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
 			-- Menu Bar

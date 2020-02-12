@@ -17,7 +17,7 @@ local drawLayers = {
 	viewportBackground = { "viewportBackground" },
 	editScene = { "entities" },
 }
-local defaultLayer = "panels"
+local defaultLayer = "entities"
 
 function love.load()
 	Input.init()
@@ -41,7 +41,7 @@ function love.draw()
 	scene:draw("viewportBackground")
    scene:draw("editScene")
 	Camera.current:resetTransform()
-	-- scene:callRecursive("debugDraw", "gui debug")
+	scene:callRecursive("debugDraw", "gui debug")
 	scene:draw("gui")
 	scene.draw_order:clear("gui debug")
 end

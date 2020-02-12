@@ -22,7 +22,7 @@ local function new(sx, sy, title, items, callback, ...)
 	column.children = buttons
 	local titleText = gui.Text(title, fnt.openSans_Reg_12, 0, -10, 0, 100, -1, 1, -1, -1)
 
-	self.layer, titleText.layer = "popupPanel", "popupText"
+	self.layer, titleText.layer = "popupPanels", "popupText"
 
 	self.callbackArgs = {...}
 	self.children = { titleText, column }
