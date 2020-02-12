@@ -1,14 +1,14 @@
 
 local script = {}
 
+local inputManager = require "input-manager"
 local RUU = require "ruu.ruu"
 local ruu
 local theme = require "theme.theme"
 
 function script.init(self)
 	love.keyboard.setKeyRepeat(true)
-	self.mx, self.my = love.mouse.getPosition()
-	Input.enable(self)
+	inputManager.add(self)
 
 	ruu = RUU(theme)
 
@@ -31,29 +31,24 @@ local dirs = { up = "up", down = "down", left = "left", right = "right" }
 
 function script.input(self, name, value, change)
 	if name == "left click" then
-		ruu:input("click", nil, change)
+		return ruu:input("click", nil, change)
 	elseif name == "enter" then
-		ruu:input("enter", nil, change)
+		return ruu:input("enter", nil, change)
 	elseif dirs[name] then
-		ruu:input("direction", dirs[name], change)
+		return ruu:input("direction", dirs[name], change)
 	elseif name == "scroll x" then
-		ruu:input("scroll x", nil, value)
+		return ruu:input("scroll x", nil, value)
 	elseif name == "scroll y" then
-		ruu:input("scroll y", nil, value)
+		return ruu:input("scroll y", nil, value)
 	elseif name == "text" then
-		ruu:input("text", nil, value)
+		return ruu:input("text", nil, value)
 	elseif name == "backspace" and value == 1 then
-		ruu:input("backspace")
+		return ruu:input("backspace")
 	end
 end
 
-function script.update(self, dt)
-	local mx, my = love.mouse.getPosition()
-	local dx, dy = mx - self.mx, my - self.my
-	if dx ~= 0 or dy ~= 0 then
-		local hit = ruu:mouseMoved(mx, my, dx, dy)
-	end
-	self.mx, self.my = mx, my
+function script.mouseMoved(self, x, y, dx, dy)
+	return ruu:mouseMoved(x, y, dx, dy)
 end
 
 return script

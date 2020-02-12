@@ -1,11 +1,11 @@
 
+require "run"
 require "philtre.init"  -- Load all engine components into global variables.
 require "philtre.lib.math-patch"
 vector = require "philtre.lib.vec2xy"
 gui = require "philtre.gui.all"
 local settings = require "settings"
-
-require "run"
+local inputManager = require "input-manager"
 
 local Root = require "root"
 local root
@@ -66,4 +66,5 @@ function love.mousemoved(x, y, dx, dy, istouch)
 	if love.window.hasFocus() then
 		shouldRedraw = true
 	end
+	inputManager.mouseMoved(x, y, dx, dy)
 end

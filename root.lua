@@ -3,6 +3,8 @@ local Panel = require "theme.widgets.Panel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
 local interface = require "interface"
+local viewport = require "viewport"
+local input_getter = require "input_getter"
 local viewport_background = require "viewport_background"
 
 local function new(w, h)
@@ -25,7 +27,7 @@ local function new(w, h)
 					ResizeHandle(0, 0, 0, 4, 10, 1, 0, 1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/leftPanel", -1)
 				}}),
 				-- Viewport
-				mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "viewport"}),
+				mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "viewport", script = {viewport}}),
 				-- Right Panel
 				mod(gui.Row(nil, nil, {{1,"end",true},{2}}, 0, 0, 0, 200, 10, 1, 0, 1, 0, "fill"), {name = "rightPanel", children = {
 					Panel(0, 0, 0, 10, 10, 1, 0, 1, 0, "fill", "panel"),
@@ -44,7 +46,8 @@ local function new(w, h)
 		layer = "viewportBackground",
 		script = {viewport_background}
 	})
-	return {root, viewportCamera, viewportBackground}
+	local inputGetter = mod(Object(), {name = "input getter", script = input_getter})
+	return {root, viewportCamera, viewportBackground, inputGetter}
 end
 
 return new
