@@ -13,6 +13,8 @@ function script.init(self)
 	inputManager.add(self)
 
 	ruu = RUU(theme)
+	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }
+	ruu:registerLayers(layers)
 
 	local menuBar = scene:get("/root/mainColumn/menuBar")
 	ruu:makePanel(menuBar, true)
