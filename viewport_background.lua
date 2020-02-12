@@ -1,17 +1,15 @@
 
 local script = {}
 
-local settings = require "settings"
-
 local snapIncrement = 8
 local desiredMaxGridLines = 48
 local bigGridEvery = 4
 local gridNumberScale = 1
-local gridColor = settings.gridColor
-local bigGridColor = settings.bigGridColor
-local gridNumberColor = settings.gridNumberColor
-local yAxisColor = settings.yAxisColor
-local xAxisColor = settings.xAxisColor
+local gridColor = SETTINGS.gridColor
+local bigGridColor = SETTINGS.bigGridColor
+local gridNumberColor = SETTINGS.gridNumberColor
+local yAxisColor = SETTINGS.yAxisColor
+local xAxisColor = SETTINGS.xAxisColor
 
 local viewportPath = "/root/mainColumn/mainRow/viewport"
 
