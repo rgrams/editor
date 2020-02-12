@@ -47,7 +47,7 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	if scancode == "escape" then
+	if scancode == "`" then
 		love.event.quit(0)
 	end
 end

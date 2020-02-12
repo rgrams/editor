@@ -49,6 +49,9 @@ function script.input(self, name, value, change)
 	elseif name == "backspace" and value == 1 then
 		return ruu:input("backspace")
 	end
+	if next(ruu.hoveredWidgets) then
+		return true
+	end
 end
 
 function script.mouseMoved(self, x, y, dx, dy)
