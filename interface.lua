@@ -36,7 +36,7 @@ local dirs = { up = "up", down = "down", left = "left", right = "right" }
 function script.input(self, name, value, change)
 	if name == "left click" then
 		return ruu:input("click", nil, change)
-	elseif name == "enter" then
+	elseif name == "confirm" then
 		return ruu:input("enter", nil, change)
 	elseif dirs[name] then
 		return ruu:input("direction", dirs[name], change)

@@ -25,9 +25,15 @@ function script.init(self)
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }
 	ruu:registerLayers(layers)
 
+	local map = {}
 	for i,btn in ipairs(self.buttons) do
 		ruu:makeButton(btn, true, buttonFunc)
+		map[i] = {btn}
 	end
+
+	ruu:mapNeighbors(map)
+
+	ruu:setFocus(self.buttons[1])
 
 	local mx, my = love.mouse.getPosition()
 	ruu:mouseMoved(mx, my, 0, 0)
@@ -39,7 +45,7 @@ function script.input(self, name, value, change)
 	if name == "left click" then
 		self.ruu:input("click", nil, change)
 		-- Close menu if nothing is clicked on?
-	elseif name == "enter" then
+	elseif name == "confirm" then
 		self.ruu:input("enter", nil, change)
 	elseif dirs[name] then
 		self.ruu:input("direction", dirs[name], change)

@@ -5,6 +5,11 @@ local bindings = {
 	{ "reset", "button", "scancode", "delete" },
 	{ "pause", "button", "key", "rshift" },
 
+	{ "up", "button", "scancode", "up" },
+	{ "down", "button", "scancode", "down" },
+	{ "left", "button", "scancode", "left" },
+	{ "right", "button", "scancode", "right" },
+
 	{ "lshift", "button", "scancode", "lshift" },
 	{ "rshift", "button", "scancode", "rshift" },
 
