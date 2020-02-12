@@ -16,6 +16,7 @@ local drawLayers = {
 	gui = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" },
 	viewportBackground = { "viewportBackground" },
 	editScene = { "entities" },
+	viewportDebug = { "viewportDebug" }
 }
 local defaultLayer = "entities"
 
@@ -41,6 +42,11 @@ function love.draw()
 	Camera.current:applyTransform()
 	scene:draw("viewportBackground")
    scene:draw("editScene")
+	if editScene then
+		editScene:callRecursive("debugDraw", "viewportDebug")
+	end
+	scene:draw("viewportDebug")
+	scene.draw_order:clear("viewportDebug")
 	Camera.current:resetTransform()
 	scene:callRecursive("debugDraw", "gui debug")
 	scene:draw("gui")
