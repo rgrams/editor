@@ -23,6 +23,7 @@ function love.load()
 	Input.init()
 	Input.bind(require("input_bindings"))
 	love.graphics.setBackgroundColor(SETTINGS.viewportBackgroundColor)
+	love.graphics.setFont(new.font("theme/font/OpenSans-Regular.ttf", 12))
 	scene = SceneTree(drawLayers, defaultLayer)
 
 	local rootObjects = Root(designW, designH)
