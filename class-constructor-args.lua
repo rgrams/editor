@@ -12,13 +12,6 @@ local M = {}
 local NO_DEFAULT = {}
 local defaultAssets = require "defaultAssets.list"
 
-local function shallowCopy(t)
-	local t2 = {}
-	for k,v in pairs(t) do
-		t2[k] = v
-	end
-end
-
 M.Object = {
 	-- key, default value, sub-key, getterFunc
 		-- sub-key is used if the argument is in a table on the object (like x and y pos).
@@ -47,7 +40,7 @@ M.Sprite = {
 	{"image", NO_DEFAULT, false, getAssetParams, defaultAssets.image},
 	{"pos", 0, "x"}, {"pos", 0, "y"}, {"angle", 0},
 	{"sx", 1}, {"sy", 1},
-	{"color", 1, 1}, {"color", 1, 2}, {"color", 1, 3}, {"color", 1, 4},
+	{"color", {1, 1, 1, 1}},
 	{"ox", 0.5, false, getImageOffset}, {"oy", 0.5, false, getImageOffset},
 	{"kx", 0}, {"ky", 0}
 }
@@ -69,7 +62,7 @@ M.Quad = {
 	{"quad", NO_DEFAULT, false, getQuadParams, defaultAssets.quad},
 	{"pos", 0, "x"}, {"pos", 0, "y"}, {"angle", 0},
 	{"sx", 1}, {"sy", 1},
-	{"color", 1, 1}, {"color", 1, 2}, {"color", 1, 3}, {"color", 1, 4},
+	{"color", {1, 1, 1, 1}},
 	{"ox", 0.5, false, getImageOffset}, {"oy", 0.5, false, getImageOffset},
 	{"kx", 0}, {"ky", 0},
 }

@@ -17,6 +17,16 @@ local function getObjVal(obj, key, subKey)
 	else  return obj[key]  end
 end
 
+local function areEqual(a, b)
+	if a == b then  return true  end
+	if type(a) == "table" and type(b) == "table" then
+		for k,v in pairs(a) do
+			if b[k] ~= v then  return  end
+		end
+		return true
+	end
+end
+
 local function encodeObject(obj, indentLevel)
 	indentLevel = indentLevel or 0
 	local indent = string.rep("\t", indentLevel)
@@ -30,7 +40,7 @@ local function encodeObject(obj, indentLevel)
 		local key, defaultVal, subKey, getterFunc = unpack(v)
 		local getterFunc = getterFunc or getObjVal
 		local val = getterFunc(obj, key, subKey)
-		if val == defaultVal then  val = "nil"
+		if areEqual(val, defaultVal) then  val = "nil"
 		elseif type(val) == "table" then  val = stringifyTable(val)  end
 		table.insert(args, val)
 	end

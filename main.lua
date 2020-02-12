@@ -15,10 +15,10 @@ local designW, designH = love.window.getMode()
 local drawLayers = {
 	gui = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" },
 	viewportBackground = { "viewportBackground" },
-	editScene = { "entities" },
-	viewportDebug = { "viewportDebug" }
+	-- editScene = { "entities" },
+	-- viewportDebug = { "viewportDebug" }
 }
-local defaultLayer = "entities"
+local defaultLayer = "panels"
 
 function love.load()
 	Input.init()
@@ -41,12 +41,12 @@ end
 function love.draw()
 	Camera.current:applyTransform()
 	scene:draw("viewportBackground")
-   scene:draw("editScene")
 	if editScene then
+		editScene:draw("editScene")
 		editScene:callRecursive("debugDraw", "viewportDebug")
+		editScene:draw("viewportDebug")
+		editScene.draw_order:clear("viewportDebug")
 	end
-	scene:draw("viewportDebug")
-	scene.draw_order:clear("viewportDebug")
 	Camera.current:resetTransform()
 	scene:callRecursive("debugDraw", "gui debug")
 	scene:draw("gui")
