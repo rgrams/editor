@@ -1,6 +1,8 @@
 
 local script = {}
 
+local fnt = require "theme.fonts"
+
 local inputManager = require "input-manager"
 local RUU = require "ruu.ruu"
 local ruu
@@ -49,6 +51,31 @@ end
 
 function script.mouseMoved(self, x, y, dx, dy)
 	return ruu:mouseMoved(x, y, dx, dy)
+end
+
+local function addFiles(basePath, files, indentLevel)
+	indentLevel = indentLevel or 0
+	local indent = string.rep("\t", indentLevel)
+	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/column")
+	for k,fileName in ipairs(files) do
+		local path = basePath .. fileName
+		local info = love.filesystem.getInfo(path)
+		assert(info, "Failed to load file at path: " .. path)
+		local btn = gui.Text(indent .. fileName, fnt.openSans_Reg_12, 0, 0, 0, 200, 0, 0, 0, 0, "left", "fill")
+		btn.layer = "text"
+		scene:add(btn, filesPanel)
+		filesPanel:add(btn)
+		if info.type == "directory" then
+			addFiles(path .. "/", love.filesystem.getDirectoryItems(path), indentLevel + 1)
+		end
+	end
+end
+
+function love.directorydropped(path)
+	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/column")
+	love.filesystem.mount(path, "project")
+	local files = love.filesystem.getDirectoryItems("project")
+	addFiles("project/", files)
 end
 
 return script

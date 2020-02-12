@@ -23,7 +23,9 @@ local function new(w, h)
 			mod(gui.Row(0, false, mainRowChildren, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "mainRow", children = {
 				-- Left Panel
 				mod(gui.Row(nil, nil, {{1,"start",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "leftPanel", children = {
-					Panel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "panel"),
+					mod(Panel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "panel"), {children = {
+						mod(gui.Column(nil, nil, nil, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill", 2), {name = "column"})
+					}}),
 					ResizeHandle(0, 0, 0, 4, 10, 1, 0, 1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/leftPanel", -1)
 				}}),
 				-- Viewport
