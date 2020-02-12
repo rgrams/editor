@@ -16,6 +16,8 @@ local function setValue(self, val)
 end
 
 function Button.init(self)
+	if self.label then  setValue(self.label, 0.75)  end
+
 	local draw = self.draw
 	self.draw = function(self)
 		draw(self)
@@ -28,10 +30,12 @@ function Button.init(self)
 end
 
 function Button.hover(self)
+	if self.label then  setValue(self.label, 1)  end
 	self.image = tex.Button_Hovered
 end
 
 function Button.unhover(self)
+	if self.label then  setValue(self.label, 0.75)  end
 	self.image = tex.Button_Normal
 end
 
@@ -42,10 +46,12 @@ function Button.unfocus(self)
 end
 
 function Button.press(self)
+	if self.label then  self.label.pos.y = self.label.pos.y + 1  end
 	self.image = tex.Button_Pressed
 end
 
 function Button.release(self)
+	if self.label then  self.label.pos.y = self.label.pos.y - 1  end
 	self.image = self.isHovered and tex.Button_Hovered or tex.Button_Normal
 end
 
