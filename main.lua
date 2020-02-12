@@ -53,7 +53,6 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.resize(w, h)
-	Camera.setAllViewports(0, 0, w, h)
 	root:parentResized(designW, designH, w, h, 1)
 	shouldRedraw = true
 end
