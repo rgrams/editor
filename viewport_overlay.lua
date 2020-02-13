@@ -26,7 +26,7 @@ end
 
 function script.draw(self)
 	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
-	local hoverList = viewport.hoverList
+	local hoveredObj = viewport.hoveredObj
 	local selection = viewport.selection
 
 	local scale = 2 / Camera.current.zoom
@@ -37,13 +37,14 @@ function script.draw(self)
 		drawObjOutline(obj, scale)
 	end
 
-	love.graphics.setColor(SETTINGS.hoverHighlightColor)
-	for i,v in ipairs(hoverList) do
-		local obj = v[1]
-		drawObjOutline(obj, scale)
+
+	if hoveredObj then
+		love.graphics.setColor(SETTINGS.hoverHighlightColor)
+		drawObjOutline(hoveredObj, scale)
 	end
-	
+
 	love.graphics.setLineWidth(1)
+
 end
 
 return script

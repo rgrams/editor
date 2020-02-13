@@ -48,29 +48,6 @@ function script.parentResized(self, designW, designH, newW, newH)
 	Camera.current:setViewport(tlx, tly, w, h)
 end
 
-local function addObject(objType, wx, wy)
-	if not objType then  return  end -- Add object canceled.
-	local class = objClasses[objType]
-	local argList = classConstructorArgs[objType]
-	local NO_DEFAULT = classConstructorArgs.NO_DEFAULT
-
-	local args = {}
-	local foundARequiredArg = false
-	for i=#argList,1,-1 do -- Loop from end until we find a required arg (one without a default value).
-		local argData = argList[i]
-		if foundARequiredArg then
-			local default, requiredPlaceholder = argData[2], argData[5]
-			args[i] = default ~= NO_DEFAULT and default or requiredPlaceholder
-		elseif argData[2] == NO_DEFAULT then
-			foundARequiredArg = true
-			args[i] = argData[5] -- Placeholder value for required arg.
-		end
-	end
-	local obj = class(unpack(args))
-	obj.pos.x, obj.pos.y = wx, wy
-	editScene:add(obj)
-end
-
 local function hitCheckObjects(objects, x, y, list)
 	for i,object in ipairs(objects) do
 		local dist = collision.hitCheckObj(object, x, y)
@@ -83,11 +60,23 @@ local function hitCheckObjects(objects, x, y, list)
 	end
 end
 
+local function getClosestHovered(list)
+	local minDist, closestObj = math.huge, nil
+	for i,v in ipairs(list) do
+		local dist = v[2]
+		if dist < minDist then
+			minDist, closestObj = dist, v[1]
+		end
+	end
+	return closestObj, minDist
+end
+
 local function hitCheckEditScene(self, x, y)
 	local hitList = {}
 	x, y = Camera.current:screenToWorld(x, y)
 	hitCheckObjects(editScene.children, x, y, hitList)
-	return hitList
+	local closest = getClosestHovered(hitList)
+	return hitList, closest
 end
 
 local function addToSelection(self, obj)
@@ -118,19 +107,45 @@ local function setSelectionDragOffsets(self, sx, sy)
 	end
 end
 
+local function addObject(objType, self, wx, wy)
+	if not objType then  return  end -- Add object canceled.
+	local class = objClasses[objType]
+	local argList = classConstructorArgs[objType]
+	local NO_DEFAULT = classConstructorArgs.NO_DEFAULT
+
+	local args = {}
+	local foundARequiredArg = false
+	for i=#argList,1,-1 do -- Loop from end until we find a required arg (one without a default value).
+		local argData = argList[i]
+		if foundARequiredArg then
+			local default, requiredPlaceholder = argData[2], argData[5]
+			args[i] = default ~= NO_DEFAULT and default or requiredPlaceholder
+		elseif argData[2] == NO_DEFAULT then
+			foundARequiredArg = true
+			args[i] = argData[5] -- Placeholder value for required arg.
+		end
+	end
+	local obj = class(unpack(args))
+	obj.pos.x, obj.pos.y = wx, wy
+	editScene:add(obj)
+	self.hoverList, self.hoveredObj = hitCheckEditScene(self, love.mouse.getPosition())
+end
+
 function script.mouseMoved(self, x, y, dx, dy)
 	if self.panning then
 		pan(self, dx ,dy)
 	end
 
-	self.hoverList = hitCheckEditScene(self, x, y)
+	self.hoverList, self.hoveredObj = hitCheckEditScene(self, x, y)
 
 	if self.dragging then
-		local mwx, mwy = Camera.current:screenToWorld(x, y)
-		for obj,dat in pairs(self.selection) do
-			local objWX, objWY = mwx + dat.dragOX, mwy + dat.dragOY
-			local localX, localY = obj.parent:toLocal(objWX, objWY)
-			obj.pos.x, obj.pos.y = localX, localY
+		if self.draggingSelection then
+			local mwx, mwy = Camera.current:screenToWorld(x, y)
+			for obj,dat in pairs(self.selection) do
+				local objWX, objWY = mwx + dat.dragOX, mwy + dat.dragOY
+				local localX, localY = obj.parent:toLocal(objWX, objWY)
+				obj.pos.x, obj.pos.y = localX, localY
+			end
 		end
 	end
 end
@@ -143,34 +158,31 @@ function script.input(self, name, value, change)
 		pan(self, 0, 0)
 	elseif name == "left click" then
 		if change == 1 then
-			if #self.hoverList > 0 then
-				local minDist, closestObj = math.huge, nil
-				for i,v in ipairs(self.hoverList) do
-					local dist = v[2]
-					if dist < minDist then
-						minDist, closestObj = dist, v[1]
-					end
-				end
+			if self.hoveredObj then
 				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-					toggleObjSelection(self, closestObj)
-				elseif not isInSelection(self, closestObj) then
+					toggleObjSelection(self, self.hoveredObj)
+				elseif not isInSelection(self, self.hoveredObj) then
 					clearSelection(self)
-					addToSelection(self, closestObj)
+					addToSelection(self, self.hoveredObj)
 				end
 			else -- hoverList is empty, clicked on nothing.
 				clearSelection(self)
 			end
 			self.dragging = true
-			setSelectionDragOffsets(self, love.mouse.getPosition())
+			if isInSelection(self, self.hoveredObj) then
+				self.draggingSelection = true
+				setSelectionDragOffsets(self, love.mouse.getPosition())
+			end
 		elseif change == -1 then
 			self.dragging = false
+			self.draggingSelection = false
 		end
 	elseif name == "add object" and change == 1 then
 		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
 			local sx, sy = love.mouse.getPosition()
 			local wx, wy = Camera.current:screenToWorld(sx, sy)
 			local lx, ly = self:toLocal(sx, sy)
-			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addObject, wx, wy), self)
+			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addObject, self, wx, wy), self)
 		end
 	end
 end
