@@ -18,7 +18,8 @@ local function drawObjOutline(obj, scale)
 	applyObjectTransform(obj)
 
 	local w2, h2 = collision.getExtents(obj)
-	w2, h2 = w2 + scale, h2 + scale
+	local pad = SETTINGS.highlightPadding
+	w2, h2 = w2 + scale + pad, h2 + scale + pad
 	love.graphics.rectangle("line", -w2, -h2, w2*2, h2*2)
 
 	love.graphics.pop()

@@ -11,7 +11,8 @@ M.xAxisColor = { 0.8, 0.4, 0.4, 0.6 }
 M.yAxisColor = { 0.4, 0.8, 0.4, 0.6 }
 
 M.ObjectHitRadius = 10
-M.hoverHighlightColor = {1, 0.9, 0.8, 0.5}
+M.hoverHighlightColor = {1, 0.9, 0.8, 0.4}
 M.selectedHighlightColor = {1, 0.7, 0.3, 1}
+M.highlightPadding = 1
 
 return M
