@@ -76,9 +76,9 @@ function script.draw(self)
 	end
 
 	-- Draw origin axis lines.
-	love.graphics.setColor(xAxisColor)
-	love.graphics.line(0, tly, 0, bry)
 	love.graphics.setColor(yAxisColor)
+	love.graphics.line(0, tly, 0, bry)
+	love.graphics.setColor(xAxisColor)
 	love.graphics.line(tlx, 0, brx, 0)
 
 	love.graphics.setLineWidth(1)
