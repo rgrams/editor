@@ -4,7 +4,6 @@ local script = {}
 local collision = require "viewport-collision"
 
 local function applyObjectTransform(obj)
-	-- love.graphics.origin()
 	local m = obj._to_world
 	local th, sx, sy, kx, ky = matrix.parameters(m)
 	love.graphics.translate(m.x, m.y)
@@ -30,8 +29,8 @@ function script.draw(self)
 	local hoveredObj = viewport.hoveredObj
 	local selection = viewport.selection
 
-	local scale = 2 / Camera.current.zoom
-	love.graphics.setLineWidth(scale)
+	local scale = 1 / Camera.current.zoom
+	love.graphics.setLineWidth(scale * SETTINGS.highlightLineWidth)
 
 	love.graphics.setColor(SETTINGS.selectedHighlightColor)
 	for obj,dat in pairs(selection) do
