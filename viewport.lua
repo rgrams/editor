@@ -102,6 +102,11 @@ local function isInSelection(self, obj)
 	return self.selection[obj]
 end
 
+local function toggleObjSelection(self, obj)
+	if isInSelection(self, obj) then  removeFromSelection(self, obj)
+	else  addToSelection(self, obj)  end
+end
+
 local function clearSelection(self)
 	for k,v in pairs(self.selection) do  self.selection[k] = nil  end
 end
@@ -146,9 +151,13 @@ function script.input(self, name, value, change)
 						minDist, closestObj = dist, v[1]
 					end
 				end
-				clearSelection(self)
-				addToSelection(self, closestObj)
-			else
+				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
+					toggleObjSelection(self, closestObj)
+				elseif not isInSelection(self, closestObj) then
+					clearSelection(self)
+					addToSelection(self, closestObj)
+				end
+			else -- hoverList is empty, clicked on nothing.
 				clearSelection(self)
 			end
 			self.dragging = true
