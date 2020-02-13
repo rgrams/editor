@@ -15,5 +15,7 @@ M.hoverHighlightColor = {1, 0.9, 0.8, 0.4}
 M.selectedHighlightColor = {1, 0.7, 0.3, 1}
 M.highlightLineWidth = 2
 M.highlightPadding = 1
+M.selectionOutOfBoundsLineMargin = 4
+M.selectionOutOfBoundsLineLength = 10
 
 return M
