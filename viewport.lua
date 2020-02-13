@@ -4,8 +4,9 @@ local script = {}
 local encoder = require "parser"
 local classConstructorArgs = require "class-constructor-args"
 local inputManager = require "input-manager"
-local PopupMenu = require "PopupMenu"
+require "object-debugDraw-overrides"
 local collision = require "viewport-collision"
+local PopupMenu = require "PopupMenu"
 
 local drawLayers = {
 	editScene = { "entities" },
