@@ -45,7 +45,7 @@ end
 function script.draw(self)
 	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
 	local hoveredObj = viewport.hoveredObj
-	local selection = viewport.selection
+	local selection = viewport.selection._
 	local cam = Camera.current
 
 	local scale = 1 / Camera.current.zoom

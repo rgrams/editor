@@ -1,6 +1,10 @@
 
 local script = {}
 
+local activeData = require "activeData"
+local CommandHistory = require "philtre.commands"
+local allCommands = require "all-commands"
+local Selection = require "Selection"
 local encoder = require "parser"
 local classConstructorArgs = require "class-constructor-args"
 local inputManager = require "input-manager"
@@ -33,7 +37,9 @@ function script.init(self)
 	inputManager.add(self, "bottom")
 	editScene = SceneTree(drawLayers, defaultLayer)
 	self.hoverList = {}
-	self.selection = {}
+	self.selection = Selection()
+	activeData.selection = self.selection
+	self.cmd = CommandHistory(allCommands)
 end
 
 local function pan(self, dx, dy)
@@ -80,34 +86,6 @@ local function hitCheckEditScene(self, x, y)
 	return hitList, closest
 end
 
-local function addToSelection(self, obj)
-	self.selection[obj] = {dragOX = 0, draxOY = 0}
-end
-
-local function removeFromSelection(self, obj)
-	self.selection[obj] = nil
-end
-
-local function isInSelection(self, obj)
-	return self.selection[obj]
-end
-
-local function toggleObjSelection(self, obj)
-	if isInSelection(self, obj) then  removeFromSelection(self, obj)
-	else  addToSelection(self, obj)  end
-end
-
-local function clearSelection(self)
-	for k,v in pairs(self.selection) do  self.selection[k] = nil  end
-end
-
-local function setSelectionDragOffsets(self, sx, sy)
-	local wx, wy = Camera.current:screenToWorld(sx, sy)
-	for obj,dat in pairs(self.selection) do
-		dat.dragOX, dat.dragOY = obj._to_world.x - wx, obj._to_world.y - wy
-	end
-end
-
 local function addObject(objType, self, wx, wy)
 	if not objType then  return  end -- Add object canceled.
 	local class = objClasses[objType]
@@ -128,6 +106,8 @@ local function addObject(objType, self, wx, wy)
 	end
 	local obj = class(unpack(args))
 	obj.pos.x, obj.pos.y = wx, wy
+	local enclosure = { obj }
+	obj[PRIVATE_KEY] = enclosure
 	editScene:add(obj)
 	self.hoverList, self.hoveredObj = hitCheckEditScene(self, love.mouse.getPosition())
 end
@@ -142,7 +122,7 @@ function script.mouseMoved(self, x, y, dx, dy)
 	if self.dragging then
 		if self.draggingSelection then
 			local mwx, mwy = Camera.current:screenToWorld(x, y)
-			for obj,dat in pairs(self.selection) do
+			for obj,dat in pairs(self.selection._) do
 				local objWX, objWY = mwx + dat.dragOX, mwy + dat.dragOY
 				local localX, localY = obj.parent:toLocal(objWX, objWY)
 				obj.pos.x, obj.pos.y = localX, localY
@@ -161,18 +141,22 @@ function script.input(self, name, value, change)
 		if change == 1 then
 			if self.hoveredObj then
 				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-					toggleObjSelection(self, self.hoveredObj)
-				elseif not isInSelection(self, self.hoveredObj) then
-					clearSelection(self)
-					addToSelection(self, self.hoveredObj)
+					self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
+					-- toggleObjSelection(self, self.hoveredObj)
+				elseif not self.selection:has(self.hoveredObj) then
+					self.cmd:perform("clearSelection", self.selection)
+					-- clearSelection(self)
+					self.cmd:perform("addToSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
+					-- addToSelection(self, self.hoveredObj)
 				end
 			else -- hoverList is empty, clicked on nothing.
-				clearSelection(self)
+				self.cmd:perform("clearSelection", self.selection)
+				-- clearSelection(self)
 			end
 			self.dragging = true
-			if isInSelection(self, self.hoveredObj) then
+			if self.selection:has(self.hoveredObj) then
 				self.draggingSelection = true
-				setSelectionDragOffsets(self, love.mouse.getPosition())
+				self.selection:updateDragOffsets(love.mouse.getPosition())
 			end
 		elseif change == -1 then
 			self.dragging = false
