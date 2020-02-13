@@ -5,16 +5,18 @@ local encoder = require "parser"
 local classConstructorArgs = require "class-constructor-args"
 local inputManager = require "input-manager"
 local PopupMenu = require "PopupMenu"
+local collision = require "viewport-collision"
 
 local drawLayers = {
 	editScene = { "entities" },
 	viewportDebug = { "viewportDebug" }
 }
 defaultLayer = "entities"
-local objList = { "Object", "Sprite", "Text", "World" }
+local objList = { "Object", "Sprite", "Quad", "Text", "World" }
 local objClasses = {
 	Object = Object,
 	Sprite = Sprite,
+	Quad = Quad,
 	Text = Text,
 	World = World
 }
@@ -29,6 +31,8 @@ end
 function script.init(self)
 	inputManager.add(self, "bottom")
 	editScene = SceneTree(drawLayers, defaultLayer)
+	self.hoverList = {}
+	self.selection = {}
 end
 
 local function pan(self, dx, dy)
@@ -67,25 +71,98 @@ local function addObject(objType, wx, wy)
 	editScene:add(obj)
 end
 
+local function hitCheckObjects(objects, x, y, list)
+	for i,object in ipairs(objects) do
+		local dist = collision.hitCheckObj(object, x, y)
+		if dist then
+			table.insert(list, {object, dist})
+		end
+		if object.children then
+			hitCheckObjects(object.children, x, y, list)
+		end
+	end
+end
+
+local function hitCheckEditScene(self, x, y)
+	local hitList = {}
+	x, y = Camera.current:screenToWorld(x, y)
+	hitCheckObjects(editScene.children, x, y, hitList)
+	return hitList
+end
+
+local function addToSelection(self, obj)
+	self.selection[obj] = {dragOX = 0, draxOY = 0}
+end
+
+local function removeFromSelection(self, obj)
+	self.selection[obj] = nil
+end
+
+local function isInSelection(self, obj)
+	return self.selection[obj]
+end
+
+local function clearSelection(self)
+	for k,v in pairs(self.selection) do  self.selection[k] = nil  end
+end
+
+local function setSelectionDragOffsets(self, sx, sy)
+	local wx, wy = Camera.current:screenToWorld(sx, sy)
+	for obj,dat in pairs(self.selection) do
+		dat.dragOX, dat.dragOY = obj._to_world.x - wx, obj._to_world.y - wy
+	end
+end
+
 function script.mouseMoved(self, x, y, dx, dy)
 	if self.panning then
 		pan(self, dx ,dy)
 	end
+
+	self.hoverList = hitCheckEditScene(self, x, y)
+
+	if self.dragging then
+		local mwx, mwy = Camera.current:screenToWorld(x, y)
+		for obj,dat in pairs(self.selection) do
+			local objWX, objWY = mwx + dat.dragOX, mwy + dat.dragOY
+			local localX, localY = obj.parent:toLocal(objWX, objWY)
+			obj.pos.x, obj.pos.y = localX, localY
+		end
+	end
 end
 
 function script.input(self, name, value, change)
-	if name == "add object" and change == 1 then
+	if name == "pan" then
+		self.panning = value == 1
+	elseif name == "zoom" then
+		Camera.current:zoomIn(value * SETTINGS.zoomRate, love.mouse.getPosition())
+		pan(self, 0, 0)
+	elseif name == "left click" then
+		if change == 1 then
+			if #self.hoverList > 0 then
+				local minDist, closestObj = math.huge, nil
+				for i,v in ipairs(self.hoverList) do
+					local dist = v[2]
+					if dist < minDist then
+						minDist, closestObj = dist, v[1]
+					end
+				end
+				clearSelection(self)
+				addToSelection(self, closestObj)
+			else
+				clearSelection(self)
+			end
+			self.dragging = true
+			setSelectionDragOffsets(self, love.mouse.getPosition())
+		elseif change == -1 then
+			self.dragging = false
+		end
+	elseif name == "add object" and change == 1 then
 		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
 			local sx, sy = love.mouse.getPosition()
 			local wx, wy = Camera.current:screenToWorld(sx, sy)
 			local lx, ly = self:toLocal(sx, sy)
 			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addObject, wx, wy), self)
 		end
-	elseif name == "zoom" then
-		Camera.current:zoomIn(value * SETTINGS.zoomRate, love.mouse.getPosition())
-		pan(self, 0, 0)
-	elseif name == "pan" then
-		self.panning = value == 1
 	end
 end
 

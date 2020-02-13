@@ -6,6 +6,7 @@ local interface = require "interface"
 local viewport = require "viewport"
 local input_getter = require "input_getter"
 local viewport_background = require "viewport_background"
+local viewport_overlay = require "viewport_overlay"
 
 local function new(w, h)
 	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}
@@ -48,8 +49,12 @@ local function new(w, h)
 		layer = "viewportBackground",
 		script = {viewport_background}
 	})
+	local viewportOverlay = mod(Object(0, 0), {
+		name = "viewportOverlay", layer = "viewportOverlay",
+		script = { viewport_overlay }
+	})
 	local inputGetter = mod(Object(), {name = "input getter", script = input_getter})
-	return {root, viewportCamera, viewportBackground, inputGetter}
+	return {root, viewportCamera, viewportBackground, viewportOverlay, inputGetter}
 end
 
 return new
