@@ -44,6 +44,7 @@ function script.setObject(self, obj)
 	clearContents(self)
 	if not obj then  return  end
 	local propList = classConstructorArgs[obj.className] or classConstructorArgs.Object
+	local widgetMap = {}
 	for i,propData in ipairs(propList) do
 		-- local val = getPropertyValue(obj, propData)
 		-- local name = propData[1]
@@ -57,18 +58,19 @@ function script.setObject(self, obj)
 		local name = key
 		if subKey then  name = name .. "." .. subKey  end
 		local value = getter(obj, key, subKey)
-		local b = PropertyWidget(name, tostring(value))
-		self.contents.h = self.contents.h + b.h
+		local widget = PropertyWidget(name, tostring(value))
+		self.contents.h = self.contents.h + widget.h
 		self.contents:_updateInnerSize()
-		scene:add(b, self.contents)
-		self.contents:add(b)
+		scene:add(widget, self.contents)
+		self.contents:add(widget)
 
-
-		local inputFld = scene:get(b.path .. "/Row/input")
-		local inputTxt = scene:get(b.path .. "/Row/input/text")
+		local inputFld = scene:get(widget.path .. "/Row/input")
+		local inputTxt = scene:get(widget.path .. "/Row/input/text")
 		self.ruu:makeInputField(inputFld, inputTxt, true)
-		b.ruuWidget = inputFld
+		widget.ruuWidget = inputFld
+		table.insert(widgetMap, {inputFld})
 	end
+	self.ruu:mapNeighbors(widgetMap)
 	self:setMaskOnChildren()
 end
 
