@@ -12,6 +12,26 @@ function script.init(self)
 	self.ruu = activeData.ruu
 end
 
+local function stringtobool(v)
+	if v == "false" then  return false  end
+	if v == "true" then  return true  end
+end
+
+local ignoreThisKeyForNow = { image = true, quad = true, font = true, color = true }
+
+local function propWidgetConfirmFunc(widget)
+	local value = widget.text
+	value = tonumber(value) or value
+	value = stringtobool(value) or value
+	value = value or widget.text
+	local key, subKey = widget._propKey, widget._propSubKey
+	if not ignoreThisKeyForNow[key] then
+		local selection = activeData.selection._
+		local obj = next(selection)
+		activeData.commands:perform("setProperty", obj[PRIVATE_KEY], key, value, subKey)
+	end
+end
+
 local function getPropertyValue(obj, propData)
 	-- { "pos", "vector2", {"x", "y"} }
 	local name, valType, subKeys = unpack(propData)
@@ -58,16 +78,17 @@ function script.setObject(self, obj)
 		local name = key
 		if subKey then  name = name .. "." .. subKey  end
 		local value = getter(obj, key, subKey)
-		local widget = PropertyWidget(name, tostring(value))
-		self.contents.h = self.contents.h + widget.h
+		local node = PropertyWidget(name, tostring(value))
+		self.contents.h = self.contents.h + node.h
 		self.contents:_updateInnerSize()
-		scene:add(widget, self.contents)
-		self.contents:add(widget)
+		scene:add(node, self.contents)
+		self.contents:add(node)
 
-		local inputFld = scene:get(widget.path .. "/Row/input")
-		local inputTxt = scene:get(widget.path .. "/Row/input/text")
-		self.ruu:makeInputField(inputFld, inputTxt, true)
-		widget.ruuWidget = inputFld
+		local inputFld = scene:get(node.path .. "/Row/input")
+		local inputTxt = scene:get(node.path .. "/Row/input/text")
+		self.ruu:makeInputField(inputFld, inputTxt, true, nil, propWidgetConfirmFunc)
+		node.ruuWidget = inputFld
+		inputFld._propKey, inputFld._propSubKey = key, subKey
 		table.insert(widgetMap, {inputFld})
 	end
 	self.ruu:mapNeighbors(widgetMap)
