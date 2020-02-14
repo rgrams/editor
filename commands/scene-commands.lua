@@ -67,7 +67,7 @@ local function setProperty(enclosure, key, value, subKey)
 	local obj = enclosure[1]
 	local oldVal = obj[key]
 	if subKey then
-		oldval = oldVal[subKey]
+		oldVal = oldVal[subKey]
 		obj[key][subKey] = value
 	else
 		obj[key] = value
