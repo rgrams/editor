@@ -3,14 +3,14 @@ local script = {}
 
 local activeData = require "activeData"
 local CommandHistory = require "philtre.commands"
-local allCommands = require "all-commands"
+local allCommands = require "commands.all-commands"
 local Selection = require "Selection"
-local encoder = require "parser"
-local classConstructorArgs = require "class-constructor-args"
-local inputManager = require "input-manager"
-require "object-debugDraw-overrides"
-local collision = require "viewport-collision"
-local PopupMenu = require "PopupMenu"
+local encoder = require "lib.encoder"
+local classConstructorArgs = require "object.class-constructor-args"
+local inputManager = require "lib.input-manager"
+require "object.object-debugDraw-overrides"
+local collision = require "viewport.viewport-collision"
+local PopupMenu = require "theme.widgets.PopupMenu"
 
 local drawLayers = {
 	editScene = { "entities" },

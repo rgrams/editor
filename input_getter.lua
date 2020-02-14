@@ -1,7 +1,7 @@
 
 local script = {}
 
-local inputManager = require "input-manager"
+local inputManager = require "lib.input-manager"
 
 function script.init(self)
 	Input.enable(self)

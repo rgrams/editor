@@ -3,7 +3,7 @@
 local objClasses = {
 	Object = Object, Sprite = Sprite, Quad = Quad, Text = Text, World = World
 }
-local classConstructorArgs = require "class-constructor-args"
+local classConstructorArgs = require "object.class-constructor-args"
 
 local function addObject(objClassName, enclosure, sceneTree, lx, ly, parent)
 	local class = objClasses[objClassName]

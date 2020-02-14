@@ -1,7 +1,7 @@
 
 local script = {}
 
-local inputManager = require "input-manager"
+local inputManager = require "lib.input-manager"
 local RUU = require "ruu.ruu"
 local theme = require "theme.theme"
 

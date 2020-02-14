@@ -2,11 +2,11 @@
 local Panel = require "theme.widgets.Panel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
-local interface = require "interface"
-local viewport = require "viewport"
+local interface = require "interface_script"
+local viewport = require "viewport.viewport"
 local input_getter = require "input_getter"
-local viewport_background = require "viewport_background"
-local viewport_overlay = require "viewport_overlay"
+local viewport_background = require "viewport.viewport_background"
+local viewport_overlay = require "viewport.viewport_overlay"
 
 local function new(w, h)
 	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}

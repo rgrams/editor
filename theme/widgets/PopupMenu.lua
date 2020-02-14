@@ -1,6 +1,6 @@
 
 local fnt = require "theme.fonts"
-local script = require "popupMenu_script"
+local script = require "theme.widgets.PopupMenu_script"
 local Panel = require "theme.widgets.Panel"
 local Button = require "theme.widgets.Button"
 

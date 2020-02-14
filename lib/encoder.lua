@@ -5,8 +5,7 @@
 local M = {}
 
 local objToString = require "philtre.lib.object-to-string"
-local classProperties = require "class-properties"
-local classConstructorArgs = require "class-constructor-args"
+local classConstructorArgs = require "object.class-constructor-args"
 
 local function stringifyTable(t)
 	return "{" .. table.concat(t, ", ") .. "}"

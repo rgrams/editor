@@ -4,7 +4,7 @@ local script = {}
 local fnt = require "theme.fonts"
 
 local activeData = require "activeData"
-local inputManager = require "input-manager"
+local inputManager = require "lib.input-manager"
 local RUU = require "ruu.ruu"
 local ruu
 local theme = require "theme.theme"
@@ -52,9 +52,11 @@ function script.input(self, name, value, change)
 	elseif name == "undo/redo" and value == 1 then
 		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
 			if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-				activeData.commands:redo()
+				local redoCommand = activeData.commands:redo()
+				print("Redo: " .. tostring(redoCommand))
 			else
-				activeData.commands:undo()
+				local undoCommand = activeData.commands:undo()
+				print("Undo: " .. tostring(undoCommand))
 			end
 		end
 	end

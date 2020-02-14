@@ -1,6 +1,6 @@
 
-local sceneCommands = require "scene-commands"
-local selectionCommands = require "selection-commands"
+local sceneCommands = require "commands.scene-commands"
+local selectionCommands = require "commands.selection-commands"
 
 local list = {sceneCommands, selectionCommands}
 

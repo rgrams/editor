@@ -6,7 +6,7 @@ vector = require "philtre.lib.vec2xy"
 gui = require "philtre.gui.all"
 SETTINGS = require "settings"
 PRIVATE_KEY = {}
-local inputManager = require "input-manager"
+local inputManager = require "lib.input-manager"
 
 local Root = require "root"
 local root

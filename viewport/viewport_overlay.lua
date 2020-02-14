@@ -1,7 +1,7 @@
 
 local script = {}
 
-local collision = require "viewport-collision"
+local collision = require "viewport.viewport-collision"
 
 local function applyObjectTransform(obj)
 	-- Don't need to reset to origin, overlay obj is at 0, 0 and drawn inside camera transform.
