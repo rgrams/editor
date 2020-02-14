@@ -135,16 +135,11 @@ function script.input(self, name, value, change)
 			if self.hoveredObj then
 				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
 					self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
-					-- toggleObjSelection(self, self.hoveredObj)
 				elseif not self.selection:has(self.hoveredObj) then
-					self.cmd:perform("clearSelection", self.selection)
-					-- clearSelection(self)
-					self.cmd:perform("addToSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
-					-- addToSelection(self, self.hoveredObj)
+					self.cmd:perform("setSelectionTo", self.selection, self.hoveredObj[PRIVATE_KEY])
 				end
 			else -- hoverList is empty, clicked on nothing.
 				self.cmd:perform("clearSelection", self.selection)
-				-- clearSelection(self)
 			end
 			self.dragging = true
 			if self.selection:has(self.hoveredObj) then

@@ -11,6 +11,13 @@ function Selection.add(self, enclosure)
 	return self, enclosure
 end
 
+-- Clear and then add - So it's one command instead of two.
+function Selection.setTo(self, enclosure)
+	local _,oldList = self:clear()
+	self:add(enclosure)
+	return self, oldList -- Undo with _set
+end
+
 function Selection.remove(self, enclosure)
 	self._[enclosure[1]] = nil
 	return self, enclosure
