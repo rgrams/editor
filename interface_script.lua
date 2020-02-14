@@ -14,6 +14,7 @@ function script.init(self)
 	inputManager.add(self)
 
 	ruu = RUU(theme)
+	activeData.ruu = ruu
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }
 	ruu:registerLayers(layers)
 
@@ -30,6 +31,9 @@ function script.init(self)
 	ruu:makeButton(rightPanelHandle, true, nil, "ResizeHandle")
 	local leftPanelHandle = scene:get("/root/mainColumn/mainRow/leftPanel/resizeHandle")
 	ruu:makeButton(leftPanelHandle, true, nil, "ResizeHandle")
+
+	local propPanel = scene:get("/root/mainColumn/mainRow/rightPanel/panel/Column/Properties")
+	ruu:makeScrollArea(propPanel, true)
 end
 
 local dirs = { up = "up", down = "down", left = "left", right = "right" }
@@ -52,11 +56,13 @@ function script.input(self, name, value, change)
 	elseif name == "undo/redo" and value == 1 then
 		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
 			if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-				local redoCommand = activeData.commands:redo()
+				local redoCommand, args = activeData.commands:redo()
 				print("Redo: " .. tostring(redoCommand))
+				if args then  for k,v in pairs(args) do  print("", k,v)  end  end
 			else
-				local undoCommand = activeData.commands:undo()
+				local undoCommand, args = activeData.commands:undo()
 				print("Undo: " .. tostring(undoCommand))
+				if args then  for k,v in pairs(args) do  print("", k,v)  end  end
 			end
 		end
 	end

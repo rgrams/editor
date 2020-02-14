@@ -7,5 +7,6 @@ local M = {}
 -- M.commands
 -- M.filePath
 -- M.scene
+-- M.propertiesPanel
 
 return M

@@ -2,12 +2,18 @@
 local Class = require "philtre.lib.base-class"
 local Selection = Class:extend()
 
+local activeData = require "activeData"
+
 function Selection.set(self)
 	self._ = {} -- Need to separate from methods so we can iterate (by keys).
 end
 
 function Selection.add(self, enclosure)
 	self._[enclosure[1]] = {dragOX = 0, draxOY = 0}
+
+	local obj = enclosure[1]
+	activeData.propertiesPanel:call("setObject", obj)
+
 	return self, enclosure
 end
 

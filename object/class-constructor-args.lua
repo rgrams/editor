@@ -1,19 +1,24 @@
 
 -- Stores a list of class constructor orguments for each object class.
 
---    Has the information needed to get each argument from an existing
---    object, so a constructor call can be encoded to recreate that object.
---        - The argument's key name on the object.
---        - The default value of the argument.
---        - The property sub-key, if the value is in a table on the object.
+-- Also stores the information needed to get each argument from an existing
+-- object, so a constructor call can be encoded to recreate that object.
 
 local M = {}
 
 local NO_DEFAULT = {}
 local defaultAssets = require "defaultAssets.list"
 
+M.classList = { "Object", "Sprite", "Text", "Quad", "World" }
+
+local function getObjVal(obj, key, subKey)
+	if subKey then  return obj[key][subKey]
+	else  return obj[key]  end
+end
+M.defaultGetter = getObjVal
+
 M.Object = {
-	-- key, default value, sub-key, getterFunc
+	-- key, default value, sub-key, getterFunc, default asset for required args.
 		-- sub-key is used if the argument is in a table on the object (like x and y pos).
 	{"pos", 0, "x"}, {"pos", 0, "y"}, {"angle", 0},
 	{"sx", 1}, {"sy", 1}, {"kx", 0}, {"ky", 0}
@@ -54,7 +59,7 @@ M.Text = {
 }
 
 local function getQuadParams(obj, key)
-	return obj[quad]:getViewport()
+	return obj.quad:getViewport()
 end
 
 M.Quad = {
@@ -99,7 +104,8 @@ M.World = {
 -- an object can be quickly checked to see if they go into the constructor,
 -- or if they should be added on afterward.
 local keys = {}
-for className,classArgs in pairs(M) do
+for _,className in pairs(M.classList) do
+	local classArgs = M[className]
 	local classKeys = {}
 	keys[className] = classKeys
 	for i,argSpecs in ipairs(classArgs) do
