@@ -12,6 +12,10 @@ local bindings = {
 
 	{ "lshift", "button", "scancode", "lshift" },
 	{ "rshift", "button", "scancode", "rshift" },
+	{ "lctrl", "button", "scancode", "lctrl" },
+	{ "rctrl", "button", "scancode", "rctrl" },
+
+	{ "undo/redo", "button", "key", "z" },
 
 	{ "save object", "button", "scancode", ";" },
 	{ "rename", "button", "scancode", "f2" },

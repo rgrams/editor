@@ -3,6 +3,7 @@ local script = {}
 
 local fnt = require "theme.fonts"
 
+local activeData = require "activeData"
 local inputManager = require "input-manager"
 local RUU = require "ruu.ruu"
 local ruu
@@ -48,6 +49,14 @@ function script.input(self, name, value, change)
 		return ruu:input("text", nil, value)
 	elseif name == "backspace" and value == 1 then
 		return ruu:input("backspace")
+	elseif name == "undo/redo" and value == 1 then
+		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
+			if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
+				activeData.commands:redo()
+			else
+				activeData.commands:undo()
+			end
+		end
 	end
 	if next(ruu.hoveredWidgets) then
 		return true
