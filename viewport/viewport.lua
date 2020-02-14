@@ -114,6 +114,8 @@ function script.mouseMoved(self, x, y, dx, dy)
 					self.cmd:perform("setPosition", enclosure, lx, ly)
 				else
 					obj.pos.x, obj.pos.y = lx, ly
+					activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
+					activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
 					self.cmd:update(enclosure, lx, ly)
 				end
 			end

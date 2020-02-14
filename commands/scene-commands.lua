@@ -1,4 +1,6 @@
 
+local activeData = require "activeData"
+
 -- Add
 local objClasses = {
 	Object = Object, Sprite = Sprite, Quad = Quad, Text = Text, World = World
@@ -42,6 +44,8 @@ local function setPosition(enclosure, x, y)
 	local obj = enclosure[1]
 	local oldx, oldy = obj.pos.x, obj.pos.y
 	obj.pos.x, obj.pos.y = x, y
+	activeData.propertiesPanel:call("setProperty", obj, "pos", x, "x")
+	activeData.propertiesPanel:call("setProperty", obj, "pos", y, "y")
 	return enclosure, oldx, oldy
 end
 
@@ -50,6 +54,8 @@ local function setWorldPosition(enclosure, wx, wy)
 	local oldx, oldy = obj.pos.x, obj.pos.y
 	local lx, ly = obj.parent:toLocal(wx, wy)
 	obj.pos.x, obj.pos.y = lx, ly
+	activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
+	activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
 	return enclosure, oldx, oldy
 end
 

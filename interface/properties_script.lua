@@ -42,6 +42,7 @@ function script.setObject(self, obj)
 	self.ruu = activeData.ruu
 	self.obj = obj
 	clearContents(self)
+	if not obj then  return  end
 	local propList = classConstructorArgs[obj.className] or classConstructorArgs.Object
 	for i,propData in ipairs(propList) do
 		-- local val = getPropertyValue(obj, propData)
@@ -71,11 +72,16 @@ function script.setObject(self, obj)
 	self:setMaskOnChildren()
 end
 
-function script.setProperty(self, key, val)
-	if not self.obj then
-		print("Properties.setProperty - No Object Set.", key, val)
+function script.setProperty(self, obj, key, val, subKey)
+	if obj ~= self.obj then
+		print("Properties.setProperty - Object mis-match.", obj, self.obj, key, val)
 		return
 	end
+	local name = key
+	if subKey then  name = name .. "." .. subKey  end
+	local widgetPath = self.path .. "/contents/" .. name .. "/Row/input"
+	local inputField = scene:get(widgetPath)
+	inputField:setText(tostring(val))
 end
 
 return script

@@ -9,11 +9,9 @@ function Selection.set(self)
 end
 
 function Selection.add(self, enclosure)
-	self._[enclosure[1]] = {dragOX = 0, draxOY = 0}
-
 	local obj = enclosure[1]
+	self._[obj] = {dragOX = 0, draxOY = 0}
 	activeData.propertiesPanel:call("setObject", obj)
-
 	return self, enclosure
 end
 
