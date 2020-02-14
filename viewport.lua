@@ -40,6 +40,7 @@ function script.init(self)
 	self.selection = Selection()
 	activeData.selection = self.selection
 	self.cmd = CommandHistory(allCommands)
+	activeData.commands = self.cmd
 end
 
 local function pan(self, dx, dy)
@@ -86,29 +87,11 @@ local function hitCheckEditScene(self, x, y)
 	return hitList, closest
 end
 
-local function addObject(objType, self, wx, wy)
+local function addMenuClosed(objType, self, wx, wy)
 	if not objType then  return  end -- Add object canceled.
-	local class = objClasses[objType]
-	local argList = classConstructorArgs[objType]
-	local NO_DEFAULT = classConstructorArgs.NO_DEFAULT
 
-	local args = {}
-	local foundARequiredArg = false
-	for i=#argList,1,-1 do -- Loop from end until we find a required arg (one without a default value).
-		local argData = argList[i]
-		if foundARequiredArg then
-			local default, requiredPlaceholder = argData[2], argData[5]
-			args[i] = default ~= NO_DEFAULT and default or requiredPlaceholder
-		elseif argData[2] == NO_DEFAULT then
-			foundARequiredArg = true
-			args[i] = argData[5] -- Placeholder value for required arg.
-		end
-	end
-	local obj = class(unpack(args))
-	obj.pos.x, obj.pos.y = wx, wy
-	local enclosure = { obj }
-	obj[PRIVATE_KEY] = enclosure
-	editScene:add(obj)
+	-- TODO: convert to local pos if parent exists.
+	self.cmd:perform("addObject", objType, {}, editScene, wx, wy, parent)
 	self.hoverList, self.hoveredObj = hitCheckEditScene(self, love.mouse.getPosition())
 end
 
@@ -121,11 +104,21 @@ function script.mouseMoved(self, x, y, dx, dy)
 
 	if self.dragging then
 		if self.draggingSelection then
+			local isStart = self.draggingSelection == "start"
 			local mwx, mwy = Camera.current:screenToWorld(x, y)
 			for obj,dat in pairs(self.selection._) do
-				local objWX, objWY = mwx + dat.dragOX, mwy + dat.dragOY
-				local localX, localY = obj.parent:toLocal(objWX, objWY)
-				obj.pos.x, obj.pos.y = localX, localY
+				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
+				local lx, ly = obj.parent:toLocal(wx, wy)
+				local enclosure = obj[PRIVATE_KEY]
+				if isStart then
+					self.cmd:perform("setPosition", enclosure, lx, ly)
+				else
+					obj.pos.x, obj.pos.y = lx, ly
+					self.cmd:update(enclosure, lx, ly)
+				end
+			end
+			if isStart then
+				self.draggingSelection = true
 			end
 		end
 	end
@@ -155,7 +148,7 @@ function script.input(self, name, value, change)
 			end
 			self.dragging = true
 			if self.selection:has(self.hoveredObj) then
-				self.draggingSelection = true
+				self.draggingSelection = "start"
 				self.selection:updateDragOffsets(love.mouse.getPosition())
 			end
 		elseif change == -1 then
@@ -167,7 +160,7 @@ function script.input(self, name, value, change)
 			local sx, sy = love.mouse.getPosition()
 			local wx, wy = Camera.current:screenToWorld(sx, sy)
 			local lx, ly = self:toLocal(sx, sy)
-			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addObject, self, wx, wy), self)
+			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addMenuClosed, self, wx, wy), self)
 		end
 	end
 end
