@@ -1,6 +1,8 @@
 
 local script = {}
 
+local fnt = require "theme.fonts"
+
 local snapIncrement = 8
 local desiredMaxGridLines = 48
 local bigGridEvery = 4
@@ -15,6 +17,7 @@ local viewportPath = "/root/mainColumn/mainRow/viewport"
 
 function script.init(self)
 	self.vpNode = scene:get(viewportPath)
+	self.font = new.font(unpack(fnt.openSans_Reg_12))
 end
 
 local function getSmallestPowerOf2(x)
@@ -27,6 +30,8 @@ local function getSmallestPowerOf2(x)
 end
 
 function script.draw(self)
+	love.graphics.setFont(self.font)
+
 	local vp = self.vpNode
 	local scrTLX, scrTLY = vp:toWorld(-vp.w/2, -vp.h/2)
 	local scrBRX, scrBRY = vp:toWorld(vp.w/2, vp.h/2)
