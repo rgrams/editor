@@ -137,16 +137,19 @@ function script.input(self, name, value, change)
 			if self.hoveredObj then
 				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
 					self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
-				elseif not self.selection:has(self.hoveredObj) then
+				elseif not self.selection._[self.hoveredObj] then
 					self.cmd:perform("setSelectionTo", self.selection, self.hoveredObj[PRIVATE_KEY])
 				end
 			else -- hoverList is empty, clicked on nothing.
 				self.cmd:perform("clearSelection", self.selection)
 			end
 			self.dragging = true
-			if self.selection:has(self.hoveredObj) then
+			if self.selection._[self.hoveredObj] then
 				self.draggingSelection = "start"
-				self.selection:updateDragOffsets(love.mouse.getPosition())
+				local wx, wy = Camera.current:screenToWorld(love.mouse.getPosition())
+				for obj,data in pairs(self.selection._) do -- updateDragOffsets
+					data.dragOX, data.dragOY = obj._to_world.x - wx, obj._to_world.y - wy
+				end
 			end
 		elseif change == -1 then
 			self.dragging = false
