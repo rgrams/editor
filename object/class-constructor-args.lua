@@ -7,6 +7,7 @@
 local M = {}
 
 local NO_DEFAULT = {}
+M.NO_DEFAULT = NO_DEFAULT
 local defaultAssets = require "defaultAssets.list"
 
 M.classList = { "Object", "Sprite", "Text", "Quad", "World" }
@@ -120,6 +121,5 @@ M.keys = keys
 M.modKeys = {
 	name = true, children = true, _script = true
 }
-M.NO_DEFAULT = NO_DEFAULT
 
 return M

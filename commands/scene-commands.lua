@@ -6,6 +6,8 @@ local objClasses = {
 	Object = Object, Sprite = Sprite, Quad = Quad, Text = Text, World = World
 }
 local classConstructorArgs = require "object.class-constructor-args"
+local objProps = require "object.editable-object-properties"
+local setget = require "object.object-prop-set-getters"
 
 local function addObject(objClassName, enclosure, sceneTree, lx, ly, parent)
 	local class = objClasses[objClassName]
@@ -65,13 +67,11 @@ end
 -- setProperty
 local function setProperty(enclosure, key, value, subKey)
 	local obj = enclosure[1]
-	local oldVal = obj[key]
-	if subKey then
-		oldVal = oldVal[subKey]
-		obj[key][subKey] = value
-	else
-		obj[key] = value
-	end
+	local propData = objProps.getSpecs(obj.className, key)
+	local setter = propData[4] or setget.set.default
+	local getter = propData[5] or setget.get.default
+	local oldVal = getter(obj, key, subKey)
+	setter(obj, key, value, subKey)
 	return enclosure, key, oldVal, subKey
 end
 
