@@ -1,14 +1,15 @@
 
 local script = {}
 
-local Button = require "theme.widgets.Button"
 local PropertyWidget = require "theme.widgets.properties.Basic"
 local activeData = require "activeData"
 local classConstructorArgs = require "object.class-constructor-args"
+local objProp = require "object.object-properties"
 
 function script.init(self)
 	activeData.propertiesPanel = self
 	self.contents = scene:get(self.path .. "/contents")
+	self.isCleared = true
 	self.ruu = activeData.ruu
 end
 
@@ -17,7 +18,7 @@ local function stringtobool(v)
 	if v == "true" then  return true  end
 end
 
-local ignoreThisKeyForNow = { image = true, quad = true, font = true, color = true }
+local ignoreThisKeyForNow = { quad = true, font = true, color = true }
 
 local function propWidgetConfirmFunc(widget)
 	local value = widget.text
@@ -47,6 +48,10 @@ local function getPropertyValue(obj, propData)
 end
 
 local function clearContents(self)
+	-- If cleared more than once in the same frame (as happens with Selection.setTo),
+	-- `contents.children` will still be full of DeletedMarkers, so just track the
+	-- cleared state on our own.
+	if self.isCleared then  return  end
 	if self.contents.children then
 		for i,child in ipairs(self.contents.children) do
 			scene:remove(child)
@@ -55,35 +60,38 @@ local function clearContents(self)
 		end
 		self.contents.h = 10
 	end
+	self.isCleared = true
 end
 
-function script.setObject(self, obj)
-	print("Properties.setObject", obj)
+function script.updateSelection(self, objDict)
+	print("--  PropertiesPanel.updateSelection  --")
 	self.ruu = activeData.ruu
-	self.obj = obj
 	clearContents(self)
-	if not obj then  return  end
-	local propList = classConstructorArgs[obj.className] or classConstructorArgs.Object
-	local widgetMap = {}
-	for i,propData in ipairs(propList) do
-		-- local val = getPropertyValue(obj, propData)
-		-- local name = propData[1]
-		-- local str = name .. ": "
-		-- if type(val) == "table" then
-			-- for k,v in pairs(val) do
-				-- str = str .. k .. ":"
+	if not next(objDict) then
+		print("  No objects selected.")
+		return
+	end
 
-		local key, subKey, getter = propData[1], propData[3], propData[4]
-		getter = getter or classConstructorArgs.defaultGetter
-		local name = key
-		if subKey then  name = name .. "." .. subKey  end
-		local value = getter(obj, key, subKey)
-		local node = PropertyWidget(name, tostring(value))
+	local obj = next(objDict)
+	print("  Object Selected: " .. tostring(obj.path))
+
+	local widgetMap = {}
+	local constructArgs = objProp.constructArgs[obj.className] or objProp.constructArgs.Object
+	local argDataDict = objProp[obj.className] or objProp.Object
+	for i,propKeys in ipairs(constructArgs) do
+		-- Get the property value from the object.
+		local key, subKey = propKeys[1], propKeys[2]
+		local value = objProp.getValue(obj, key, subKey)
+
+		-- Make a PropertyWidget for each property and add it to the "contents" column.
+		local nodeName = subKey and (key .. "." .. subKey) or key
+		local node = PropertyWidget(nodeName, tostring(value))
 		self.contents.h = self.contents.h + node.h
 		self.contents:_updateInnerSize()
 		scene:add(node, self.contents)
 		self.contents:add(node)
 
+		-- Make the Ruu widget.
 		local inputFld = scene:get(node.path .. "/Row/input")
 		local inputTxt = scene:get(node.path .. "/Row/input/text")
 		self.ruu:makeInputField(inputFld, inputTxt, true, nil, propWidgetConfirmFunc)
@@ -93,13 +101,10 @@ function script.setObject(self, obj)
 	end
 	self.ruu:mapNeighbors(widgetMap)
 	self:setMaskOnChildren()
+	self.isCleared = false
 end
 
 function script.setProperty(self, obj, key, val, subKey)
-	if obj ~= self.obj then
-		print("Properties.setProperty - Object mis-match.", obj, self.obj, key, val)
-		return
-	end
 	local name = key
 	if subKey then  name = name .. "." .. subKey  end
 	local widgetPath = self.path .. "/contents/" .. name .. "/Row/input"

@@ -3,6 +3,7 @@ local tex = require "theme.textures"
 local fnt = require "theme.fonts"
 
 local function new(label, value, labelW)
+	assert(label, "PropertyWidget - can't create without a label name.")
 	local w, h = 200, 24
 	local self = mod(gui.Slice(tex.Panel, nil, {2}, 0, 0, 0, w, h, 0, 0, 0, 0, {"fill", "none"}), {name = label, layer = "widgets", children = {
 		mod(gui.Row(0, false, {{1,"start",false},{2,"end",true}}, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {children = {

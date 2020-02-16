@@ -4,18 +4,20 @@ local activeData = require "activeData"
 local function add(self, enclosure)
 	local obj = enclosure[1]
 	self._[obj] = {dragOX = 0, draxOY = 0}
-	activeData.propertiesPanel:call("setObject", obj)
+	activeData.propertiesPanel:call("updateSelection", self._)
 	return self, enclosure
 end
 
 local function remove(self, enclosure)
 	self._[enclosure[1]] = nil
+	activeData.propertiesPanel:call("updateSelection", self._)
 	return self, enclosure
 end
 
 local function clear(self)
 	local oldList = self._
 	self._ = {}
+	activeData.propertiesPanel:call("updateSelection", self._)
 	return self, oldList
 end
 
@@ -35,6 +37,7 @@ end
 local function _set(self, new) -- For undoing clear().
 	local old = self._
 	self._ = new
+	activeData.propertiesPanel:call("updateSelection", self._)
 	return self, old
 end
 
