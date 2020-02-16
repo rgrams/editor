@@ -8,7 +8,7 @@ local viewport = require "viewport.viewport"
 local input_getter = require "input_getter"
 local viewport_background = require "viewport.viewport_background"
 local viewport_overlay = require "viewport.viewport_overlay"
-local properties = require "interface.properties_script"
+local propertiesPanel = require "interface.propertiesPanel_script"
 
 local function new(w, h)
 	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}
@@ -33,7 +33,7 @@ local function new(w, h)
 				mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "viewport", script = {viewport}}),
 				-- Right Panel
 				mod(gui.Row(nil, nil, {{1,"end",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "rightPanel", children = {
-					ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Properties", nil, properties),
+					ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Properties", nil, propertiesPanel),
 					ResizeHandle(0, 0, 0, 4, 10, -1, 0, -1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/rightPanel", 1)
 				}})
 			}}),
