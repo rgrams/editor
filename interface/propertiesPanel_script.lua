@@ -32,20 +32,6 @@ local function propWidgetConfirmFunc(widget)
 	end
 end
 
-local function getPropertyValue(obj, propData)
-	-- { "pos", "vector2", {"x", "y"} }
-	local name, valType, subKeys = unpack(propData)
-	if not subKeys then
-		return obj[name]
-	else
-		local v = {}
-		for i,key in ipairs(subKeys) do
-			v[key] = obj[name][key]
-		end
-		return v
-	end
-end
-
 local function clearContents(self)
 	-- If cleared more than once in the same frame (as happens with Selection.setTo),
 	-- `contents.children` will still be full of DeletedMarkers, so just track the
