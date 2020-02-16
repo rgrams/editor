@@ -1,29 +1,26 @@
 
 local activeData = require "activeData"
-
--- Add
-local objClasses = {
-	Object = Object, Sprite = Sprite, Quad = Quad, Text = Text, World = World
-}
-local classConstructorArgs = require "object.class-constructor-args"
-local objProps = require "object.editable-object-properties"
+local objProp = require "object.editable-object-properties"
 local setget = require "object.object-prop-set-getters"
 
-local function addObject(objClassName, enclosure, sceneTree, lx, ly, parent)
-	local class = objClasses[objClassName]
-	local argList = classConstructorArgs[objClassName]
-	local NO_DEFAULT = classConstructorArgs.NO_DEFAULT
+-- Add
+local function addObject(className, enclosure, sceneTree, lx, ly, parent)
+	local class = objProp.stringToClass[className]
+	local argList = objProp.constructArgs[className]
+	local NO_DEFAULT = objProp.NO_DEFAULT
 
 	local args = {}
 	local foundARequiredArg = false
-	for i=#argList,1,-1 do -- Loop from end until we find a required arg (one without a default value).
-		local argData = argList[i]
+	-- Loop backwards from the end end until we find a required arg. (one without a default value)
+	-- Ignore anything after the last required arg (to leave them at defaults).
+	for i=#argList,1,-1 do
+		local key, subKey = argList[i][1], argList[i][2]
+		local default, placeholder = objProp.getDefault(className, key, subKey)
 		if foundARequiredArg then
-			local default, requiredPlaceholder = argData[2], argData[5]
-			args[i] = default ~= NO_DEFAULT and default or requiredPlaceholder
-		elseif argData[2] == NO_DEFAULT then
+			args[i] = default ~= NO_DEFAULT and default or placeholder
+		elseif default == NO_DEFAULT then
 			foundARequiredArg = true
-			args[i] = argData[5] -- Placeholder value for required arg.
+			args[i] = placeholder
 		end
 	end
 	local obj = class(unpack(args))
@@ -67,9 +64,9 @@ end
 -- setProperty
 local function setProperty(enclosure, key, value, subKey)
 	local obj = enclosure[1]
-	local propData = objProps.getSpecs(obj.className, key)
-	local setter = propData[4] or setget.set.default
-	local getter = propData[5] or setget.get.default
+	local propData = objProp.getSpecs(obj.className, key)
+	local setter = propData[3] or setget.set.default
+	local getter = propData[4] or setget.get.default
 	local oldVal = getter(obj, key, subKey)
 	setter(obj, key, value, subKey)
 	return enclosure, key, oldVal, subKey
