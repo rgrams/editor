@@ -1,14 +1,11 @@
 
 local M = {}
 
-local constructArgs = require "object.class-constructor-args"
-local classList = constructArgs.classList
 local setget = require "object.object-prop-set-getters"
 local set, get = setget.set, setget.get
 local defAssets = require "defaultAssets.list"
 
--- local NO_DEFAULT = {}
-local NO_DEFAULT = constructArgs.NO_DEFAULT
+local NO_DEFAULT = {}
 M.NO_DEFAULT = NO_DEFAULT
 M.classList = { "Object", "Sprite", "Text", "Quad", "World" }
 M.stringToClass = {

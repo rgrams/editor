@@ -3,7 +3,6 @@ local script = {}
 
 local PropertyWidget = require "theme.widgets.properties.Basic"
 local activeData = require "activeData"
-local classConstructorArgs = require "object.class-constructor-args"
 local objProp = require "object.object-properties"
 
 function script.init(self)
