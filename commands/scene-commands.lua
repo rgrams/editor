@@ -61,14 +61,11 @@ end
 -- setRotation?
 -- setScale?
 
--- setProperty
+-- setProperty -- Only used by Properties panel.
 local function setProperty(enclosure, key, value, subKey)
 	local obj = enclosure[1]
-	local propData = objProp.getSpecs(obj.className, key)
-	local setter = propData[3] or setget.set.default
-	local getter = propData[4] or setget.get.default
-	local oldVal = getter(obj, key, subKey)
-	setter(obj, key, value, subKey)
+	local oldVal = objProp.getValue(obj, key, subKey)
+	objProp.setValue(obj, key, value, subKey)
 	return enclosure, key, oldVal, subKey
 end
 
