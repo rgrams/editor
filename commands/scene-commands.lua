@@ -1,6 +1,6 @@
 
 local activeData = require "activeData"
-local objProp = require "object.editable-object-properties"
+local objProp = require "object.object-properties"
 local setget = require "object.object-prop-set-getters"
 
 -- Add
