@@ -69,10 +69,62 @@ local function setProperty(enclosure, key, value, subKey)
 	return enclosure, key, oldVal, subKey
 end
 
+-- Only for undo-ing `set`. Returns no args.
+-- Takes a dictionary
+-- objects as keys, values a table: { {key, val, subKey}, {key,val,subKey}, ... }
+local function setSeparate(data)
+	for enclosure,argList in pairs(data) do
+		local obj = enclosure[1]
+		for _,argData in ipairs(argList) do
+			local key, val, subKey = unpack(argData)
+			objProp.setValue(obj, key, val, subKey)
+		end
+	end
+end
+
+-- Set any number of properties to fixed values on any number of objects.
+-- Takes a list of objects enclosures, and any number of key,value,subkey triplet arguments.
+-- Returns a big data table with all the old property values for each object.
+local function set(enclosureList, ...)
+	local argList = {...} -- `nil` subKeys must be `false` instead!
+	local propCount = math.ceil(#argList/3) -- round up so you only need to give key,val for the final set.
+	-- Use global NIL for setting nil values. (for layer, script, etc.?)
+	-- subKeys could be false instead, either works.
+	for i,v in ipairs(argList) do
+		if v == NIL then  argList[i] = nil  end
+	end
+
+	-- Convert list of all args into a table of argDatas for each property. { {key,val,subKey},... }
+	local propertySettings = {}
+	for pi=0,propCount-1 do
+		local i = pi * 3
+		local argData = { argList[i+1], argList[i+2], argList[i+3] }
+		propertySettings[pi + 1] = argData
+	end
+
+	-- Set properties on each object and save all the old values & keys.
+	local oldData = {}
+	for i,enclosure in ipairs(enclosureList) do
+		local obj = enclosure[1]
+		oldData[enclosure] = {}
+		for i,argData in ipairs(propertySettings) do
+			local key, val, subKey = unpack(argData)
+			local oldVal = objProp.getValue(obj, key, subKey)
+			objProp.setValue(obj, key, val, subKey)
+			activeData.propertiesPanel:call("setProperty", obj, key, val, subKey)
+
+			local oldArgData = { key, oldVal, subKey }
+			table.insert(oldData[enclosure], oldArgData)
+		end
+	end
+	return oldData
+end
+
 return {
 	addObject = { addObject, removeObject },
 	removeObject = { removeObject, addObject },
 	setPosition = { setPosition, setPosition },
 	setWorldPosition = { setWorldPosition, setPosition },
-	setProperty = { setProperty, setProperty }
+	setProperty = { setProperty, setProperty },
+	set = { set, setSeparate }
 }

@@ -160,6 +160,14 @@ function script.input(self, name, value, change)
 			local lx, ly = self:toLocal(sx, sy)
 			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addMenuClosed, self, wx, wy), self)
 		end
+	elseif name == "rename" and change == 1 then
+		print("TEST")
+		local enclosureList = {}
+		for obj,_ in pairs(self.selection._) do
+			local objEnclosure = obj[PRIVATE_KEY]
+			table.insert(enclosureList, objEnclosure)
+		end
+		self.cmd:perform("set", enclosureList, "pos", 0, "y")
 	end
 end
 
