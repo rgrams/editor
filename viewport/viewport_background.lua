@@ -17,7 +17,7 @@ local viewportPath = "/root/mainColumn/mainRow/viewport"
 
 function script.init(self)
 	self.vpNode = scene:get(viewportPath)
-	self.font = new.font(unpack(fnt.openSans_Reg_12))
+	self.font = new.font(unpack(fnt.viewportGrid))
 end
 
 local function getSmallestPowerOf2(x)

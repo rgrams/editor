@@ -20,7 +20,7 @@ local function new(sx, sy, title, items, callback, ...)
 
 	local column = gui.Column(1, nil, columnLayoutChildren, 0, 0, 0, 100, 100, 0, 0, 0, 0, "fill")
 	column.children = buttons
-	local titleText = gui.Text(title, fnt.openSans_Reg_12, 0, -10, 0, 100, -1, 1, -1, -1)
+	local titleText = gui.Text(title, fnt.default, 0, -10, 0, 100, -1, 1, -1, -1)
 
 	self.layer, titleText.layer = "popupPanels", "popupText"
 

@@ -1,8 +1,8 @@
 
 local fnt = {
-	openSans_Reg_12 = {"theme/font/OpenSans-Regular.ttf", 14},
-	panelTitle = {"theme/font/OpenSans-Regular.ttf", 14}
+	default = {"theme/font/OpenSans-Semibold.ttf", 14},
+	panelTitle = {"theme/font/OpenSans-Semibold.ttf", 16},
+	viewportGrid = {"theme/font/OpenSans-Regular.ttf", 12}
 }
-fnt.default = fnt.openSans_Reg_12
 
 return fnt

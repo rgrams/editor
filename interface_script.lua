@@ -83,7 +83,7 @@ local function addFiles(basePath, files, indentLevel)
 		local path = basePath .. fileName
 		local info = love.filesystem.getInfo(path)
 		assert(info, "Failed to load file at path: " .. path)
-		local btn = gui.Text(indent .. fileName, fnt.openSans_Reg_12, 0, 0, 0, 200, 0, 0, 0, 0, "left", "fill")
+		local btn = gui.Text(indent .. fileName, fnt.default, 0, 0, 0, 200, 0, 0, 0, 0, "left", "fill")
 		btn.layer = "text"
 		scene:add(btn, filesPanel)
 		filesPanel:add(btn)

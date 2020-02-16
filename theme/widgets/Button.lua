@@ -7,7 +7,7 @@ local function new(text, x, y, angle, w, h, px, py, ax, ay, resizeMode, name)
 	local self = gui.Slice(
 		tex.Button_Normal, nil, {5, 6}, x, y, angle, w, h, px, py, ax, ay, resizeMode
 	)
-	local label = gui.Text(text, fnt.openSans_Reg_12, 0, -1, 0, w, -1, 0, -1, 0, "center", "fill")
+	local label = gui.Text(text, fnt.default, 0, -1, 0, w, -1, 0, -1, 0, "center", "fill")
 	label.layer = "text"
 	label.name = "label"
 	self.label = label
