@@ -45,11 +45,12 @@ end
 function script.draw(self)
 	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
 	local hoveredObj = viewport.hoveredObj
-	local selection = viewport.selection._
+	local selection = viewport.selection
 	local cam = Camera.current
 
 	local scale = 1 / Camera.current.zoom
 	love.graphics.setLineWidth(scale * SETTINGS.highlightLineWidth)
+	love.graphics.setColor(SETTINGS.selectedHighlightColor)
 
 	local camtlx, camtly = cam:screenToWorld(cam.vp.x, cam.vp.y)
 	local cambrx, cambry = cam:screenToWorld(cam.vp.x + cam.vp.w, cam.vp.y + cam.vp.h)
@@ -59,8 +60,15 @@ function script.draw(self)
 	local margin = SETTINGS.selectionOutOfBoundsLineMargin * scale
 	local length = SETTINGS.selectionOutOfBoundsLineLength * scale
 
-	love.graphics.setColor(SETTINGS.selectedHighlightColor)
-	for obj,dat in pairs(selection) do
+	for obj,dat in pairs(selection._) do
+		local color = SETTINGS.selectedHighlightColor
+		local scale = scale
+		if obj == selection.latest then
+			color = SETTINGS.latestSelectedHighlightColor
+			scale = scale * 3 + 0.5
+		end
+		love.graphics.setColor(color)
+
 		drawObjOutline(obj, scale)
 
 		local wx, wy = obj._to_world.x, obj._to_world.y

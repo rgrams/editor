@@ -12,8 +12,9 @@ M.yAxisColor = { 0.4, 0.8, 0.4, 0.6 }
 
 M.ObjectHitRadius = 10
 M.hoverHighlightColor = {1, 0.9, 0.8, 0.4}
-M.selectedHighlightColor = {1, 0.7, 0.3, 1}
-M.highlightLineWidth = 2
+M.selectedHighlightColor = {0.9, 0.5, 0.0, 0.9}
+M.latestSelectedHighlightColor = {1, 0.9, 0.45, 1}
+M.highlightLineWidth = 3
 M.highlightPadding = 1
 M.selectionOutOfBoundsLineMargin = 4
 M.selectionOutOfBoundsLineLength = 10

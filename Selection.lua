@@ -10,7 +10,8 @@ end
 
 local function new()
 	return {
-		_ = {},  -- Separate content from reference.
+		_ = {}, -- Separate content from reference, allow methods & properties.
+		latest = nil,
 		getEnclosureList = getEnclosureList
 	}
 end
