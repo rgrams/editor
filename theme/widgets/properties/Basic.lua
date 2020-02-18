@@ -10,7 +10,7 @@ local function new(label, value, labelW)
 			mod(gui.Text(label, fnt.default, 0, -1, 0, labelW or w/3, -1, 0, -1, 0, "left", "fill"), {layer = "text"}),
 			mod(gui.Slice(tex.Button_Normal, nil, {5,6}, 0, 0, 0, w/2, h, 1, 0, 1, 0, "fill"), {layer = "widgets", name = "input", children = {
 				mod(gui.Text(value, fnt.default, 0, -1, 0, w/2, 1, 0, 1, 0, "left", "fill"), {layer = "text", name = "text"})
-			}})
+			}, color = {0.4, 0.4, 0.4, 1}})
 		}})
 	}})
 	self.color[1], self.color[2], self.color[3] = 0.75, 0.75, 0.75
