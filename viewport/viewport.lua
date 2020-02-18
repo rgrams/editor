@@ -109,21 +109,23 @@ function script.mouseMoved(self, x, y, dx, dy)
 		if self.draggingSelection then
 			local isStart = self.draggingSelection == "start"
 			local mwx, mwy = Camera.current:screenToWorld(x, y)
+
+			local args = {}
 			for obj,dat in pairs(self.selection._) do
 				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
 				local lx, ly = obj.parent:toLocal(wx, wy)
+				obj.pos.x, obj.pos.y = lx, ly
+				activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
+				activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
 				local enclosure = obj[PRIVATE_KEY]
-				if isStart then
-					self.cmd:perform("setPosition", enclosure, lx, ly)
-				else
-					obj.pos.x, obj.pos.y = lx, ly
-					activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
-					activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
-					self.cmd:update(enclosure, lx, ly)
-				end
+				table.insert(args, {enclosure, "pos", lx, "x"})
+				table.insert(args, {enclosure, "pos", ly, "y"})
 			end
 			if isStart then
-				self.draggingSelection = true
+				self.cmd:perform("setSeparate", args)
+				self.draggingSelection = "not start"
+			else
+				self.cmd:update(args)
 			end
 		end
 	end
