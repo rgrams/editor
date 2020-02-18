@@ -13,6 +13,16 @@ M.stringToClass = {
 }
 M.constructArgs = {}
 
+function M.areValuesEqual(a, b)
+	if a == b then  return true  end
+	if type(a) == "table" and type(b) == "table" then
+		for k,v in pairs(a) do
+			if b[k] ~= v then  return  end
+		end
+		return true
+	end
+end
+
 function M.getSpecs(className, propName)
 	local classPropList = M[className] or M.Object
 	return classPropList[propName]
@@ -33,6 +43,7 @@ end
 
 function M.setValue(obj, key, val, subKey)
 	local propList = M[obj.className] or M.Object
+	assert(propList[key], "Obj-Properties.setValue - No property: '" .. tostring(key) .. "' for object of class '" .. obj.className .. "'.")
 	local setter = propList[key][3] or set.default
 	setter(obj, key, val, subKey)
 end

@@ -89,7 +89,7 @@ local function addMenuClosed(objType, self, wx, wy)
 	if not objType then  return  end -- Add object canceled.
 
 	-- TODO: convert to local pos if parent exists.
-	self.cmd:perform("addObject", objType, {}, editScene, wx, wy, parent)
+	self.cmd:perform("addObject", objType, {}, editScene, editScene, {pos = {x=wx, y=wy}})
 	self.hoverList, self.hoveredObj = hitCheckEditScene(self, love.mouse.getPosition())
 end
 
@@ -159,6 +159,11 @@ function script.input(self, name, value, change)
 			local wx, wy = Camera.current:screenToWorld(sx, sy)
 			local lx, ly = self:toLocal(sx, sy)
 			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addMenuClosed, self, wx, wy), self)
+		end
+	elseif name == "remove object" and change == 1 then
+		local obj = next(self.selection._)
+		if obj then
+			self.cmd:perform("removeObject", obj[PRIVATE_KEY])
 		end
 	elseif name == "rename" and change == 1 then
 		print("TEST")

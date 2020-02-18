@@ -29,7 +29,7 @@ local bindings = {
 	{ "cancel", "button", "scancode", "escape" },
 
 	{ "add object", "button", "scancode", "a" },
-	{ "delete object", "button", "scancode", "delete" },
+	{ "remove object", "button", "scancode", "delete" },
 	{ "reparent", "button", "scancode", "r" },
 
 	{ "left click", "button", "mouse", 1 },

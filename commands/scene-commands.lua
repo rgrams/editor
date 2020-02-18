@@ -4,11 +4,12 @@ local objProp = require "object.object-properties"
 local setget = require "object.object-prop-set-getters"
 
 -- Add
-local function addObject(className, enclosure, sceneTree, lx, ly, parent)
+local function addObject(className, enclosure, sceneTree, parent, modProps)
 	local class = objProp.stringToClass[className]
 	local argList = objProp.constructArgs[className]
 	local NO_DEFAULT = objProp.NO_DEFAULT
 
+	-- Create an instance of the class with the minimum required arguments.
 	local args = {}
 	local foundARequiredArg = false
 	-- Loop backwards from the end end until we find a required arg. (one without a default value)
@@ -24,8 +25,14 @@ local function addObject(className, enclosure, sceneTree, lx, ly, parent)
 		end
 	end
 	local obj = class(unpack(args))
-	obj.pos.x, obj.pos.y = lx, ly
 	enclosure[1], obj[PRIVATE_KEY] = obj, enclosure
+
+	local classPropDict = objProp[className] or objProp.object
+	for k,v in pairs(modProps) do
+		if classPropDict[k] then
+			objProp.setValue(obj, k, v)
+		end
+	end
 
 	sceneTree:add(obj, parent)
 	return enclosure
@@ -34,8 +41,20 @@ end
 -- Remove
 local function removeObject(enclosure)
 	local obj = enclosure[1]
+
+	-- Make a dictionary of any modified properties on the object.
+	local modProps = {}
+	local classPropDict = objProp[obj.className] or objProp.Object
+	for propName,data in pairs(classPropDict) do
+		local curVal = objProp.getValue(obj, propName)
+		local defaultVal = objProp.getDefault(obj.className, propName)
+		if not objProp.areValuesEqual(curVal, defaultVal) then
+			modProps[propName] = curVal
+		end
+	end
+	local parent = obj.parent -- Save parent before SceneTree nullifies it.
 	obj.tree:remove(obj)
-	return obj.className, enclosure, obj.tree, obj.pos.x, obj.pos.y, obj.parent
+	return obj.className, enclosure, obj.tree, parent, modProps
 end
 
 -- setPosition
@@ -111,6 +130,8 @@ local function set(enclosureList, ...)
 			local key, val, subKey = unpack(argData)
 			local oldVal = objProp.getValue(obj, key, subKey)
 			objProp.setValue(obj, key, val, subKey)
+
+			-- TODO: Kinda wrong. The command might not be done on selected objects. (send this anyway?)
 			activeData.propertiesPanel:call("setProperty", obj, key, val, subKey)
 
 			local oldArgData = { key, oldVal, subKey }
