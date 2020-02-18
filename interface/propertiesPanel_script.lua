@@ -94,6 +94,10 @@ function script.setProperty(self, obj, key, val, subKey)
 	if subKey then  name = name .. "." .. subKey  end
 	local widgetPath = self.path .. "/contents/" .. name .. "/Row/input"
 	local inputField = scene:get(widgetPath)
+	if not inputField then
+		print("Properties Panel - No widget for property '" .. name .. "'.")
+		return
+	end
 	inputField:setText(tostring(val))
 end
 
