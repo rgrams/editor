@@ -56,6 +56,7 @@ local function removeObject(enclosure)
 	return obj.className, enclosure, obj.tree, parent, modProps
 end
 
+-- Takes a sequence of sequences of `addObject` args: {className, enclosure, sceneTree, parent, modProps}
 local function addMultiple(data)
 	local enclosureList = {}
 	for i,v in ipairs(data) do
