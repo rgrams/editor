@@ -85,12 +85,12 @@ local function hitCheckEditScene(self, x, y)
 	return hitList, closest
 end
 
-local function addMenuClosed(objType, self, wx, wy)
-	if not objType then  return  end -- Add object canceled.
+local function addMenuClosed(className, self, wx, wy)
+	if not className then  return  end -- Add object canceled.
 
 	-- TODO: convert to local pos if parent exists.
 	if not next(self.selection._) then -- Add a single object in world space.
-		self.cmd:perform("addObject", objType, {}, editScene, editScene, {pos = {x=wx, y=wy}})
+		self.cmd:perform("addObject", className, {}, editScene, editScene, {pos = {x=wx, y=wy}})
 	else -- Have something selected - Add duplicate objects as children to each of them.
 
 	end

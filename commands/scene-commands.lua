@@ -3,8 +3,8 @@ local activeData = require "activeData"
 local objProp = require "object.object-properties"
 local setget = require "object.object-prop-set-getters"
 
--- Add
 local function addObject(className, enclosure, sceneTree, parent, modProps)
+	assert(parent, "Command: 'addObject' - No parent specified.")
 	local class = objProp.stringToClass[className]
 	local argList = objProp.constructArgs[className]
 	local NO_DEFAULT = objProp.NO_DEFAULT
@@ -28,9 +28,9 @@ local function addObject(className, enclosure, sceneTree, parent, modProps)
 	enclosure[1], obj[PRIVATE_KEY] = obj, enclosure
 
 	local classPropDict = objProp[className] or objProp.object
-	for k,v in pairs(modProps) do
-		if classPropDict[k] then
-			objProp.setValue(obj, k, v)
+	if modProps then
+		for k,v in pairs(modProps) do
+			if classPropDict[k] then  objProp.setValue(obj, k, v)  end
 		end
 	end
 
@@ -38,7 +38,6 @@ local function addObject(className, enclosure, sceneTree, parent, modProps)
 	return enclosure
 end
 
--- Remove
 local function removeObject(enclosure)
 	local obj = enclosure[1]
 
@@ -63,7 +62,7 @@ local function addMultiple(data)
 		local enclosure = addObject(unpack(v))
 		table.insert(enclosureList, enclosure)
 	end
-	return enclosureList
+	return enclosureList -- A sequence of object enclosures.
 end
 
 local function removeMultiple(enclosureList)
@@ -72,7 +71,7 @@ local function removeMultiple(enclosureList)
 		local args = {removeObject(enclosure)}
 		table.insert(data, args)
 	end
-	return data
+	return data -- A sequence of sequences of `addObject` args.
 end
 
 -- setPosition
@@ -94,9 +93,6 @@ local function setWorldPosition(enclosure, wx, wy)
 	activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
 	return enclosure, oldx, oldy
 end
-
--- setRotation?
--- setScale?
 
 -- setProperty -- Only used by Properties panel.
 local function setProperty(enclosure, key, value, subKey)
@@ -149,7 +145,7 @@ local function set(enclosureList, ...)
 			local oldVal = objProp.getValue(obj, key, subKey)
 			objProp.setValue(obj, key, val, subKey)
 
-			-- TODO: Kinda wrong. The command might not be done on selected objects. (send this anyway?)
+			-- TODO: Kinda wrong. The command might NOT be done on selected objects. (send this anyway?)
 			activeData.propertiesPanel:call("setProperty", obj, key, val, subKey)
 
 			local oldArgData = { key, oldVal, subKey }
