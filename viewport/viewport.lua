@@ -89,7 +89,12 @@ local function addMenuClosed(objType, self, wx, wy)
 	if not objType then  return  end -- Add object canceled.
 
 	-- TODO: convert to local pos if parent exists.
-	self.cmd:perform("addObject", objType, {}, editScene, editScene, {pos = {x=wx, y=wy}})
+	if not next(self.selection._) then -- Add a single object in world space.
+		self.cmd:perform("addObject", objType, {}, editScene, editScene, {pos = {x=wx, y=wy}})
+	else -- Have something selected - Add duplicate objects as children to each of them.
+
+	end
+
 	self.hoverList, self.hoveredObj = hitCheckEditScene(self, love.mouse.getPosition())
 end
 
@@ -161,17 +166,13 @@ function script.input(self, name, value, change)
 			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addMenuClosed, self, wx, wy), self)
 		end
 	elseif name == "remove object" and change == 1 then
-		local obj = next(self.selection._)
-		if obj then
-			self.cmd:perform("removeObject", obj[PRIVATE_KEY])
+		local enclosureList = self.selection:getEnclosureList()
+		if #enclosureList > 0 then
+			self.cmd:perform("removeMultiple", enclosureList)
 		end
 	elseif name == "rename" and change == 1 then
 		print("TEST")
-		local enclosureList = {}
-		for obj,_ in pairs(self.selection._) do
-			local objEnclosure = obj[PRIVATE_KEY]
-			table.insert(enclosureList, objEnclosure)
-		end
+		local enclosureList = self.selection:getEnclosureList()
 		self.cmd:perform("set", enclosureList, "pos", 0, "y")
 	end
 end

@@ -57,6 +57,24 @@ local function removeObject(enclosure)
 	return obj.className, enclosure, obj.tree, parent, modProps
 end
 
+local function addMultiple(data)
+	local enclosureList = {}
+	for i,v in ipairs(data) do
+		local enclosure = addObject(unpack(v))
+		table.insert(enclosureList, enclosure)
+	end
+	return enclosureList
+end
+
+local function removeMultiple(enclosureList)
+	local data = {}
+	for i,enclosure in ipairs(enclosureList) do
+		local args = {removeObject(enclosure)}
+		table.insert(data, args)
+	end
+	return data
+end
+
 -- setPosition
 local function setPosition(enclosure, x, y)
 	local obj = enclosure[1]
@@ -144,6 +162,8 @@ end
 return {
 	addObject = { addObject, removeObject },
 	removeObject = { removeObject, addObject },
+	addMultiple = { addMultiple, removeMultiple },
+	removeMultiple = { removeMultiple, addMultiple },
 	setPosition = { setPosition, setPosition },
 	setWorldPosition = { setWorldPosition, setPosition },
 	setProperty = { setProperty, setProperty },
