@@ -59,6 +59,10 @@ M.universalProperties = {
 	script = { nil, "list" },
 }
 
+M.hiddenUniversalProperties = {
+	worldPos = { {x=0,y=0}, "vector2" }
+}
+
 M.Object = {
 	-- key = { defaultVal, type, setter, getter }
 	pos = { {x=0,y=0}, "vector2" },

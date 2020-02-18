@@ -11,6 +11,25 @@ function setters.default(obj, key, val, subKey)
 	else  obj[key] = val  end
 end
 
+function getters.worldPos(obj, key, subKey)
+	if not subKey then  return {x=obj._to_world.x,y=obj._to_world.y}
+	else  return obj._to_world[subKey]  end
+end
+
+function setters.worldPos(obj, key, val, subKey)
+	assert(obj.parent, "setters.worldPos - Object does not have a parent. " .. tostring(obj))
+	local oldx, oldy = obj.pos.x, obj.pos.y
+	local lx, ly
+	if not subKey then
+		lx, ly = obj.parent:toLocal(val.x, val.y)
+	elseif subKey == "x" then
+		lx, ly = obj.parent:toLocal(val, obj._to_world.y)
+	elseif subKey == "y" then
+		lx, ly = obj.parent:toLocal(obj._to_world.x, val)
+	end
+	obj.pos.x, obj.pos.y = lx, ly
+end
+
 function getters.assetParams(obj, key)
 	local params = new.paramsFor[obj[key]]
 	if not params then
