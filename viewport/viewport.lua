@@ -89,6 +89,8 @@ local function addMenuClosed(className, self, wx, wy)
 	if not className then  return  end -- Add object canceled.
 
 	if not next(self.selection._) then -- Add a single object in world space.
+		local roundTo = SETTINGS.roundAllNumbersTo
+		wx, wy = math.round(wx, roundTo), math.round(wy, roundTo)
 		self.cmd:perform("addObject", className, {}, editScene, false, { pos = {x=wx, y=wy} })
 	else -- Have something selected - Add duplicate objects as children to each of them.
 		local multiAddArgs = {}
@@ -96,6 +98,8 @@ local function addMenuClosed(className, self, wx, wy)
 		for i,enclosure in ipairs(enclosureList) do
 			local parent = enclosure[1]
 			local lx, ly = parent:toLocal(wx, wy)
+			local roundTo = SETTINGS.roundAllNumbersTo
+			lx, ly = math.round(lx, roundTo), math.round(ly, roundTo)
 			local addArgs = {className, {}, editScene, enclosure, { pos = {x=lx, y=ly} }}
 			table.insert(multiAddArgs, addArgs)
 		end
@@ -117,15 +121,16 @@ function script.mouseMoved(self, x, y, dx, dy)
 			local isStart = self.draggingSelection == "start"
 			local mwx, mwy = Camera.current:screenToWorld(x, y)
 
+			local roundTo = SETTINGS.roundAllNumbersTo
+
 			local args = {}
 			for enclosure,dat in pairs(self.selection._) do
 				local obj = enclosure[1]
 				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
 				local lx, ly = obj.parent:toLocal(wx, wy)
+				lx, ly = math.round(lx, roundTo), math.round(ly, roundTo)
 				obj.pos.x, obj.pos.y = lx, ly
 				obj:updateTransform()
-				-- activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
-				-- activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
 				table.insert(args, {enclosure, "pos", lx, "x"})
 				table.insert(args, {enclosure, "pos", ly, "y"})
 			end

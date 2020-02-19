@@ -3,6 +3,8 @@ local M = {}
 
 M.zoomRate = 0.1
 
+M.roundAllNumbersTo = 0.001
+
 M.viewportBackgroundColor = {0.1, 0.1, 0.1}
 M.gridColor = { 0.5, 0.5, 0.5, 0.1 }
 M.bigGridColor = { 0.5, 0.5, 0.5, 0.28 }
