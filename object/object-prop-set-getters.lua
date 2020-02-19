@@ -11,6 +11,17 @@ function setters.default(obj, key, val, subKey)
 	else  obj[key] = val  end
 end
 
+-- Don't mess with the `pos` table reference.
+function getters.pos(obj, key, subKey)
+	if subKey then  return obj[key][subKey]
+	else  return { x=obj.pos.x, y=obj.pos.y }  end
+end
+
+function setters.pos(obj, key, val, subKey)
+	if subKey then  obj[key][subKey] = val
+	else  obj[key].x, obj[key].y = val.x, val.y  end
+end
+
 function getters.worldPos(obj, key, subKey)
 	if not subKey then  return {x=obj._to_world.x,y=obj._to_world.y}
 	else  return obj._to_world[subKey]  end

@@ -66,7 +66,7 @@ M.hiddenUniversalProperties = {
 
 M.Object = {
 	-- key = { defaultVal, type, setter, getter }
-	pos = { {x=0,y=0}, "vector2" },
+	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
 	sx = { 0, "number" },
 	sy = { 0, "number" },
@@ -81,7 +81,7 @@ M.constructArgs.Object = {
 M.Sprite = {
 	-- key = { defaultVal, type, setter, getter }
 	image = { NO_DEFAULT, "string", set.imageData, get.assetParams, defAssets.image},
-	pos = { {x=0,y=0}, "vector2" },
+	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
 	sx = { 0, "number" },
 	sy = { 0, "number" },
@@ -100,7 +100,7 @@ M.Text = {
 	-- key = { defaultVal, type, setter, getter }
 	text = { "", "string"},
 	font = { NO_DEFAULT, "font", set.font, get.assetParams, defAssets.font},
-	pos = { {x=0,y=0}, "vector2" },
+	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
 	wrapLimit = { nil, "number" },
 	hAlign = { "left", "string" },
@@ -118,7 +118,7 @@ M.Quad = {
 	-- key = { defaultVal, type, setter, getter }
 	image = { NO_DEFAULT, "string", set.imageData, get.assetParams, defAssets.image },
 	quad = { NO_DEFAULT, "quad", set.quadParams, get.quadParams, defAssets.quad },
-	pos = { {x=0,y=0}, "vector2" },
+	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
 	sx = { 0, "number" },
 	sy = { 0, "number" },
