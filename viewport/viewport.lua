@@ -123,6 +123,7 @@ function script.mouseMoved(self, x, y, dx, dy)
 				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
 				local lx, ly = obj.parent:toLocal(wx, wy)
 				obj.pos.x, obj.pos.y = lx, ly
+				obj:updateTransform()
 				-- activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
 				-- activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
 				table.insert(args, {enclosure, "pos", lx, "x"})
