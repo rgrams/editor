@@ -68,6 +68,7 @@ function script.draw(self)
 	local hoveredObj = viewport.hoveredObj
 	local selection = viewport.selection
 	local latest = selection.history[#selection.history]
+	latest = latest and latest[1] or nil
 	local cam = Camera.current
 
 	local scale = 1 / Camera.current.zoom
@@ -82,7 +83,8 @@ function script.draw(self)
 	local margin = SETTINGS.selectionOutOfBoundsLineMargin * scale
 	local length = SETTINGS.selectionOutOfBoundsLineLength * scale
 
-	for obj,dat in pairs(selection._) do
+	for enclosure,dat in pairs(selection._) do
+		local obj = enclosure[1]
 		local color = SETTINGS.selectedHighlightColor
 		local scale = scale
 		if obj == latest then

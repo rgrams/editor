@@ -1,8 +1,7 @@
 
 local function getEnclosureList(self)
 	local enclosureList = {}
-	for obj,_ in pairs(self._) do
-		local enclosure = obj[PRIVATE_KEY]
+	for enclosure,_ in pairs(self._) do
 		table.insert(enclosureList, enclosure)
 	end
 	return enclosureList

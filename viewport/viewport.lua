@@ -118,13 +118,13 @@ function script.mouseMoved(self, x, y, dx, dy)
 			local mwx, mwy = Camera.current:screenToWorld(x, y)
 
 			local args = {}
-			for obj,dat in pairs(self.selection._) do
+			for enclosure,dat in pairs(self.selection._) do
+				local obj = enclosure[1]
 				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
 				local lx, ly = obj.parent:toLocal(wx, wy)
 				obj.pos.x, obj.pos.y = lx, ly
 				-- activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
 				-- activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
-				local enclosure = obj[PRIVATE_KEY]
 				table.insert(args, {enclosure, "pos", lx, "x"})
 				table.insert(args, {enclosure, "pos", ly, "y"})
 			end
@@ -149,17 +149,18 @@ function script.input(self, name, value, change)
 			if self.hoveredObj then
 				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
 					self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
-				elseif not self.selection._[self.hoveredObj] then
+				elseif not self.selection._[self.hoveredObj[PRIVATE_KEY]] then
 					self.cmd:perform("setSelectionTo", self.selection, self.hoveredObj[PRIVATE_KEY])
 				end
 			else -- hoverList is empty, clicked on nothing.
 				self.cmd:perform("clearSelection", self.selection)
 			end
 			self.dragging = true
-			if self.selection._[self.hoveredObj] then
+			if self.hoveredObj and self.selection._[self.hoveredObj[PRIVATE_KEY]] then
 				self.draggingSelection = "start"
 				local wx, wy = Camera.current:screenToWorld(love.mouse.getPosition())
-				for obj,data in pairs(self.selection._) do -- updateDragOffsets
+				for enclosure,data in pairs(self.selection._) do -- updateDragOffsets
+					local obj = enclosure[1]
 					data.dragOX, data.dragOY = obj._to_world.x - wx, obj._to_world.y - wy
 				end
 			end

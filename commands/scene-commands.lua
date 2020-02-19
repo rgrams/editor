@@ -48,8 +48,8 @@ local function getModifiedProperties(obj)
 	return modProps
 end
 
-local function getIsSelected(obj)
-	return activeData.selection._[obj]
+local function getIsSelected(enclosure)
+	return activeData.selection._[enclosure]
 end
 
 -- Recursively make a sequence of sequences of `addObject` args.
@@ -62,7 +62,7 @@ local function getChildrenReCreationData(objects)
 			local modProps = getModifiedProperties(obj)
 			local enclosure, parentEnclosure = obj[PRIVATE_KEY], obj.parent[PRIVATE_KEY]
 			local children = getChildrenReCreationData(obj.children)
-			local wasSelected = getIsSelected(obj)
+			local wasSelected = getIsSelected(enclosure)
 
 			if wasSelected then  selectionRemove(activeData.selection, enclosure)  end
 
@@ -79,7 +79,7 @@ local function removeObject(enclosure)
 	local obj = enclosure[1]
 	local modProps = getModifiedProperties(obj)
 	local children = getChildrenReCreationData(obj.children)
-	local wasSelected = getIsSelected(obj)
+	local wasSelected = getIsSelected(enclosure)
 	if wasSelected then  selectionRemove(activeData.selection, enclosure)  end
 	local parentEnclosure = obj.parent[PRIVATE_KEY] or false -- Save parent before SceneTree nullifies it.
 	obj.tree:remove(obj)
