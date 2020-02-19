@@ -89,7 +89,7 @@ local function addMenuClosed(className, self, wx, wy)
 	if not className then  return  end -- Add object canceled.
 
 	if not next(self.selection._) then -- Add a single object in world space.
-		self.cmd:perform("addObject", className, {}, editScene, nil, { pos = {x=wx, y=wy} })
+		self.cmd:perform("addObject", className, {}, editScene, false, { pos = {x=wx, y=wy} })
 	else -- Have something selected - Add duplicate objects as children to each of them.
 		local multiAddArgs = {}
 		local enclosureList = self.selection:getEnclosureList()
@@ -122,8 +122,8 @@ function script.mouseMoved(self, x, y, dx, dy)
 				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
 				local lx, ly = obj.parent:toLocal(wx, wy)
 				obj.pos.x, obj.pos.y = lx, ly
-				activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
-				activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
+				-- activeData.propertiesPanel:call("setProperty", obj, "pos", lx, "x")
+				-- activeData.propertiesPanel:call("setProperty", obj, "pos", ly, "y")
 				local enclosure = obj[PRIVATE_KEY]
 				table.insert(args, {enclosure, "pos", lx, "x"})
 				table.insert(args, {enclosure, "pos", ly, "y"})

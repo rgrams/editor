@@ -5,12 +5,13 @@ local function add(self, enclosure)
 	local obj = enclosure[1]
 	self._[obj] = {dragOX = 0, draxOY = 0}
 	table.insert(self.history, obj)
-	activeData.propertiesPanel:call("updateSelection", self._)
+	-- activeData.propertiesPanel:call("updateSelection", self._)
 	return self, enclosure
 end
 
 local function remove(self, enclosure)
 	local obj = enclosure[1]
+	if not self._[obj] then  return  end -- Object wasn't selected anyway.
 	self._[obj] = nil
 	for i=#self.history,1,-1 do
 		if self.history[i] == obj then
@@ -18,14 +19,14 @@ local function remove(self, enclosure)
 			break
 		end
 	end
-	activeData.propertiesPanel:call("updateSelection", self._)
+	-- activeData.propertiesPanel:call("updateSelection", self._)
 	return self, enclosure
 end
 
 local function clear(self)
 	local oldList, oldHistory = self._, self.history
 	self._, self.history = {}, {}
-	activeData.propertiesPanel:call("updateSelection", self._)
+	-- activeData.propertiesPanel:call("updateSelection", self._)
 	return self, oldList, oldHistory
 end
 
@@ -46,7 +47,7 @@ local function _set(self, new, newHistory) -- For undoing clear().
 	local old, oldHistory = self._, self.history
 	self._ = new
 	self.history = newHistory
-	activeData.propertiesPanel:call("updateSelection", self._)
+	-- activeData.propertiesPanel:call("updateSelection", self._)
 	return self, old, oldHistory
 end
 

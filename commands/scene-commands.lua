@@ -2,8 +2,11 @@
 local activeData = require "activeData"
 local objProp = require "object.object-properties"
 local setget = require "object.object-prop-set-getters"
+local selectionCommands = require "commands.selection-commands"
+local selectionAdd = selectionCommands.addToSelection[1]
+local selectionRemove = selectionCommands.addToSelection[2]
 
-local function addObject(className, enclosure, sceneTree, parentEnclosure, modProps, children)
+local function addObject(className, enclosure, sceneTree, parentEnclosure, modProps, children, wasSelected)
 	local class = objProp.stringToClass[className]
 	local argList = objProp.constructArgs[className]
 	local NO_DEFAULT = objProp.NO_DEFAULT
@@ -21,6 +24,8 @@ local function addObject(className, enclosure, sceneTree, parentEnclosure, modPr
 		end
 	end
 	sceneTree:add(obj, parentEnclosure and parentEnclosure[1])
+
+	if wasSelected then  selectionAdd(activeData.selection, enclosure)  end
 
 	if children then
 		for i,v in ipairs(children) do  addObject(unpack(v))  end
@@ -43,19 +48,25 @@ local function getModifiedProperties(obj)
 	return modProps
 end
 
+local function getIsSelected(obj)
+	return activeData.selection._[obj]
+end
+
 -- Recursively make a sequence of sequences of `addObject` args.
 local function getChildrenReCreationData(objects)
-	if not objects then  return  end
-	local t
+	if not objects then  return false  end
+	local t = false
 	for i,obj in ipairs(objects) do
 		if obj.name ~= "deletedMarker" then
 			t = t or {}
 			local modProps = getModifiedProperties(obj)
 			local enclosure, parentEnclosure = obj[PRIVATE_KEY], obj.parent[PRIVATE_KEY]
-			local args = {obj.className, enclosure, obj.tree, parentEnclosure, modProps}
-			if obj.children then
-				args[6] = getChildrenReCreationData(obj.children)
-			end
+			local children = getChildrenReCreationData(obj.children)
+			local wasSelected = getIsSelected(obj)
+
+			if wasSelected then  selectionRemove(activeData.selection, enclosure)  end
+
+			local args = {obj.className, enclosure, obj.tree, parentEnclosure, modProps, children, wasSelected}
 			table.insert(t, args)
 		end
 	end
@@ -63,17 +74,20 @@ local function getChildrenReCreationData(objects)
 end
 
 -- For objects with children, save a list of `addObject` args for each child.
-	-- ({className, enclosure, sceneTree, parentEnclosure, modProps, children})
+	-- ({className, enclosure, sceneTree, parentEnclosure, modProps, children, wasSelected})
 local function removeObject(enclosure)
 	local obj = enclosure[1]
 	local modProps = getModifiedProperties(obj)
 	local children = getChildrenReCreationData(obj.children)
-	local parentEnclosure = obj.parent[PRIVATE_KEY] -- Save parent before SceneTree nullifies it.
+	local wasSelected = getIsSelected(obj)
+	if wasSelected then  selectionRemove(activeData.selection, enclosure)  end
+	local parentEnclosure = obj.parent[PRIVATE_KEY] or false -- Save parent before SceneTree nullifies it.
 	obj.tree:remove(obj)
-	return obj.className, enclosure, obj.tree, parentEnclosure, modProps, children
+	return obj.className, enclosure, obj.tree, parentEnclosure, modProps, children, wasSelected
 end
 
--- Takes a sequence of sequences of `addObject` args: {className, enclosure, sceneTree, parent, modProps}
+-- Takes a sequence of sequences of `addObject` args:
+	-- {className, enclosure, sceneTree, parentEnclosure, modProps, children, wasSelected}
 local function addMultiple(data)
 	local enclosureList = {}
 	for i,v in ipairs(data) do
