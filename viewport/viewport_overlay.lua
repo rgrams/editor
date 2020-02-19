@@ -67,6 +67,7 @@ function script.draw(self)
 	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
 	local hoveredObj = viewport.hoveredObj
 	local selection = viewport.selection
+	local latest = selection.history[#selection.history]
 	local cam = Camera.current
 
 	local scale = 1 / Camera.current.zoom
@@ -84,7 +85,7 @@ function script.draw(self)
 	for obj,dat in pairs(selection._) do
 		local color = SETTINGS.selectedHighlightColor
 		local scale = scale
-		if obj == selection.latest then
+		if obj == latest then
 			color = SETTINGS.latestSelectedHighlightColor
 			scale = scale * 3 + 0.5
 		end

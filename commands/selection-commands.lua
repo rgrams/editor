@@ -4,31 +4,36 @@ local activeData = require "activeData"
 local function add(self, enclosure)
 	local obj = enclosure[1]
 	self._[obj] = {dragOX = 0, draxOY = 0}
-	self.latest = obj
+	table.insert(self.history, obj)
 	activeData.propertiesPanel:call("updateSelection", self._)
 	return self, enclosure
 end
 
 local function remove(self, enclosure)
-	self._[enclosure[1]] = nil
-	if self.latest == enclosure[1] then  self.latest = nil  end
+	local obj = enclosure[1]
+	self._[obj] = nil
+	for i=#self.history,1,-1 do
+		if self.history[i] == obj then
+			table.remove(self.history, i)
+			break
+		end
+	end
 	activeData.propertiesPanel:call("updateSelection", self._)
 	return self, enclosure
 end
 
 local function clear(self)
-	local oldList, oldLatest = self._, self.latest
-	self._ = {}
-	self.latest = nil
+	local oldList, oldHistory = self._, self.history
+	self._, self.history = {}, {}
 	activeData.propertiesPanel:call("updateSelection", self._)
-	return self, oldList, oldLatest
+	return self, oldList, oldHistory
 end
 
 -- Clear and then add - So it's one command instead of two.
 local function setTo(self, enclosure)
-	local _, oldList, oldLatest = clear(self)
+	local _, oldList, oldHistory = clear(self)
 	add(self, enclosure)
-	return self, oldList, oldLatest -- Undo with _set
+	return self, oldList, oldHistory -- Undo with _set
 end
 
 local function toggle(self, enclosure)
@@ -37,12 +42,12 @@ local function toggle(self, enclosure)
 	return self, enclosure
 end
 
-local function _set(self, new, newLatest) -- For undoing clear().
-	local old, oldLatest = self._, self.latest
+local function _set(self, new, newHistory) -- For undoing clear().
+	local old, oldHistory = self._, self.history
 	self._ = new
-	self.latest = newLatest
+	self.history = newHistory
 	activeData.propertiesPanel:call("updateSelection", self._)
-	return self, old, oldLatest
+	return self, old, oldHistory
 end
 
 return {

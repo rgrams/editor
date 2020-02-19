@@ -11,7 +11,7 @@ end
 local function new()
 	return {
 		_ = {}, -- Separate content from reference, allow methods & properties.
-		latest = nil,
+		history = {},
 		getEnclosureList = getEnclosureList
 	}
 end
