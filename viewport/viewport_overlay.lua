@@ -42,6 +42,27 @@ local function intersectLineWithBounds(ax, ay, cx, cy, tlx, tly, brx, bry)
 	return x, y, vx, vy
 end
 
+local function drawObjectsParentLines(objects, scale)
+	for i,object in ipairs(objects) do
+		if object.parent ~= object.tree then
+			love.graphics.push()
+			applyObjectTransform(object.parent)
+			local x, y = object.pos.x * 0.93, object.pos.y * 0.93
+			love.graphics.line(0, 0, x, y)
+			local vx, vy = vector.normalize(-x, -y)
+			local length, angle = SETTINGS.parentLineArrowLength, SETTINGS.parentLineArrowAngle
+			vx, vy = vx * length * scale, vy * length * scale
+			local x2, y2 = vector.rotate(vx, vy, angle)
+			local x3, y3 = vector.rotate(vx, vy, -angle)
+			love.graphics.line(x2+x, y2+y, x, y, x3+x, y3+y)
+			love.graphics.pop()
+		end
+		if object.children then
+			drawObjectsParentLines(object.children, scale)
+		end
+	end
+end
+
 function script.draw(self)
 	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
 	local hoveredObj = viewport.hoveredObj
@@ -85,8 +106,11 @@ function script.draw(self)
 		drawObjOutline(hoveredObj, scale)
 	end
 
-	love.graphics.setLineWidth(1)
+	love.graphics.setLineWidth(scale)
+	love.graphics.setColor(SETTINGS.parenthoodLineColor)
+	drawObjectsParentLines(editScene.children, scale)
 
+	love.graphics.setLineWidth(1)
 end
 
 return script

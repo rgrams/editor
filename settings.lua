@@ -18,5 +18,8 @@ M.highlightLineWidth = 3
 M.highlightPadding = 1
 M.selectionOutOfBoundsLineMargin = 4
 M.selectionOutOfBoundsLineLength = 10
+M.parenthoodLineColor = {0, 1, 1, 0.3}
+M.parentLineArrowAngle = 0.4
+M.parentLineArrowLength = 20
 
 return M
