@@ -8,5 +8,6 @@ local M = {}
 -- M.filePath
 -- M.scene
 -- M.propertiesPanel
+-- M.clipboard
 
 return M

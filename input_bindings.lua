@@ -19,6 +19,9 @@ local bindings = {
 	{ "rctrl", "button", "scancode", "rctrl" },
 
 	{ "undo/redo", "button", "key", "z" },
+	{ "copy", "button", "key", "c" },
+	{ "cut", "button", "key", "x" },
+	{ "paste", "button", "key", "v" },
 
 	{ "save object", "button", "scancode", ";" },
 	{ "rename", "button", "scancode", "f2" },

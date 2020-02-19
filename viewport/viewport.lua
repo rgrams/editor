@@ -185,6 +185,18 @@ function script.input(self, name, value, change)
 		print("TEST")
 		local enclosureList = self.selection:getEnclosureList()
 		self.cmd:perform("set", enclosureList, "pos", 0, "y")
+	elseif name == "copy" and change == 1 then
+		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
+			self.cmd:perform("copySelection", self.selection)
+		end
+	elseif name == "cut" and change == 1 then
+		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
+			self.cmd:perform("cutSelection", self.selection)
+		end
+	elseif name == "paste" and change == 1 then
+		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
+			self.cmd:perform("pasteOntoSelection", self.selection)
+		end
 	end
 end
 

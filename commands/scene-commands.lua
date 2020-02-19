@@ -112,11 +112,8 @@ local function dictContainsAncestor(dict, obj)
 	return true
 end
 
-local function removeMultiple(enclosureList)
-	local undoData = {}
-
-	-- Remove objects from the list if any of their ancestors is also being removed.
-	--   That way there's no duplication on undo, and they are recreated in parent-child order. (as they need to be)
+-- Removes objects from the list if any of their ancestors are also in the list.
+local function cleanDescendantsFromList(enclosureList)
 	local objDict = {} -- Make a dict of the objects to remove for quick checking.
 	for i,enclosure in ipairs(enclosureList) do
 		objDict[enclosure[1]] = true
@@ -127,6 +124,14 @@ local function removeMultiple(enclosureList)
 			table.remove(enclosureList, i)
 		end
 	end
+end
+
+local function removeMultiple(enclosureList)
+	local undoData = {}
+	-- Remove objects from the list if any of their ancestors is also being removed.
+	--   That way there's no duplication on undo, and they are recreated in parent-child order. (as they need to be)
+	cleanDescendantsFromList(enclosureList)
+
 	for i,enclosure in ipairs(enclosureList) do
 		local args = {removeObject(enclosure)}
 		table.insert(undoData, args)
@@ -149,6 +154,74 @@ end
 local function undoRemoveAllSelected(undoRemoveData, selection, oldList, oldHistory)
 	addMultiple(undoRemoveData)
 	selection_set(selection, oldList, oldHistory)
+end
+
+local function copySelection(selection)
+	local enclosureList = selection:getEnclosureList()
+	local oldClipboard = activeData.clipboard
+	cleanDescendantsFromList(enclosureList)
+	local data = {}
+	for i,enclosure in ipairs(enclosureList) do
+		local obj = enclosure[1]
+		-- NOTE: object and parent enclosures for obj and all descendants will need to be changed on paste.
+		local args = {
+			obj.className, false,
+			obj.tree, false,
+			getModifiedProperties(obj),
+			getChildrenReCreationData(obj.children)
+		}
+		table.insert(data, args)
+	end
+	activeData.clipboard = data
+	return oldClipboard or data -- No reason to undo clipboard to `nil`.
+end
+
+local function undoCopy(data)
+	activeData.clipboard = data
+end
+
+local function cutSelection(selection)
+	local enclosureList = selection:getEnclosureList()
+	local oldClipboard = copySelection(selection) -- Ignores selection info, as opposed to `undoRemoveData`.
+	local undoRemoveData, selection, oldList, oldHistory = removeAllSelected(selection)
+	return oldClipboard, undoRemoveData, selection, oldList, oldHistory
+end
+
+local function undoCutSelection(oldClipboard, undoRemoveData, selection, oldList, oldHistory)
+	undoRemoveAllSelected(undoRemoveData, selection, oldList, oldHistory)
+	activeData.clipboard = oldClipboard
+end
+
+-- Recursively makes new object enclosures and updates parent enclosure references
+-- for the `addObject` argument data for one object and its descendants.
+local function setEnclosuresForPaste(addDataList, parentEnclosure)
+	for i,addData in ipairs(addDataList) do
+		addData[2] = {} -- Make new enclosure.
+		addData[4] = parentEnclosure
+		if addData[6] then -- Has children
+			setEnclosuresForPaste(addData[6], addData[2])
+		end
+	end
+end
+
+local function pasteOntoSelection(selection)
+	local clipboard = activeData.clipboard
+	local enclosureList = selection:getEnclosureList()
+	local undoData
+	if #enclosureList == 0 then -- Nothing selected, add to SceneTree (no parent).
+		setEnclosuresForPaste(clipboard, false)
+		undoData = addMultiple(clipboard)
+	else
+		undoData = {}
+		for i,parentEnclosure in ipairs(enclosureList) do
+			setEnclosuresForPaste(clipboard, parentEnclosure)
+			local data = addMultiple(clipboard)
+			for i,v in ipairs(data) do
+				table.insert(undoData, v)
+			end
+		end
+	end
+	return undoData
 end
 
 -- setProperty -- Only used by Properties panel.
@@ -215,5 +288,8 @@ return {
 	setProperty = { setProperty, setProperty },
 	setSeparate = { setSeparate, setSeparate },
 	setSame = { setSame, setSeparate },
-	setSameMultiple = { setSameMultiple, setSeparate }
+	setSameMultiple = { setSameMultiple, setSeparate },
+	copySelection = { copySelection, undoCopy },
+	cutSelection = { cutSelection, undoCutSelection },
+	pasteOntoSelection = { pasteOntoSelection, removeMultiple }
 }
