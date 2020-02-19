@@ -2,19 +2,17 @@
 local activeData = require "activeData"
 
 local function add(self, enclosure)
-	local obj = enclosure[1]
-	self._[obj] = {dragOX = 0, draxOY = 0}
-	table.insert(self.history, obj)
+	self._[enclosure] = {dragOX = 0, draxOY = 0}
+	table.insert(self.history, enclosure)
 	-- activeData.propertiesPanel:call("updateSelection", self._)
 	return self, enclosure
 end
 
 local function remove(self, enclosure)
-	local obj = enclosure[1]
-	if not self._[obj] then  return  end -- Object wasn't selected anyway.
-	self._[obj] = nil
+	if not self._[enclosure] then  return  end -- Object wasn't selected anyway.
+	self._[enclosure] = nil
 	for i=#self.history,1,-1 do
-		if self.history[i] == obj then
+		if self.history[i] == enclosure then
 			table.remove(self.history, i)
 			break
 		end
@@ -38,7 +36,7 @@ local function setTo(self, enclosure)
 end
 
 local function toggle(self, enclosure)
-	if self._[enclosure[1]] then  remove(self, enclosure)
+	if self._[enclosure] then  remove(self, enclosure)
 	else  add(self, enclosure)  end
 	return self, enclosure
 end
