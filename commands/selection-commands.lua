@@ -4,7 +4,7 @@ local activeData = require "activeData"
 local function add(self, enclosure)
 	self._[enclosure] = {dragOX = 0, draxOY = 0}
 	table.insert(self.history, enclosure)
-	-- activeData.propertiesPanel:call("updateSelection", self._)
+	activeData.propertiesPanel:call("updateSelection")
 	return self, enclosure
 end
 
@@ -17,14 +17,14 @@ local function remove(self, enclosure)
 			break
 		end
 	end
-	-- activeData.propertiesPanel:call("updateSelection", self._)
+	activeData.propertiesPanel:call("updateSelection")
 	return self, enclosure
 end
 
 local function clear(self)
 	local oldList, oldHistory = self._, self.history
 	self._, self.history = {}, {}
-	-- activeData.propertiesPanel:call("updateSelection", self._)
+	activeData.propertiesPanel:call("updateSelection")
 	return self, oldList, oldHistory
 end
 
@@ -45,7 +45,7 @@ local function _set(self, new, newHistory) -- For undoing clear().
 	local old, oldHistory = self._, self.history
 	self._ = new
 	self.history = newHistory
-	-- activeData.propertiesPanel:call("updateSelection", self._)
+	activeData.propertiesPanel:call("updateSelection")
 	return self, old, oldHistory
 end
 

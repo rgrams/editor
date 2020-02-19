@@ -26,9 +26,9 @@ local function propWidgetConfirmFunc(widget)
 	value = value or widget.text
 	local key, subKey = widget._propKey, widget._propSubKey
 	if not ignoreThisKeyForNow[key] then
-		local selection = activeData.selection._
-		local obj = next(selection)
-		activeData.commands:perform("setProperty", obj[PRIVATE_KEY], key, value, subKey)
+		local selection = activeData.selection
+		local enclosureList = selection:getEnclosureList()
+		activeData.commands:perform("setSame", enclosureList, key, value, subKey)
 	end
 end
 
@@ -48,25 +48,56 @@ local function clearContents(self)
 	self.isCleared = true
 end
 
-function script.updateSelection(self, objDict)
+function script.updateSelection(self)
 	print("--  PropertiesPanel.updateSelection  --")
 	self.ruu = activeData.ruu
+	local selection = activeData.selection
 	clearContents(self)
-	if not next(objDict) then
-		print("  No objects selected.")
+
+	if not next(selection._) then
 		return
 	end
 
-	local obj = next(objDict)
-	print("  Object Selected: " .. tostring(obj.path))
+	-- For each selected object, get its list of properties.
+		-- Use constructArgs list so they're in order.
+	-- Check them against a master list
+		-- If the object does NOT have a property that IS in the master list
+			-- Remove that property from the master list.
+	local masterPropList
+
+	for enclosure,_ in pairs(selection._) do
+		local obj = enclosure[1]
+		local objPropList = objProp.constructArgs[obj.className]
+		if not masterPropList then
+			masterPropList = {}
+			for i,v in ipairs(objPropList) do
+				local val = objProp.getValue(obj, v[1], v[2])
+				masterPropList[i] = { v[1], v[2], val }
+			end
+		else
+			for i=#masterPropList,1,-1 do
+				local v = masterPropList[i]
+				local mKey, mSubKey = v[1], v[2]
+				local found = false
+				for i,v2 in ipairs(objPropList) do
+					local oKey, oSubKey = v2[1], v2[2]
+					if oKey == mKey and oSubKey == mSubKey then
+						found = true
+						local oVal = objProp.getValue(obj, oKey, oSubKey)
+						if oVal ~= v[3] then  v[3] = "-multiple-"  end
+						break
+					end
+				end
+				if not found then
+					table.remove(masterPropList, i)
+				end
+			end
+		end
+	end
 
 	local widgetMap = {}
-	local constructArgs = objProp.constructArgs[obj.className] or objProp.constructArgs.Object
-	local argDataDict = objProp[obj.className] or objProp.Object
-	for i,propKeys in ipairs(constructArgs) do
-		-- Get the property value from the object.
-		local key, subKey = propKeys[1], propKeys[2]
-		local value = objProp.getValue(obj, key, subKey)
+	for i,propData in ipairs(masterPropList) do
+		local key, subKey, value = unpack(propData)
 
 		-- Make a PropertyWidget for each property and add it to the "contents" column.
 		local nodeName = subKey and (key .. "." .. subKey) or key
@@ -87,18 +118,6 @@ function script.updateSelection(self, objDict)
 	self.ruu:mapNeighbors(widgetMap)
 	self:setMaskOnChildren()
 	self.isCleared = false
-end
-
-function script.setProperty(self, obj, key, val, subKey)
-	local name = key
-	if subKey then  name = name .. "." .. subKey  end
-	local widgetPath = self.path .. "/contents/" .. name .. "/Row/input"
-	local inputField = scene:get(widgetPath)
-	if not inputField then
-		print("Properties Panel - No widget for property '" .. name .. "'.")
-		return
-	end
-	inputField:setText(tostring(val))
 end
 
 return script
