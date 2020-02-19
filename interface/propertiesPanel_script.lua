@@ -39,9 +39,11 @@ local function clearContents(self)
 	if self.isCleared then  return  end
 	if self.contents.children then
 		for i,child in ipairs(self.contents.children) do
-			scene:remove(child)
-			self.contents:remove(child)
-			self.ruu:destroyWidget(child.ruuWidget)
+			if child.name ~= "deletedMarker" then
+				scene:remove(child)
+				self.contents:remove(child)
+				self.ruu:destroyWidget(child.ruuWidget)
+			end
 		end
 		self.contents.h = 10
 	end
@@ -49,7 +51,6 @@ local function clearContents(self)
 end
 
 function script.updateSelection(self)
-	print("--  PropertiesPanel.updateSelection  --")
 	self.ruu = activeData.ruu
 	local selection = activeData.selection
 	clearContents(self)

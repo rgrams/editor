@@ -34,6 +34,7 @@ local function addObject(className, enclosure, sceneTree, parentEnclosure, modPr
 		for i,v in ipairs(children) do  addObject(unpack(v))  end
 	end
 
+	activeData.propertiesPanel:call("updateSelection")
 	return enclosure
 end
 
@@ -86,6 +87,7 @@ local function removeObject(enclosure)
 	if wasSelected then  selectionRemove(activeData.selection, enclosure)  end
 	local parentEnclosure = obj.parent[PRIVATE_KEY] or false -- Save parent before SceneTree nullifies it.
 	obj.tree:remove(obj)
+	activeData.propertiesPanel:call("updateSelection")
 	return obj.className, enclosure, obj.tree, parentEnclosure, modProps, children, wasSelected
 end
 
@@ -97,6 +99,7 @@ local function addMultiple(data)
 		local enclosure = addObject(unpack(v))
 		table.insert(enclosureList, enclosure)
 	end
+	activeData.propertiesPanel:call("updateSelection")
 	return enclosureList -- A sequence of object enclosures.
 end
 
@@ -128,6 +131,7 @@ local function removeMultiple(enclosureList)
 		local args = {removeObject(enclosure)}
 		table.insert(undoData, args)
 	end
+	activeData.propertiesPanel:call("updateSelection")
 	return undoData -- A sequence of sequences of `addObject` args.
 end
 
@@ -138,6 +142,7 @@ local function removeAllSelected(selection)
 	local enclosureList = selection:getEnclosureList()
 	local _, oldList, oldHistory = selectionClear(selection)
 	local undoRemoveData = removeMultiple(enclosureList)
+	activeData.propertiesPanel:call("updateSelection")
 	return undoRemoveData, selection, oldList, oldHistory
 end
 
@@ -151,6 +156,7 @@ local function setProperty(enclosure, key, value, subKey)
 	local obj = enclosure[1]
 	local oldVal = objProp.getValue(obj, key, subKey)
 	objProp.setValue(obj, key, value, subKey)
+	activeData.propertiesPanel:call("updateSelection")
 	return enclosure, key, oldVal, subKey
 end
 
@@ -162,6 +168,7 @@ local function setSeparate(data)
 		local args = {setProperty(unpack(v))}
 		table.insert(undoData, args)
 	end
+	activeData.propertiesPanel:call("updateSelection")
 	return undoData
 end
 
@@ -173,6 +180,7 @@ local function setSame(enclosureList, key, val, subKey)
 		local args = {setProperty(enclosure, key, val, subKey)}
 		table.insert(undoData, args)
 	end
+	activeData.propertiesPanel:call("updateSelection")
 	return undoData
 end
 
@@ -194,6 +202,7 @@ local function setSameMultiple(enclosureList, ...)
 			table.insert(undoData, args) -- Added for each property for each object.
 		end
 	end
+	activeData.propertiesPanel:call("updateSelection")
 	return undoData
 end
 

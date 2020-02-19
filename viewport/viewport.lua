@@ -133,6 +133,7 @@ function script.mouseMoved(self, x, y, dx, dy)
 				self.draggingSelection = "not start"
 			else
 				self.cmd:update(args)
+				activeData.propertiesPanel:call("updateSelection")
 			end
 		end
 	end
