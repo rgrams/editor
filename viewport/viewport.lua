@@ -88,16 +88,15 @@ end
 local function addMenuClosed(className, self, wx, wy)
 	if not className then  return  end -- Add object canceled.
 
-	-- TODO: convert to local pos if parent exists.
 	if not next(self.selection._) then -- Add a single object in world space.
-		self.cmd:perform("addObject", className, {}, editScene, editScene, { pos = {x=wx, y=wy} })
+		self.cmd:perform("addObject", className, {}, editScene, nil, { pos = {x=wx, y=wy} })
 	else -- Have something selected - Add duplicate objects as children to each of them.
 		local multiAddArgs = {}
 		local enclosureList = self.selection:getEnclosureList()
 		for i,enclosure in ipairs(enclosureList) do
 			local parent = enclosure[1]
 			local lx, ly = parent:toLocal(wx, wy)
-			local addArgs = {className, {}, editScene, parent, { pos = {x=lx, y=ly} }}
+			local addArgs = {className, {}, editScene, enclosure, { pos = {x=lx, y=ly} }}
 			table.insert(multiAddArgs, addArgs)
 		end
 		self.cmd:perform("addMultiple", multiAddArgs)
