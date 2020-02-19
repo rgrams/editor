@@ -10,23 +10,11 @@ local function addObject(className, enclosure, sceneTree, parent, modProps)
 	local NO_DEFAULT = objProp.NO_DEFAULT
 
 	-- Create an instance of the class with the minimum required arguments.
-	local args = {}
-	local foundARequiredArg = false
-	-- Loop backwards from the end end until we find a required arg. (one without a default value)
-	-- Ignore anything after the last required arg (to leave them at defaults).
-	for i=#argList,1,-1 do
-		local key, subKey = argList[i][1], argList[i][2]
-		local default, placeholder = objProp.getDefault(className, key, subKey)
-		if foundARequiredArg then
-			args[i] = default ~= NO_DEFAULT and default or placeholder
-		elseif default == NO_DEFAULT then
-			foundARequiredArg = true
-			args[i] = placeholder
-		end
-	end
+	local args = objProp.minimumConstructArgs[className]
 	local obj = class(unpack(args))
 	enclosure[1], obj[PRIVATE_KEY] = obj, enclosure
 
+	-- Mod on changed properties, if any.
 	local classPropDict = objProp[className] or objProp.object
 	if modProps then
 		for k,v in pairs(modProps) do

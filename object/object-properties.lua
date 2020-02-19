@@ -12,6 +12,7 @@ M.stringToClass = {
 	Object = Object, Sprite = Sprite, Text = Text, Quad = Quad, World = World
 }
 M.constructArgs = {}
+M.minimumConstructArgs = {}
 
 function M.areValuesEqual(a, b)
 	if a == b then  return true  end
@@ -145,6 +146,23 @@ M.World = {
 M.constructArgs.World = {
 	{"xg"}, {"yg"}, {"sleep"}, {"disableBegin"}, {"disableEnd"}, {"disablePre"}, {"disablePost"},
 }
+
+for i,className in ipairs(M.classList) do
+	local argList = M.constructArgs[className]
+	local minArgs = {}
+	M.minimumConstructArgs[className] = minArgs
+	local foundARequiredArg = false
+	for i=#argList,1,-1 do
+		local key, subKey = argList[i][1], argList[i][2]
+		local default, placeholder = M.getDefault(className, key, subKey)
+		if foundARequiredArg then -- Need a value, put in the editor default.
+			minArgs[i] = default ~= NO_DEFAULT and default or placeholder
+		elseif default == NO_DEFAULT then -- First required value, put in the editor placeholder.
+			foundARequiredArg = true
+			minArgs[i] = placeholder
+		end
+	end
+end
 
 -- Property widgets:
 -- 	Numeric input box.
