@@ -178,7 +178,7 @@ function script.input(self, name, value, change)
 	elseif name == "remove object" and change == 1 then
 		local enclosureList = self.selection:getEnclosureList()
 		if #enclosureList > 0 then
-			self.cmd:perform("removeMultiple", enclosureList)
+			self.cmd:perform("removeAllSelected", self.selection)
 		end
 	elseif name == "rename" and change == 1 then
 		print("TEST")

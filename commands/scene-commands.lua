@@ -2,9 +2,12 @@
 local activeData = require "activeData"
 local objProp = require "object.object-properties"
 local setget = require "object.object-prop-set-getters"
+
 local selectionCommands = require "commands.selection-commands"
 local selectionAdd = selectionCommands.addToSelection[1]
 local selectionRemove = selectionCommands.addToSelection[2]
+local selectionClear = selectionCommands.clearSelection[1]
+local selection_set = selectionCommands.clearSelection[2]
 
 local function addObject(className, enclosure, sceneTree, parentEnclosure, modProps, children, wasSelected)
 	local class = objProp.stringToClass[className]
@@ -128,6 +131,21 @@ local function removeMultiple(enclosureList)
 	return undoData -- A sequence of sequences of `addObject` args.
 end
 
+-- Clears the selection in one go so we can undo and recover the selection history.
+--   Don't call if there's nothing in the selection, or you'll have a command
+--   in the undo history that does nothing.
+local function removeAllSelected(selection)
+	local enclosureList = selection:getEnclosureList()
+	local _, oldList, oldHistory = selectionClear(selection)
+	local undoRemoveData = removeMultiple(enclosureList)
+	return undoRemoveData, selection, oldList, oldHistory
+end
+
+local function undoRemoveAllSelected(undoRemoveData, selection, oldList, oldHistory)
+	addMultiple(undoRemoveData)
+	selection_set(selection, oldList, oldHistory)
+end
+
 -- setPosition
 local function setPosition(enclosure, x, y)
 	local obj = enclosure[1]
@@ -204,6 +222,7 @@ return {
 	removeObject = { removeObject, addObject },
 	addMultiple = { addMultiple, removeMultiple },
 	removeMultiple = { removeMultiple, addMultiple },
+	removeAllSelected = { removeAllSelected, undoRemoveAllSelected },
 	setPosition = { setPosition, setPosition },
 	setWorldPosition = { setWorldPosition, setPosition },
 	setProperty = { setProperty, setProperty },
