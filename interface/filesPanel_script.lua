@@ -3,6 +3,7 @@ local script = {}
 
 local fnt = require "theme.fonts"
 local FileWidget = require "theme.widgets.files.File"
+local FolderWidget = require "theme.widgets.files.Folder"
 local activeData = require "activeData"
 
 function script.init(self)
@@ -25,6 +26,10 @@ local function fileBtnReleased(self)
 	if self.doubleClickT then
 		print(self.filepath)
 		self.doubleClickT = SETTINGS.doubleClickTime
+		if self.isFolder then
+			self.isOpen = not self.isOpen
+			self.arrow.angle = self.isOpen and 0 or -math.pi/2
+		end
 	else
 		self.doubleClickT = SETTINGS.doubleClickTime
 		self.update = self.doubleClickUpdate
@@ -43,15 +48,20 @@ local function addFiles(basePath, files, indentLevel, widgetMap)
 		local info = love.filesystem.getInfo(path)
 		assert(info, "Failed to load file at path: " .. path)
 
-		local btn = FileWidget(indent .. fileName, path)
-		contentsColumn.h = contentsColumn.h + btn.h
+		local wgt
+		if info.type == "directory" then
+			wgt = FolderWidget(indent .. fileName, path)
+		else
+			wgt = FileWidget(indent .. fileName, path)
+		end
+		contentsColumn.h = contentsColumn.h + wgt.h
 		contentsColumn:_updateInnerSize()
-		scene:add(btn, contentsColumn)
-		contentsColumn:add(btn)
+		scene:add(wgt, contentsColumn)
+		contentsColumn:add(wgt)
 		filesPanel:setMaskOnChildren()
 
-		ruu:makeButton(btn, true, fileBtnReleased, "FileWidget")
-		table.insert(widgetMap, {btn})
+		ruu:makeButton(wgt, true, fileBtnReleased, "FileWidget")
+		table.insert(widgetMap, {wgt})
 
 		if info.type == "directory" then
 			addFiles(path .. "/", love.filesystem.getDirectoryItems(path), indentLevel + 1, widgetMap)
@@ -68,7 +78,7 @@ function script.folderDropped(self, path)
 	self.projectPath = path
 	love.filesystem.mount(self.projectPath, "project")
 	local files = love.filesystem.getDirectoryItems("project")
-	local widgetMap = addFiles("project/", files, 1)
+	local widgetMap = addFiles("project/", files)
 	local ruu = activeData.ruu
 	ruu:mapNeighbors(widgetMap)
 end
