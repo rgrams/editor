@@ -68,8 +68,8 @@ M.Object = {
 	-- key = { defaultVal, type, setter, getter }
 	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
-	sx = { 0, "number" },
-	sy = { 0, "number" },
+	sx = { 1, "number" },
+	sy = { 1, "number" },
 	kx = { 0, "number" },
 	ky = { 0, "number" }
 }
@@ -83,11 +83,11 @@ M.Sprite = {
 	image = { NO_DEFAULT, "string", set.imageData, get.assetParams, defAssets.image},
 	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
-	sx = { 0, "number" },
-	sy = { 0, "number" },
+	sx = { 1, "number" },
+	sy = { 1, "number" },
 	color = { {1,1,1,1}, "color"},
-	ox = { 0, "number", set.imgOffsetFraction, get.imgOffsetFraction },
-	oy = { 0, "number", set.imgOffsetFraction, get.imgOffsetFraction },
+	ox = { 0.5, "number", set.imgOffsetFraction, get.imgOffsetFraction },
+	oy = { 0.5, "number", set.imgOffsetFraction, get.imgOffsetFraction },
 	kx = { 0, "number" },
 	ky = { 0, "number" }
 }
@@ -104,8 +104,8 @@ M.Text = {
 	angle = { 0, "number" },
 	wrapLimit = { nil, "number" },
 	hAlign = { "left", "string" },
-	sx = { 0, "number" },
-	sy = { 0, "number" },
+	sx = { 1, "number" },
+	sy = { 1, "number" },
 	kx = { 0, "number" },
 	ky = { 0, "number" }
 }
@@ -120,11 +120,11 @@ M.Quad = {
 	quad = { NO_DEFAULT, "quad", set.quadParams, get.quadParams, defAssets.quad },
 	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
-	sx = { 0, "number" },
-	sy = { 0, "number" },
+	sx = { 1, "number" },
+	sy = { 1, "number" },
 	color = { {1,1,1,1}, "color"},
-	ox = { 0, "number", set.imgOffsetFraction, get.imgOffsetFraction },
-	oy = { 0, "number", set.imgOffsetFraction, get.imgOffsetFraction },
+	ox = { 0.5, "number", set.imgOffsetFraction, get.imgOffsetFraction },
+	oy = { 0.5, "number", set.imgOffsetFraction, get.imgOffsetFraction },
 	kx = { 0, "number" },
 	ky = { 0, "number" }
 }
