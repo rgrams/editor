@@ -97,6 +97,7 @@ function script.reMapWidgets(self)
 end
 
 function script.addFiles(self, basePath, files, indentLevel, columnIndex)
+	shouldRedraw = true
 	indentLevel = indentLevel or 0
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 	local contentsColumn = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files/contents")
