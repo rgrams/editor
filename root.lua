@@ -4,6 +4,7 @@ local ListPanel = require "theme.widgets.ListPanel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
 local interface = require "interface.interface_script"
+local interfaceOverlay = require "interface.interfaceOverlay_script"
 local viewport = require "viewport.viewport"
 local input_getter = require "input_getter"
 local viewport_background = require "viewport.viewport_background"
@@ -17,6 +18,7 @@ local function new(w, h)
 
 	-- Screen offset node.
 	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = interface, children = {
+		mod(gui.Node(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill"), {name = "overlay", layer = "gui overlay", script = {interfaceOverlay}}),
 		-- Main Column
 		mod(gui.Column(0, false, mainColumnChildren, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
 			-- Menu Bar

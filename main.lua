@@ -15,7 +15,7 @@ local root
 local designW, designH = love.window.getMode()
 
 local drawLayers = {
-	gui = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" },
+	gui = { "gui debug", "gui overlay", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" },
 	viewportBackground = { "viewportBackground" },
 	-- editScene = { "entities" },
 	-- viewportDebug = { "viewportDebug" }
