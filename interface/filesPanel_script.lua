@@ -12,10 +12,12 @@ end
 
 function script.clearContents(self)
 	if self.contents.children then
+		local ruu = activeData.ruu
 		for i,child in ipairs(self.contents.children) do
 			if child.name ~= "deletedMarker" then
 				scene:remove(child)
 				self.contents:remove(child)
+				ruu:destroyWidget(child)
 			end
 		end
 		self.contents.h = 10
