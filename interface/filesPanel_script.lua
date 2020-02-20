@@ -38,7 +38,6 @@ end
 
 local function addFiles(basePath, files, indentLevel, widgetMap)
 	indentLevel = indentLevel or 0
-	local indent = string.rep("\t", indentLevel)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 	local contentsColumn = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files/contents")
 	local ruu = activeData.ruu
@@ -50,9 +49,9 @@ local function addFiles(basePath, files, indentLevel, widgetMap)
 
 		local wgt
 		if info.type == "directory" then
-			wgt = FolderWidget(indent .. fileName, path)
+			wgt = FolderWidget(fileName, path, indentLevel)
 		else
-			wgt = FileWidget(indent .. fileName, path)
+			wgt = FileWidget(fileName, path, indentLevel)
 		end
 		contentsColumn.h = contentsColumn.h + wgt.h
 		contentsColumn:_updateInnerSize()

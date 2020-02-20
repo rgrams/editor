@@ -14,6 +14,8 @@ M.gridNumberColor = { 0.7, 0.7, 0.7, 0.5 }
 M.xAxisColor = { 0.8, 0.4, 0.4, 0.6 }
 M.yAxisColor = { 0.4, 0.8, 0.4, 0.6 }
 
+M.filesIndentSize = 10
+
 M.ObjectHitRadius = 10
 M.hoverHighlightColor = {1, 0.9, 0.8, 0.4}
 M.selectedHighlightColor = {0.9, 0.5, 0.0, 0.9}

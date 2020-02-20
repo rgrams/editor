@@ -12,7 +12,8 @@ local function doubleClickUpdate(self, dt)
 	end
 end
 
-local function new(text, path)
+local function new(text, path, indent)
+	indent = indent * SETTINGS.filesIndentSize
 	local self = mod(gui.Slice(tex.Panel, nil, {2}, 0, 0, 0, 100, 24, -1, 0, -1, 0, {"fill", "none"}), {
 		filepath = path,
 		doubleClickUpdate = doubleClickUpdate,
@@ -20,7 +21,7 @@ local function new(text, path)
 		name = text,
 		layer = "widgets",
 		children = {
-			mod(gui.Text(text, fnt.files, 12, -1, 0, 600, -1, 0, -1, 0, "left", "none"), {
+			mod(gui.Text(text, fnt.files, 12 + indent, -1, 0, 600, -1, 0, -1, 0, "left", "none"), {
 				name = "label",
 				layer = "text"
 			})
