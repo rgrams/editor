@@ -37,12 +37,15 @@ local function clearContents(self)
 	-- `contents.children` will still be full of DeletedMarkers, so just track the
 	-- cleared state on our own.
 	if self.isCleared then  return  end
+	self.oldFocusedPath = nil
 	if self.contents.children then
-		self.oldFocusedPath = self.ruu.focusedWidget and self.ruu.focusedWidget.path
 		for i,child in ipairs(self.contents.children) do
 			if child.name ~= "deletedMarker" then
 				scene:remove(child)
 				self.contents:remove(child)
+				if child.ruuWidget.isFocused then
+					self.oldFocusedPath = child.ruuWidget.path
+				end
 				self.ruu:destroyWidget(child.ruuWidget)
 			end
 		end
