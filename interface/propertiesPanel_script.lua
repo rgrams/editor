@@ -38,6 +38,7 @@ local function clearContents(self)
 	-- cleared state on our own.
 	if self.isCleared then  return  end
 	if self.contents.children then
+		self.oldFocusedPath = self.ruu.focusedWidget and self.ruu.focusedWidget.path
 		for i,child in ipairs(self.contents.children) do
 			if child.name ~= "deletedMarker" then
 				scene:remove(child)
@@ -117,6 +118,9 @@ function script.updateSelection(self)
 		table.insert(widgetMap, {inputFld})
 	end
 	self.ruu:mapNeighbors(widgetMap)
+	if self.oldFocusedPath then
+		self.ruu:setFocus(scene:get(self.oldFocusedPath))
+	end
 	self:setMaskOnChildren()
 	self.isCleared = false
 end
