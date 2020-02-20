@@ -1,6 +1,7 @@
 
 local script = {}
 
+local encoder = require "lib.encoder"
 local activeData = require "activeData"
 local CommandHistory = require "philtre.commands"
 local allCommands = require "commands.all-commands"
@@ -202,6 +203,13 @@ function script.input(self, name, value, change)
 	elseif name == "paste" and change == 1 then
 		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
 			self.cmd:perform("pasteOntoSelection", self.selection)
+		end
+	elseif name == "save" and change == 1 then
+		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
+			local enclosure = next(self.selection._)
+			if enclosure then
+				local str = encoder.encode(enclosure[1])
+			end
 		end
 	end
 end

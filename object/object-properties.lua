@@ -52,16 +52,12 @@ end
 M.displayNames = { kx = "shear x", ky = "shear y" }
 
 -- Properties that all objects have:
-M.universalProperties = {
+M.universalProps = {
 	-- key = { defaultVal, type, setter, getter }
 	name = { nil, "string"},
 	path = { nil, "read-only" },
 	layer = { nil, "string" }, -- Should be multiple-choice at some point.
 	script = { nil, "list" },
-}
-
-M.hiddenUniversalProperties = {
-	worldPos = { {x=0,y=0}, "vector2" }
 }
 
 M.Object = {

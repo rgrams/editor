@@ -23,9 +23,8 @@ local bindings = {
 	{ "cut", "button", "key", "x" },
 	{ "paste", "button", "key", "v" },
 
-	{ "save object", "button", "scancode", ";" },
+	{ "save", "button", "key", "s" },
 	{ "rename", "button", "scancode", "f2" },
-	{ "set script", "button", "scancode", "s" },
 	{ "text", "text", "text", "text" },
 	{ "backspace", "button", "scancode", "backspace" },
 	{ "confirm", "button", "scancode", "return" },
