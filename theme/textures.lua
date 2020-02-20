@@ -13,6 +13,8 @@ local tex = {
 	SliderBar_Hovered = new.image("theme/tex/SliderBar_Hovered.png"),
 	SliderBar_Pressed = new.image("theme/tex/SliderBar_Pressed.png"),
 	Panel = new.image("theme/tex/Panel.png"),
+	Panel_Hovered = new.image("theme/tex/Panel_Hovered.png"),
+	Panel_Pressed = new.image("theme/tex/Panel_Pressed.png"),
 	ResizeHandle_Normal = new.image("theme/tex/ResizeHandle_Normal.png"),
 	ResizeHandleHandle = new.image("theme/tex/ResizeHandleHandle.png")
 }

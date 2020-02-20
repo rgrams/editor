@@ -197,4 +197,42 @@ function ResizeHandle.unfocus(self)  end
 function ResizeHandle.press(self)  end
 function ResizeHandle.release(self)  end
 
+--##############################  FILE-WIDGET  ##############################
+local FileWidget = Button:extend()
+M.FileWidget = FileWidget
+
+function FileWidget.init(self)
+	if self.label then  setValue(self.label, 0.75)  end
+
+	local draw = self.draw
+	self.draw = function(self)
+		draw(self)
+		if self.isFocused then
+			local w, h = self.w, self.h
+			love.graphics.setColor(1, 1, 1, 1)
+			love.graphics.rectangle("line", -w/2, -h/2, w, h)
+		end
+	end
+end
+
+function FileWidget.hover(self)
+	if self.label then  setValue(self.label, 1)  end
+	self.image = tex.Panel_Hovered
+end
+
+function FileWidget.unhover(self)
+	if self.label then  setValue(self.label, 0.75)  end
+	self.image = tex.Panel
+end
+
+function FileWidget.press(self)
+	if self.label then  self.label.pos.y = self.label.pos.y + 1  end
+	self.image = tex.Panel_Pressed
+end
+
+function FileWidget.release(self)
+	if self.label then  self.label.pos.y = self.label.pos.y - 1  end
+	self.image = self.isHovered and tex.Panel_Hovered or tex.Panel
+end
+
 return M

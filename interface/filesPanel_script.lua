@@ -2,6 +2,8 @@
 local script = {}
 
 local fnt = require "theme.fonts"
+local FileWidget = require "theme.widgets.files.File"
+local activeData = require "activeData"
 
 function script.init(self)
 	self.contents = scene:get(self.path .. "/contents")
@@ -19,40 +21,52 @@ function script.clearContents(self)
 	end
 end
 
-local function addFiles(basePath, files, indentLevel)
+local function fileBtnReleased(self)
+	print(self.filepath)
+end
+
+local function addFiles(basePath, files, indentLevel, widgetMap)
 	indentLevel = indentLevel or 0
 	local indent = string.rep("\t", indentLevel)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 	local contentsColumn = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files/contents")
+	local ruu = activeData.ruu
+	widgetMap = widgetMap or {}
 	for k,fileName in ipairs(files) do
 		local path = basePath .. fileName
 		local info = love.filesystem.getInfo(path)
 		assert(info, "Failed to load file at path: " .. path)
 
-		local btn = gui.Text(indent .. fileName, fnt.files, 0, 0, 0, 500, -1, 0, -1, 0, "left", "none")
-		btn.layer = "text"
+		local btn = FileWidget(indent .. fileName, path)
 		contentsColumn.h = contentsColumn.h + btn.h
 		contentsColumn:_updateInnerSize()
 		scene:add(btn, contentsColumn)
 		contentsColumn:add(btn)
 		filesPanel:setMaskOnChildren()
 
+		ruu:makeButton(btn, true, fileBtnReleased, "FileWidget")
+		table.insert(widgetMap, {btn})
+
 		if info.type == "directory" then
-			addFiles(path .. "/", love.filesystem.getDirectoryItems(path), indentLevel + 1)
+			addFiles(path .. "/", love.filesystem.getDirectoryItems(path), indentLevel + 1, widgetMap)
 		end
 	end
+	return widgetMap
 end
 
-local projectPath
+function script.folderDropped(self, path)
+	if self.projectPath then  love.filesystem.unmount(self.projectPath)  end
+	self.projectPath = path
+	love.filesystem.mount(self.projectPath, "project")
+	local files = love.filesystem.getDirectoryItems("project")
+	local widgetMap = addFiles("project/", files, 1)
+	local ruu = activeData.ruu
+	ruu:mapNeighbors(widgetMap)
+end
 
 function love.directorydropped(path)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
-	filesPanel:call("clearContents")
-	if projectPath then  love.filesystem.unmount(projectPath)  end
-	projectPath = path
-	love.filesystem.mount(projectPath, "project")
-	local files = love.filesystem.getDirectoryItems("project")
-	addFiles("project/", files)
+	filesPanel:call("folderDropped", path)
 end
 
 return script
