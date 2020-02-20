@@ -61,7 +61,10 @@ local function addFiles(basePath, files, indentLevel, widgetMap)
 end
 
 function script.folderDropped(self, path)
-	if self.projectPath then  love.filesystem.unmount(self.projectPath)  end
+	if self.projectPath then
+		love.filesystem.unmount(self.projectPath)
+		self:call("clearContents")
+	end
 	self.projectPath = path
 	love.filesystem.mount(self.projectPath, "project")
 	local files = love.filesystem.getDirectoryItems("project")
