@@ -3,7 +3,7 @@ local Panel = require "theme.widgets.Panel"
 local ListPanel = require "theme.widgets.ListPanel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
-local interface = require "interface_script"
+local interface = require "interface.interface_script"
 local viewport = require "viewport.viewport"
 local input_getter = require "input_getter"
 local viewport_background = require "viewport.viewport_background"
