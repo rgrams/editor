@@ -22,7 +22,13 @@ function script.clearContents(self)
 end
 
 local function fileBtnReleased(self)
-	print(self.filepath)
+	if self.doubleClickT then
+		print(self.filepath)
+		self.doubleClickT = SETTINGS.doubleClickTime
+	else
+		self.doubleClickT = SETTINGS.doubleClickTime
+		self.update = self.doubleClickUpdate
+	end
 end
 
 local function addFiles(basePath, files, indentLevel, widgetMap)
