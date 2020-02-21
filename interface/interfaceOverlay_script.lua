@@ -12,6 +12,7 @@ local KEY_COLOR = {1, 1, 1, 0.3}
 local KEY_COLOR_OFF = {0.1, 0.1, 0.1, 0.3}
 local KEY_TEXT_COLOR = {1, 1, 1, 1}
 local SQUISH_THRESHOLD = 0.4
+local WHEEL = {}
 
 local function findKeyInList(list, device, input)
 	for i,key in ipairs(list) do
@@ -23,7 +24,7 @@ end
 
 local function addNewKey(self, device, input, value)
 	local text
-	if device == "key" or value == 2 then
+	if device == "key" or value == WHEEL then
 		text = string.upper(input)
 	else
 		text = "MOUSE " .. input
@@ -31,37 +32,47 @@ local function addNewKey(self, device, input, value)
 	local w = self.keyFont:getWidth(text) + INNER_PADDING * 2
 	local key = { device = device, input = input, text = text, w = w, squish = 1 }
 	table.insert(self.keyList, key)
-	self.isInputPressed[device][input] = value
+	self.pressCount[device][input] = value
 	shouldRedraw = true
 	return key
 end
 
+local conversions = {
+	lshift = "shift", rshift = "shift", lctrl = "ctrl", rctrl = "ctrl",
+	lalt = "alt", ralt = "alt"
+}
+
 -- Raw input happens before action input.
-local function rawInput(self, device, input, value)
+local function rawInput(self, device, input, value, isRepeat)
+	if isRepeat then  return  end
 	if device ~= "mouse" and device ~= "key" then  return  end -- Ignore scancodes, joysticks, etc.
-	if input == "wheel y" or input == "wheel x" then  value = 2  end -- Wheel is a special case - no release events.
-	if value >= 1 then -- Pressed.
-		local curVal = self.isInputPressed[device][input]
+	if input == "wheel y" or input == "wheel x" then  value = WHEEL -- Wheel is a special case - no release events.
+	elseif conversions[input] then  input = conversions[input]  end
+
+	local curVal = self.pressCount[device][input]
+	if value ~= 0 then -- Pressed.
 		if not curVal then
 			local key = addNewKey(self, device, input, value)
-			if value == 2 then  key.t = DURATION + 0.1  end -- Start fading wheel events immediately.
-		elseif curVal then
-			if value == 2 or curVal ~= value then
-				self.isInputPressed[device][input] = value
-				local i, key = findKeyInList(self.keyList, device, input)
-				key.t, key.squish = nil, 1
-				shouldRedraw = true
-				if input == "wheel y" or input == "wheel x" then -- Won't send a released event, start fading immediately.
-					key.t = DURATION + 0.1 -- Add a bit so it looks pressed for a few frames.
-				end
-				table.remove(self.keyList, i)
-				table.insert(self.keyList, key)
-			end
+			-- No wheel release events, so start fading them immediately.
+			if value == WHEEL then  key.t = DURATION + 0.1  end -- Add a bit so it looks pressed for a few frames.
+		elseif curVal then -- Event reoccured while it was still fading. (NOT a key-repeat - they already got thrown out.)
+			self.pressCount[device][input] = value == WHEEL and value or curVal + 1
+			local i, key = findKeyInList(self.keyList, device, input)
+			key.t, key.squish = nil, 1
+			shouldRedraw = true
+			if value == WHEEL then  key.t = DURATION + 0.1  end
+			-- Move it to the end of the list.
+			table.remove(self.keyList, i)
+			table.insert(self.keyList, key)
 		end
 	elseif value == 0 then -- Released.
-		local i, key = findKeyInList(self.keyList, device, input)
-		key.t = DURATION -- Start it fading.
-		self.isInputPressed[device][input] = value
+		local curVal = self.pressCount[device][input]
+		curVal = curVal - 1
+		if curVal <= 0 then
+			local i, key = findKeyInList(self.keyList, device, input)
+			key.t = DURATION -- Start it fading.
+		end
+		self.pressCount[device][input] = curVal
 	end
 end
 
@@ -73,10 +84,8 @@ end
 function script.init(self)
 	self.input = rawInput
 	Input.enable(self, true)
-	self.warnings = {}
-	self.commands = {}
 	self.keyList = {}
-	self.isInputPressed = { mouse = {}, key = {} }
+	self.pressCount = { mouse = {}, key = {} }
 	self.keyFont = new.font(unpack(fnt.keyCast))
 	self.extraSpace = 0
 end
@@ -108,7 +117,7 @@ function script.update(self, dt)
 			end
 			if key.t <= 0 then
 				table.remove(self.keyList, i)
-				self.isInputPressed[key.device][key.input] = nil
+				self.pressCount[key.device][key.input] = nil
 			end
 		end
 	end
