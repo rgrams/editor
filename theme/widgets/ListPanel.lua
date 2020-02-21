@@ -4,7 +4,7 @@ local tex = require "theme.textures"
 local Panel = require "theme.widgets.Panel"
 
 local function new(x, y, angle, w, h, px, py, ax, ay, resizeMode, title, name, script)
-	local self = mod(Panel(x, y, angle, w, h, px, py, ax, ay, resizeMode, name), {children = {
+	local self = mod(Panel(x, y, angle, w, h, px, py, ax, ay, resizeMode, name), {layer = "panel backgrounds", children = {
 		mod(gui.Column(nil, nil, {{1},{2,"start",true}}, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {children = {
 			-- Title Bar
 			mod(Panel(0, 0, 0, w, 24, 0, -1, 0, -1, {"fill", "none"}, "titleBar"), {children = {

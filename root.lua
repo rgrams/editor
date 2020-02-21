@@ -23,7 +23,7 @@ local function new(w, h)
 		mod(gui.Column(0, false, mainColumnChildren, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
 			-- Menu Bar
 			mod(gui.Row(1, false, nil, 0, 0, 0, w, 24, 0, 0, 0, 0, {"fill", "none"}), {name = "menuBar", children = {
-				Panel(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill", "panel")
+				mod(Panel(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill", "panel"), {layer = "panel backgrounds"})
 			}}),
 			-- Main Row
 			mod(gui.Row(0, false, mainRowChildren, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "mainRow", children = {
@@ -42,7 +42,7 @@ local function new(w, h)
 			}}),
 			-- Status Bar
 			mod(gui.Row(1, false, nil, 0, 0, 0, w, 24, 0, 0, 0, 0, {"fill", "none"}), {name = "statusBar", children = {
-				Panel(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill", "statusBarPanel")
+				mod(Panel(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill", "statusBarPanel"), {layer = "panel backgrounds"})
 			}})
 		}})
 	}})

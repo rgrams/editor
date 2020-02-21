@@ -170,7 +170,19 @@ end
 local Panel = Class:extend()
 M.Panel = Panel
 
-function Panel.init(self)  end
+function Panel.init(self)
+	self.panelIndex = 1
+	local draw = self.draw
+	self.draw = function(self)
+		-- draw(self)
+		if self.isFocused then
+			local w, h = self.w, self.h
+			love.graphics.setColor(1, 1, 1, 1/self.panelIndex)
+			love.graphics.rectangle("line", -w/2, -h/2, w, h)
+		end
+	end
+end
+
 function Panel.hover(self)  end
 function Panel.unhover(self)  end
 function Panel.focus(self)  end
