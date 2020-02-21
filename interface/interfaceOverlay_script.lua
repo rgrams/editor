@@ -4,12 +4,12 @@ local script = {}
 local fnt = require "theme.fonts"
 
 local DURATION = 3
-local KEY_HEIGHT = 20
+local KEY_HEIGHT = 29
 local INNER_PADDING = 5
 local PADDING = 5
 local ROUND = 8
 local KEY_COLOR = {1, 1, 1, 0.3}
-local KEY_COLOR_OFF = {0.1, 0.1, 0.1, 0.3}
+local KEY_COLOR_OFF = {0.1, 0.1, 0.1, 0.5}
 local KEY_TEXT_COLOR = {1, 1, 1, 1}
 local SQUISH_THRESHOLD = 0.4
 local WHEEL = {}
