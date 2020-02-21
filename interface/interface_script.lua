@@ -85,6 +85,29 @@ function script.input(self, name, value, change)
 end
 
 function script.mouseMoved(self, x, y, dx, dy)
+	if self.ignoreNextMouseDelta then -- The frame after wrapping there will be a screen-sized delta.
+		dx, dy = 0, 0
+		self.ignoreNextMouseDelta = false
+	end
+	if ruu.drags then -- Wrap mouse inside window while dragging.
+		local mx, my = x + dx, y + dy
+		local didWrap
+		if mx <= 0 and dx < 0 then
+			mx, didWrap = mx + self.w, true
+		elseif mx >= self.w and dx > 0 then
+			mx, didWrap = mx - self.w, true
+		end
+		if my <= 0 and dy < 0 then
+			my, didWrap = my + self.h, true
+		elseif my >= self.h and dy > 0 then
+			my, didWrap = my - self.h, true
+		end
+		if didWrap then
+			love.mouse.setPosition(mx, my)
+			self.ignoreNextMouseDelta = true
+		end
+		x, y = mx, my
+	end
 	return ruu:mouseMoved(x, y, dx, dy)
 end
 
