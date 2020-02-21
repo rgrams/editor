@@ -16,7 +16,7 @@ local dirs = { up = "up", down = "down", left = "left", right = "right" }
 
 function script.input(self, name, value, change)
 	if name == "left click" then
-		return self.ruu:input("click", nil, change)
+		self.ruu:input("click", nil, change)
 	elseif name == "pan" then
 		if change == 1 then
 			local widget = self.ruu:focusAtCursor()
@@ -27,17 +27,17 @@ function script.input(self, name, value, change)
 			self.ruu:stopDrag("pan")
 		end
 	elseif name == "confirm" then
-		return self.ruu:input("enter", nil, change)
+		self.ruu:input("enter", nil, change)
 	elseif dirs[name] then
-		return self.ruu:input("direction", dirs[name], change)
+		self.ruu:input("direction", dirs[name], change)
 	elseif name == "scroll x" then
-		return self.ruu:input("scroll x", nil, value)
+		self.ruu:input("scroll x", nil, value)
 	elseif name == "scroll y" then
-		return self.ruu:input("scroll y", nil, value)
+		self.ruu:input("scroll y", nil, value)
 	elseif name == "text" then
-		return self.ruu:input("text", nil, value)
+		self.ruu:input("text", nil, value)
 	elseif name == "backspace" and value == 1 then
-		return self.ruu:input("backspace")
+		self.ruu:input("backspace")
 	elseif name == "undo/redo" and value == 1 then
 		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
 			if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
@@ -51,8 +51,9 @@ function script.input(self, name, value, change)
 			end
 		end
 	end
-	if next(self.ruu.hoveredWidgets) then
-		return true
+	local basePanel = self.ruu.focusedPanels[1]
+	if basePanel then
+		basePanel:call("input", name, value, change)
 	end
 end
 
@@ -80,7 +81,11 @@ function script.mouseMoved(self, x, y, dx, dy)
 			x, y = mx, my
 		end
 	end
-	return self.ruu:mouseMoved(x, y, dx, dy)
+	self.ruu:mouseMoved(x, y, dx, dy)
+	local basePanel = self.ruu.focusedPanels[1]
+	if basePanel then
+		basePanel:call("mouseMoved", x, y, dx, dy)
+	end
 end
 
 return script

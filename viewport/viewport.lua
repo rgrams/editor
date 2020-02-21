@@ -6,7 +6,6 @@ local activeData = require "activeData"
 local CommandHistory = require "philtre.commands"
 local allCommands = require "commands.all-commands"
 local Selection = require "Selection"
-local inputStack = require "lib.input-stack"
 require "object.object-debugDraw-overrides"
 local collision = require "viewport.viewport-collision"
 local PopupMenu = require "theme.widgets.PopupMenu"
@@ -44,8 +43,12 @@ local function drag(self, dx, dy, dragType)
 	end
 end
 
+local function scroll(self, dx, dy)
+	Camera.current:zoomIn(dy * SETTINGS.zoomRate, love.mouse.getPosition())
+	pan(self, 0, 0)
+end
+
 function script.init(self)
-	inputStack.add(self, "bottom")
 	editScene = SceneTree(drawLayers, defaultLayer)
 	self.hoverList = {}
 	self.selection = Selection()
@@ -54,6 +57,7 @@ function script.init(self)
 	activeData.commands = self.cmd
 	self.isDraggable = true
 	self.drag = drag
+	self.scroll = scroll
 end
 
 function script.parentResized(self, designW, designH, newW, newH)
@@ -119,10 +123,6 @@ local function addMenuClosed(className, self, wx, wy)
 end
 
 function script.mouseMoved(self, x, y, dx, dy)
-	if self.panning then
-		pan(self, dx ,dy)
-	end
-
 	self.hoverList, self.hoveredObj = hitCheckEditScene(self, x, y)
 
 	if self.dragging then
@@ -155,12 +155,7 @@ function script.mouseMoved(self, x, y, dx, dy)
 end
 
 function script.input(self, name, value, change)
-	if name == "pan" then
-		self.panning = value == 1
-	elseif name == "zoom" then
-		Camera.current:zoomIn(value * SETTINGS.zoomRate, love.mouse.getPosition())
-		pan(self, 0, 0)
-	elseif name == "left click" then
+	if name == "left click" then
 		if change == 1 then
 			if self.hoveredObj then
 				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
