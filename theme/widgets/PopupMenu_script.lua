@@ -1,7 +1,7 @@
 
 local script = {}
 
-local inputManager = require "lib.input-manager"
+local inputStack = require "lib.input-stack"
 local RUU = require "ruu.ruu"
 local theme = require "theme.theme"
 
@@ -11,7 +11,7 @@ local function buttonFunc(self)
 end
 
 function script.close(self, itemText)
-	inputManager.remove(self)
+	inputStack.remove(self)
 	if self.callback then
 		self.callback(itemText, unpack(self.callbackArgs))
 	end
@@ -19,7 +19,7 @@ function script.close(self, itemText)
 end
 
 function script.init(self)
-	inputManager.add(self, "top", false)
+	inputStack.add(self, "top", false)
 	self.ruu = RUU(theme)
 	local ruu = self.ruu
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }

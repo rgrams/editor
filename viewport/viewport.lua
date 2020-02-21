@@ -6,7 +6,7 @@ local activeData = require "activeData"
 local CommandHistory = require "philtre.commands"
 local allCommands = require "commands.all-commands"
 local Selection = require "Selection"
-local inputManager = require "lib.input-manager"
+local inputStack = require "lib.input-stack"
 require "object.object-debugDraw-overrides"
 local collision = require "viewport.viewport-collision"
 local PopupMenu = require "theme.widgets.PopupMenu"
@@ -45,7 +45,7 @@ local function drag(self, dx, dy, dragType)
 end
 
 function script.init(self)
-	inputManager.add(self, "bottom")
+	inputStack.add(self, "bottom")
 	editScene = SceneTree(drawLayers, defaultLayer)
 	self.hoverList = {}
 	self.selection = Selection()

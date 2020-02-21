@@ -7,7 +7,7 @@ gui = require "philtre.gui.all"
 SETTINGS = require "settings"
 PRIVATE_KEY = {}
 NIL = {}
-local inputManager = require "lib.input-manager"
+local inputStack = require "lib.input-stack"
 
 local Root = require "root"
 local root
@@ -76,5 +76,5 @@ function love.mousemoved(x, y, dx, dy, istouch)
 	if love.window.hasFocus() then
 		shouldRedraw = true
 	end
-	inputManager.mouseMoved(x, y, dx, dy)
+	inputStack.mouseMoved(x, y, dx, dy)
 end

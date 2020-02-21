@@ -4,14 +4,14 @@ local script = {}
 local fnt = require "theme.fonts"
 
 local activeData = require "activeData"
-local inputManager = require "lib.input-manager"
+local inputStack = require "lib.input-stack"
 local RUU = require "ruu.ruu"
 local ruu
 local theme = require "theme.theme"
 
 function script.init(self)
 	love.keyboard.setKeyRepeat(true)
-	inputManager.add(self)
+	inputStack.add(self)
 
 	ruu = RUU(theme)
 	activeData.ruu = ruu
