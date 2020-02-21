@@ -28,7 +28,7 @@ local function new(text, path, indent)
 				name = "label",
 				layer = "text"
 			}),
-			mod(gui.Sprite(tex.FolderArrow, 0, 0, -math.pi/2, 1, 1, nil, 0, 0, -1, 0), {parentOffsetX = 7 + indentPos})
+			gui.Sprite(tex.FolderArrow, 7+indentPos, 0, -math.pi/2, 1, 1, nil, 0, 0, -1, 0)
 		}
 	})
 	self.label = self.children[1]
