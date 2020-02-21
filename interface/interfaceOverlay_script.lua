@@ -4,6 +4,7 @@ local script = {}
 local fnt = require "theme.fonts"
 
 local DURATION = 3
+local BASE_X, BASE_Y = 100, 30
 local KEY_HEIGHT = 29
 local INNER_PADDING = 5
 local PADDING = 5
@@ -125,7 +126,7 @@ end
 
 function script.draw(self)
 	if #self.keyList > 0 then
-		local X, Y = -self.w/2 + 10, self.h/2 - 30 - KEY_HEIGHT
+		local X, Y = -self.w/2 + BASE_X, self.h/2 - BASE_Y - KEY_HEIGHT
 		love.graphics.setFont(self.keyFont)
 		for i=#self.keyList,1,-1 do
 			local key = self.keyList[i]
