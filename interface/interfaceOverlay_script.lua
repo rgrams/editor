@@ -127,14 +127,15 @@ function script.draw(self)
 	if #self.keyList > 0 then
 		local X, Y = -self.w/2 + 10, self.h/2 - 30 - KEY_HEIGHT
 		love.graphics.setFont(self.keyFont)
-		for i,key in ipairs(self.keyList) do
+		for i=#self.keyList,1,-1 do
+			local key = self.keyList[i]
 			local colorMult = key.t and key.t/DURATION or 1
 			local keyCol = colorMult < 1 and KEY_COLOR_OFF or KEY_COLOR
 			setColorWithAlphaMult(keyCol, colorMult)
 			love.graphics.rectangle("fill", X, Y, key.w, KEY_HEIGHT, ROUND)
 			setColorWithAlphaMult(KEY_TEXT_COLOR, colorMult)
 			love.graphics.print(key.text, X + INNER_PADDING, Y + 1)
-			X = X + (key.w + PADDING)*key.squish
+			Y = Y - (KEY_HEIGHT + PADDING) * key.squish
 		end
 	end
 end
