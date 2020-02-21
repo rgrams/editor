@@ -3,13 +3,15 @@ local script = {}
 
 local fnt = require "theme.fonts"
 
-local DURATION = 1
+local DURATION = 3
 local KEY_HEIGHT = 20
 local INNER_PADDING = 5
 local PADDING = 5
-local ROUND = 5
-local KEY_COLOR = {1, 1, 1, 0.2}
+local ROUND = 8
+local KEY_COLOR = {1, 1, 1, 0.3}
+local KEY_COLOR_OFF = {0.1, 0.1, 0.1, 0.3}
 local KEY_TEXT_COLOR = {1, 1, 1, 1}
+local SQUISH_THRESHOLD = 0.4
 
 local function findKeyInList(list, device, input)
 	for i,key in ipairs(list) do
@@ -27,7 +29,7 @@ local function addNewKey(self, device, input, value)
 		text = "MOUSE " .. input
 	end
 	local w = self.keyFont:getWidth(text) + INNER_PADDING * 2
-	local key = { device = device, input = input, text = text, w = w }
+	local key = { device = device, input = input, text = text, w = w, squish = 1 }
 	table.insert(self.keyList, key)
 	self.isInputPressed[device][input] = value
 	shouldRedraw = true
@@ -42,16 +44,18 @@ local function rawInput(self, device, input, value)
 		local curVal = self.isInputPressed[device][input]
 		if not curVal then
 			local key = addNewKey(self, device, input, value)
-			if value == 2 then  key.t = DURATION  end -- Start fading wheel events immediately.
+			if value == 2 then  key.t = DURATION + 0.1  end -- Start fading wheel events immediately.
 		elseif curVal then
 			if value == 2 or curVal ~= value then
 				self.isInputPressed[device][input] = value
 				local i, key = findKeyInList(self.keyList, device, input)
-				key.t = nil
+				key.t, key.squish = nil, 1
 				shouldRedraw = true
-				if input == "wheel y" or input == "wheel x" then
-					key.t = DURATION -- Won't send a released event, start fading immediately.
+				if input == "wheel y" or input == "wheel x" then -- Won't send a released event, start fading immediately.
+					key.t = DURATION + 0.1 -- Add a bit so it looks pressed for a few frames.
 				end
+				table.remove(self.keyList, i)
+				table.insert(self.keyList, key)
 			end
 		end
 	elseif value == 0 then -- Released.
@@ -73,7 +77,20 @@ function script.init(self)
 	self.commands = {}
 	self.keyList = {}
 	self.isInputPressed = { mouse = {}, key = {} }
-	self.keyFont = new.font(unpack(fnt.default))
+	self.keyFont = new.font(unpack(fnt.keyCast))
+	self.extraSpace = 0
+end
+
+local function inOutCubic(k)
+	k = k * 2
+	if k < 1 then
+		return 0.5 * k*k*k -- curved 0.5-0
+	else -- 2-1
+		k = 2 - k -- 0-1 -- subtract 1 and flip in one operation.
+		k = k*k*k -- curved 0-1
+		k = 1 - k
+		return 0.5 + 0.5 * k -- curved 1-0.5
+	end
 end
 
 function script.update(self, dt)
@@ -82,6 +99,13 @@ function script.update(self, dt)
 		if key.t then
 			shouldRedraw = true
 			key.t = key.t - dt
+			-- Calculate squish factor.
+			local k = key.t / DURATION
+			if k <= SQUISH_THRESHOLD then
+				k = k / SQUISH_THRESHOLD
+				k = inOutCubic(k)
+				key.squish = k
+			end
 			if key.t <= 0 then
 				table.remove(self.keyList, i)
 				self.isInputPressed[key.device][key.input] = nil
@@ -96,11 +120,12 @@ function script.draw(self)
 		love.graphics.setFont(self.keyFont)
 		for i,key in ipairs(self.keyList) do
 			local colorMult = key.t and key.t/DURATION or 1
-			setColorWithAlphaMult(KEY_COLOR, colorMult)
+			local keyCol = colorMult < 1 and KEY_COLOR_OFF or KEY_COLOR
+			setColorWithAlphaMult(keyCol, colorMult)
 			love.graphics.rectangle("fill", X, Y, key.w, KEY_HEIGHT, ROUND)
 			setColorWithAlphaMult(KEY_TEXT_COLOR, colorMult)
-			love.graphics.print(key.text, X + INNER_PADDING, Y)
-			X = X + key.w + PADDING
+			love.graphics.print(key.text, X + INNER_PADDING, Y + 1)
+			X = X + (key.w + PADDING)*key.squish
 		end
 	end
 end
