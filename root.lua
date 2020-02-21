@@ -3,7 +3,9 @@ local Panel = require "theme.widgets.Panel"
 local ListPanel = require "theme.widgets.ListPanel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
-local interface = require "interface.interface_script"
+local interfaceRoot = require "interface.interfaceRoot_script"
+local globalShortcuts = require "interface.globalShortcutHandler_script"
+local ruuInput = require "interface.ruuInputHandler_script"
 local screencastInput = require "interface.screencastInput_script"
 local viewport = require "viewport.viewport"
 local input_getter = require "input_getter"
@@ -16,9 +18,11 @@ local function new(w, h)
 	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}
 	local mainRowChildren = mainColumnChildren
 
+	local rootScripts = { interfaceRoot, globalShortcuts, ruuInput }
+
 	-- Screen offset node.
-	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = interface, children = {
-		mod(gui.Node(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill"), {name = "overlay", layer = "gui overlay", script = {screencastInput}}),
+	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = rootScripts, children = {
+		mod(gui.Node(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill"), {name = "overlay", layer = "gui overlay", script = {screencastInput}}), -- Screencast keys on the overlay layer.
 		-- Main Column
 		mod(gui.Column(0, false, mainColumnChildren, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
 			-- Menu Bar
