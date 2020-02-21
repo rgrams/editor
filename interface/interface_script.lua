@@ -24,6 +24,8 @@ function script.init(self)
 	ruu:makePanel(statusBar, true)
 	local leftPanel = scene:get("/root/mainColumn/mainRow/leftPanel")
 	ruu:makePanel(leftPanel, true)
+	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
+	ruu:makePanel(viewport, true)
 	local rightPanel = scene:get("/root/mainColumn/mainRow/rightPanel")
 	ruu:makePanel(rightPanel, true)
 
@@ -43,6 +45,15 @@ local dirs = { up = "up", down = "down", left = "left", right = "right" }
 function script.input(self, name, value, change)
 	if name == "left click" then
 		return ruu:input("click", nil, change)
+	elseif name == "pan" then
+		if change == 1 then
+			local widget = ruu:focusAtCursor()
+			if widget then
+				ruu:startDrag(widget, "pan")
+			end
+		elseif change == -1 then
+			ruu:stopDrag("pan")
+		end
 	elseif name == "confirm" then
 		return ruu:input("enter", nil, change)
 	elseif dirs[name] then

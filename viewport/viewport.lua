@@ -32,6 +32,18 @@ local function shallowCopy(t)
 	end
 end
 
+local function pan(self, dx, dy)
+	dx, dy = Camera.current:screenToWorld(dx, dy, true)
+	local camPos = Camera.current.pos
+	camPos.x, camPos.y = camPos.x - dx, camPos.y - dy
+end
+
+local function drag(self, dx, dy, dragType)
+	if dragType == "pan" then
+		pan(self, dx, dy)
+	end
+end
+
 function script.init(self)
 	inputManager.add(self, "bottom")
 	editScene = SceneTree(drawLayers, defaultLayer)
@@ -40,12 +52,8 @@ function script.init(self)
 	activeData.selection = self.selection
 	self.cmd = CommandHistory(allCommands)
 	activeData.commands = self.cmd
-end
-
-local function pan(self, dx, dy)
-	dx, dy = Camera.current:screenToWorld(dx, dy, true)
-	local camPos = Camera.current.pos
-	camPos.x, camPos.y = camPos.x - dx, camPos.y - dy
+	self.isDraggable = true
+	self.drag = drag
 end
 
 function script.parentResized(self, designW, designH, newW, newH)
