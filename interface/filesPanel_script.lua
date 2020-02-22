@@ -11,26 +11,25 @@ end
 
 function script.clearContents(self)
 	if self.contents.children then
-		local ruu = activeData.ruu
 		for i,child in ipairs(self.contents.children) do
 			if child.name ~= "deletedMarker" then
 				scene:remove(child)
 				self.contents:remove(child)
-				ruu:destroyWidget(child)
+				self.ruu:destroyWidget(child)
 			end
 		end
 		self.contents.h = 10
 	end
 end
 
-local function setContentsVisible(self, visible, ruu)
+local function setContentsVisible(self, visible)
 	for i,obj in ipairs(self.containedObjects) do
 		obj:setVisible(visible)
-		ruu:setWidgetEnabled(obj, visible)
+		self.ruu:setWidgetEnabled(obj, visible)
 		obj.originalH = visible and 24 or 0
 		if obj.containedObjects then
 			if (not visible) or (visible and obj.isOpen) then
-				setContentsVisible(obj, visible, ruu)
+				setContentsVisible(obj, visible)
 			end
 		end
 	end
@@ -57,12 +56,10 @@ local function toggleFolder(self)
 		end
 		self.containedObjects = files
 	elseif self.isOpen then -- Folder opened, show its contents.
-		local ruu = activeData.ruu
-		setContentsVisible(self, true, ruu)
+		setContentsVisible(self, true)
 		self.filesPanel:call("reMapWidgets")
 	else
-		local ruu = activeData.ruu
-		setContentsVisible(self, false, ruu)
+		setContentsVisible(self, false)
 		self.filesPanel:call("reMapWidgets")
 	end
 end
@@ -90,8 +87,7 @@ function script.reMapWidgets(self)
 		end
 	end
 	if #map > 0 then
-		local ruu = activeData.ruu
-		ruu:mapNeighbors(map)
+		self.ruu:mapNeighbors(map)
 	end
 end
 
@@ -124,7 +120,6 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 	sortFoldersFirst(files, basePath)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 	local contentsColumn = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files/contents")
-	local ruu = activeData.ruu
 	for i,fileName in ipairs(files) do
 		local path = basePath .. fileName
 		local info = love.filesystem.getInfo(path)
@@ -144,7 +139,7 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 		contentsColumn:add(wgt, nil, nil, columnIndex)
 		filesPanel:setMaskOnChildren()
 
-		ruu:makeButton(wgt, true, fileBtnReleased, "FileWidget")
+		self.ruu:makeButton(wgt, true, fileBtnReleased, "FileWidget")
 	end
 	self:call("reMapWidgets")
 end

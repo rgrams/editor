@@ -36,6 +36,7 @@ function script.init(self)
 	ruu:makeScrollArea(propPanel, true)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 	ruu:makeScrollArea(filesPanel, true)
+	filesPanel.ruu = ruu
 end
 
 return script
