@@ -7,6 +7,7 @@ local interfaceRoot = require "interface.interfaceRoot_script"
 local fileHandler = require "interface.fileHandler_script"
 local globalShortcuts = require "interface.globalShortcutHandler_script"
 local ruuInput = require "interface.ruuInputHandler_script"
+local filesInputPasser = require "interface.filesPanelInputPasser_script"
 local screencastInput = require "interface.screencastInput_script"
 local viewport = require "viewport.viewport"
 local input_getter = require "input_getter"
@@ -19,7 +20,7 @@ local function new(w, h)
 	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}
 	local mainRowChildren = mainColumnChildren
 
-	local rootScripts = { interfaceRoot, fileHandler, globalShortcuts, ruuInput }
+	local rootScripts = { interfaceRoot, fileHandler, globalShortcuts, ruuInput, filesInputPasser }
 
 	-- Screen offset node.
 	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = rootScripts, children = {

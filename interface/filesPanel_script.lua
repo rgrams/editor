@@ -64,19 +64,27 @@ local function toggleFolder(self)
 	end
 end
 
-local function fileBtnReleased(self)
-	if self.doubleClickT then
-		self.doubleClickT = SETTINGS.doubleClickTime
-		if self.isFolder then
-			if self.filesPanel.showSingleFolder then
-				self.filesPanel:call("setFolder", self.filepath)
-			else
-				toggleFolder(self)
-			end
+local function activateFile(self)
+	if self.isFolder then
+		if self.filesPanel.showSingleFolder then
+			self.filesPanel:call("setFolder", self.filepath)
+		else
+			toggleFolder(self)
 		end
+	end
+end
+
+local function fileBtnReleased(self, mx, my, isKeyboard)
+	if isKeyboard then
+		activateFile(self)
 	else
-		self.doubleClickT = SETTINGS.doubleClickTime
-		self.update = self.doubleClickUpdate
+		if self.doubleClickT then
+			self.doubleClickT = SETTINGS.doubleClickTime
+			activateFile(self)
+		else
+			self.doubleClickT = SETTINGS.doubleClickTime
+			self.update = self.doubleClickUpdate
+		end
 	end
 end
 
@@ -159,6 +167,19 @@ function script.goUp(self)
 	local pattern = "(.+)/.+$"
 	local parentPath = string.match(path, pattern)
 	if parentPath then  self:call("setFolder", parentPath)  end
+end
+
+function script.input(self, name, value, change)
+	-- backspace for goUp, alt-up for goUp
+	if change == 1 then
+		if name == "backspace" then
+			self:call("goUp")
+		elseif name == "up" then
+			if Input.get("lalt").value == 1 or Input.get("ralt").value == 1 then
+				self:call("goUp")
+			end
+		end
+	end
 end
 
 function script.setFolder(self, folderPath)

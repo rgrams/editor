@@ -19,6 +19,8 @@ local bindings = {
 	{ "rshift", "button", "scancode", "rshift" },
 	{ "lctrl", "button", "scancode", "lctrl" },
 	{ "rctrl", "button", "scancode", "rctrl" },
+	{ "lalt", "button", "scancode", "lalt" },
+	{ "ralt", "button", "scancode", "ralt" },
 
 	{ "undo/redo", "button", "key", "z" },
 	{ "copy", "button", "key", "c" },

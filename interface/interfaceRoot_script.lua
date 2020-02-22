@@ -38,6 +38,7 @@ function script.init(self)
 	ruu:makeScrollArea(filesPanel, true)
 	filesPanel.ruu = ruu
 	filesPanel.showSingleFolder = true
+	self.filesPanel = filesPanel -- For files-panel-input-passer.
 end
 
 return script
