@@ -21,7 +21,7 @@ local function new(text, path, indent)
 		name = path,
 		layer = "widgets",
 		children = {
-			mod(gui.Text(text, fnt.files, 12 + indentPos, -1, 0, 600, -1, 0, -1, 0, "left", "none"), {
+			mod(gui.Text(text, fnt.files, 12 + indentPos, -1, 0, 4000, -1, 0, -1, 0, "left", "none"), {
 				name = "label",
 				layer = "text"
 			})

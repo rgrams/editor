@@ -11,10 +11,10 @@ local function new(x, y, angle, w, h, px, py, ax, ay, resizeMode, title, name, s
 				mod(gui.Text(title, fnt.panelTitle, 0, 0, 0, 200, -1, 0, -1, 0, "center", "fill"), {name = "text", layer = "text"})
 			}}),
 			-- Mask
-			mod(gui.Mask(nil, 0, 0, 0, w, 10, 0, -1, 0, -1, "fill", 2), {name = title, children = {
+			mod(gui.Mask(nil, 0, 0, 0, w, 10, 0, -1, 0, -1, "fill", 2), {name = title, script = script, children = {
 				-- Contents Column
 				mod(gui.Column(nil, nil, nil, 0, 0, 0, 10, 10, 0, -1, 0, -1, {"fill", "none"}), {layer = "widgets", name = "contents"})
-			}, script = script})
+			}})
 		}})
 	}})
 

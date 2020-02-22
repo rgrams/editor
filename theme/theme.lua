@@ -214,7 +214,7 @@ local FileWidget = Button:extend()
 M.FileWidget = FileWidget
 
 function FileWidget.init(self)
-	if self.label then  setValue(self.label, 0.75)  end
+	setValue(self.label, 0.75)
 
 	local draw = self.draw
 	self.draw = function(self)
