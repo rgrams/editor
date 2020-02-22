@@ -8,7 +8,9 @@ local function new(x, y, angle, w, h, px, py, ax, ay, resizeMode, title, name, s
 		mod(gui.Column(nil, nil, {{1},{2,"start",true}}, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {children = {
 			-- Title Bar
 			mod(Panel(0, 0, 0, w, 24, 0, -1, 0, -1, {"fill", "none"}, "titleBar"), {children = {
-				mod(gui.Text(title, fnt.panelTitle, 0, 0, 0, 200, -1, 0, -1, 0, "center", "fill"), {name = "text", layer = "text"})
+				mod(gui.Mask(nil, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {children = {
+					mod(gui.Text(title, fnt.panelTitle, 0, 0, 0, 200, 0, 0, 0, 0, "center"), {name = "text", layer = "text"})
+				}})
 			}}),
 			-- Mask
 			mod(gui.Mask(nil, 0, 0, 0, w, 10, 0, -1, 0, -1, "fill", 2), {name = title, script = script, children = {

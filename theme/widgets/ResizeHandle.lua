@@ -9,7 +9,7 @@ local function drag(self, dx, dy, isLocal)
 			return
 		end
 		if self.target.originalW then
-			self.target.originalW = self.target.originalW - dx * self.dir
+			self.target.originalW = math.max(self.minSize, self.target.originalW - dx * self.dir)
 			self.target.parent:refresh()
 		end
 	end
@@ -23,17 +23,18 @@ function script.init(self)
 	end
 end
 
-local function new(x, y, angle, w, h, px, py, ax, ay, resizeMode, target, dir, name)
+local function new(x, y, angle, w, h, px, py, ax, ay, resizeMode, target, dir, minSize)
 	local self = gui.Slice(
 		tex.ResizeHandle_Normal, nil, {2}, x, y, angle, w, h, px, py, ax, ay, resizeMode
 	)
 	local handle = gui.Sprite(tex.ResizeHandleHandle, 0, 0, 0, 1, 2)
 	self.children = { handle }
-	self.name = name or "resizeHandle"
+	self.name = "resizeHandle"
 	self.layer = "panel backgrounds"
 	self.isDraggable = true
 	self.target = scene:get(target) or target
 	self.dir = dir or 1
+	self.minSize = math.max(1, minSize or 1)
 	self.drag = drag
 	self.script = {script}
 	return self

@@ -36,14 +36,14 @@ local function new(w, h)
 				-- Left Panel
 				mod(gui.Row(nil, nil, {{1,"start",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "leftPanel", children = {
 					ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Files", nil, filesPanel),
-					ResizeHandle(0, 0, 0, 4, 10, 1, 0, 1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/leftPanel", -1)
+					ResizeHandle(0, 0, 0, 6, 10, 1, 0, 1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/leftPanel", -1, 7)
 				}}),
 				-- Viewport
 				mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "viewport", script = {viewport}}),
 				-- Right Panel
 				mod(gui.Row(nil, nil, {{1,"end",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "rightPanel", children = {
 					ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Properties", nil, propertiesPanel),
-					ResizeHandle(0, 0, 0, 4, 10, -1, 0, -1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/rightPanel", 1)
+					ResizeHandle(0, 0, 0, 6, 10, -1, 0, -1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/rightPanel", 1, 7)
 				}})
 			}}),
 			-- Status Bar
