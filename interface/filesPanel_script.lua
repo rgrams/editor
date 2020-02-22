@@ -9,7 +9,7 @@ function script.init(self)
 	self.contents = scene:get(self.path .. "/contents")
 end
 
-function script.clearContents(self)
+function script.clear(self)
 	if self.contents.children then
 		for i,child in ipairs(self.contents.children) do
 			if child.name ~= "deletedMarker" then
@@ -68,7 +68,11 @@ local function fileBtnReleased(self)
 	if self.doubleClickT then
 		self.doubleClickT = SETTINGS.doubleClickTime
 		if self.isFolder then
-			toggleFolder(self)
+			if self.filesPanel.showSingleFolder then
+				self.filesPanel:call("setFolder", self.filepath)
+			else
+				toggleFolder(self)
+			end
 		end
 	else
 		self.doubleClickT = SETTINGS.doubleClickTime
@@ -120,6 +124,12 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 	sortFoldersFirst(files, basePath)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 	local contentsColumn = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files/contents")
+
+	-- Expand contents Column to fit new files & update its transform stuff.
+	contentsColumn.h = contentsColumn.h + #files * 24
+	contentsColumn:_updateInnerSize() -- Update innerH based on new H - padY.
+	contentsColumn:updateTransform()
+
 	for i,fileName in ipairs(files) do
 		local path = basePath .. fileName
 		local info = love.filesystem.getInfo(path)
@@ -133,20 +143,28 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 			wgt = FileWidget(fileName, path, indentLevel)
 		end
 		wgt.filesPanel = filesPanel
-		contentsColumn.h = contentsColumn.h + wgt.h
-		contentsColumn:_updateInnerSize()
-		scene:add(wgt, contentsColumn)
-		contentsColumn:add(wgt, nil, nil, columnIndex)
+		scene:add(wgt, contentsColumn) -- Get added to the SceneTree at the center of the contentsColumn.
+		contentsColumn:add(wgt, nil, nil, columnIndex) -- Get their parentOffset set, W/H possibly changed.
+		wgt:updateTransform() -- May also do this during `parentResized` if their W or H has changed...
 		filesPanel:setMaskOnChildren()
 
 		self.ruu:makeButton(wgt, true, fileBtnReleased, "FileWidget")
 	end
 	self:call("reMapWidgets")
+	self.ruu:mouseMoved(self.ruu.mx, self.ruu.my, 0, 0) -- Added new widgets, re-check for hover.
+end
+
+function script.goUp(self)
+	if not self.showSingleFolder or not self.basePath then  return  end
+	local path = self.basePath
+	local pattern = "(.+)/.+$"
+	local parentPath = string.match(path, pattern)
+	if parentPath then  self:call("setFolder", parentPath)  end
 end
 
 function script.setFolder(self, folderPath)
 	self.basePath = folderPath .. "/"
-	self:call("clearContents")
+	self:call("clear")
 	local files = love.filesystem.getDirectoryItems(folderPath)
 	self:call("addFiles", files, self.basePath)
 end

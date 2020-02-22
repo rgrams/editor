@@ -10,6 +10,8 @@ local bindings = {
 	{ "left", "button", "scancode", "left" },
 	{ "right", "button", "scancode", "right" },
 
+	{ "back", "button", "mouse", 4 },
+
 	{ "scroll x", "axis", "mouse", "wheel x" },
 	{ "scroll y", "axis", "mouse", "wheel y" },
 

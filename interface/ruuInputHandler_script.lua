@@ -38,7 +38,11 @@ function script.input(self, name, value, change)
 		self.ruu:input("text", nil, value)
 	elseif name == "backspace" and value == 1 then
 		self.ruu:input("backspace")
+	elseif name == "back" and value == 1 then
+		local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
+		filesPanel:call("goUp")
 	end
+
 	local basePanel = self.ruu.focusedPanels[1]
 	if basePanel then
 		basePanel:call("input", name, value, change)
