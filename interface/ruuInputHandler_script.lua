@@ -82,10 +82,6 @@ function script.mouseMoved(self, x, y, dx, dy)
 		end
 	end
 	self.ruu:mouseMoved(x, y, dx, dy)
-	local basePanel = self.ruu.focusedPanels[1]
-	if basePanel then
-		basePanel:call("mouseMoved", x, y, dx, dy)
-	end
 end
 
 return script

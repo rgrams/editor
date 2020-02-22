@@ -87,7 +87,6 @@ local function press(self, mx, my, isKeyboard)
 	if isKeyboard then  return  end
 
 	updateCursorCollision(self, mx, my)
-
 	if self.hoveredObj then
 		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
 			self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
@@ -115,6 +114,37 @@ local function release(self, mx, my, isKeyboard)
 	self.draggingSelection = false
 end
 
+local function mouseMoved(self, x, y, dx, dy)
+	updateCursorCollision(self, x, y)
+
+	if self.dragging then
+		if self.draggingSelection then
+			local isStart = self.draggingSelection == "start"
+			local mwx, mwy = Camera.current:screenToWorld(x, y)
+			local roundTo = SETTINGS.roundAllNumbersTo
+
+			local args = {}
+			for enclosure,dat in pairs(self.selection._) do
+				local obj = enclosure[1]
+				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
+				local lx, ly = obj.parent:toLocal(wx, wy)
+				lx, ly = math.round(lx, roundTo), math.round(ly, roundTo)
+				obj.pos.x, obj.pos.y = lx, ly
+				obj:updateTransform()
+				table.insert(args, {enclosure, "pos", lx, "x"})
+				table.insert(args, {enclosure, "pos", ly, "y"})
+			end
+			if isStart then
+				self.cmd:perform("setSeparate", args)
+				self.draggingSelection = "not start"
+			else
+				self.cmd:update(args)
+				activeData.propertiesPanel:call("updateSelection")
+			end
+		end
+	end
+end
+
 function script.init(self)
 	editScene = SceneTree(drawLayers, defaultLayer)
 	self.hoverList = {}
@@ -123,9 +153,9 @@ function script.init(self)
 	self.cmd = CommandHistory(allCommands)
 	activeData.commands = self.cmd
 	self.isDraggable = true
-	self.drag = drag
-	self.scroll = scroll
+	self.drag, self.scroll = drag, scroll
 	self.pressFunc, self.releaseFunc = press, release
+	self.mouseMovedFunc = mouseMoved
 end
 
 function script.parentResized(self, designW, designH, newW, newH)
@@ -157,38 +187,6 @@ local function addMenuClosed(className, self, wx, wy)
 	end
 
 	updateCursorCollision(self, love.mouse.getPosition())
-end
-
-function script.mouseMoved(self, x, y, dx, dy)
-	updateCursorCollision(self, x, y)
-
-	if self.dragging then
-		if self.draggingSelection then
-			local isStart = self.draggingSelection == "start"
-			local mwx, mwy = Camera.current:screenToWorld(x, y)
-
-			local roundTo = SETTINGS.roundAllNumbersTo
-
-			local args = {}
-			for enclosure,dat in pairs(self.selection._) do
-				local obj = enclosure[1]
-				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
-				local lx, ly = obj.parent:toLocal(wx, wy)
-				lx, ly = math.round(lx, roundTo), math.round(ly, roundTo)
-				obj.pos.x, obj.pos.y = lx, ly
-				obj:updateTransform()
-				table.insert(args, {enclosure, "pos", lx, "x"})
-				table.insert(args, {enclosure, "pos", ly, "y"})
-			end
-			if isStart then
-				self.cmd:perform("setSeparate", args)
-				self.draggingSelection = "not start"
-			else
-				self.cmd:update(args)
-				activeData.propertiesPanel:call("updateSelection")
-			end
-		end
-	end
 end
 
 function script.input(self, name, value, change)
