@@ -38,18 +38,6 @@ function script.input(self, name, value, change)
 		self.ruu:input("text", nil, value)
 	elseif name == "backspace" and value == 1 then
 		self.ruu:input("backspace")
-	elseif name == "undo/redo" and value == 1 then
-		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
-			if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-				local redoCommand, args = activeData.commands:redo()
-				print("Redo: " .. tostring(redoCommand))
-				if args then  for k,v in pairs(args) do  print("", k,v)  end  end
-			else
-				local undoCommand, args = activeData.commands:undo()
-				print("Undo: " .. tostring(undoCommand))
-				if args then  for k,v in pairs(args) do  print("", k,v)  end  end
-			end
-		end
 	end
 	local basePanel = self.ruu.focusedPanels[1]
 	if basePanel then
