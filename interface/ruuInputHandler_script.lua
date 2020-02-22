@@ -45,7 +45,7 @@ function script.input(self, name, value, change)
 		end
 	end
 
-	local basePanel = self.ruu.focusedPanels[1]
+	local basePanel = self.ruu.focusedPanels[1] or self.ruu.focusedWidget
 	if basePanel then
 		basePanel:call("input", name, value, change)
 	end
