@@ -166,6 +166,7 @@ function script.setFolder(self, folderPath)
 	self:call("clear")
 	local files = love.filesystem.getDirectoryItems(folderPath)
 	self:call("addFiles", files, self.basePath)
+	self.ruu:setFocus(self.contents.startChildren[1].obj)
 end
 
 return script
