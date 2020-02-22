@@ -96,13 +96,36 @@ function script.reMapWidgets(self)
 	end
 end
 
+local function sortFoldersFirst(files, basePath)
+	local folders
+	for i=#files,1,-1 do
+		local fileName = files[i]
+		local info = love.filesystem.getInfo(basePath .. fileName)
+		if not info then
+			table.remove(files, i)
+		else
+			if info.type == "directory" then
+				table.remove(files, i)
+				folders = folders or {}
+				table.insert(folders, fileName)
+			end
+		end
+	end
+	if folders then
+		for i=1,#folders do
+			table.insert(files, 1, folders[i])
+		end
+	end
+end
+
 function script.addFiles(self, basePath, files, indentLevel, columnIndex)
 	shouldRedraw = true
 	indentLevel = indentLevel or 0
+	sortFoldersFirst(files, basePath)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 	local contentsColumn = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files/contents")
 	local ruu = activeData.ruu
-	for k,fileName in ipairs(files) do
+	for i,fileName in ipairs(files) do
 		local path = basePath .. fileName
 		local info = love.filesystem.getInfo(path)
 		assert(info, "Failed to load file at path: " .. path)
