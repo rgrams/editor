@@ -24,7 +24,7 @@ function script.input(self, name, value, change)
 				self.ruu:startDrag(widget, "pan")
 			end
 		elseif change == -1 then
-			self.ruu:stopDrag("pan")
+			self.ruu:stopDrag("type", "pan")
 		end
 	elseif name == "confirm" then
 		self.ruu:input("enter", nil, change)

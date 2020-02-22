@@ -31,42 +31,6 @@ local function shallowCopy(t)
 	end
 end
 
-local function pan(self, dx, dy)
-	dx, dy = Camera.current:screenToWorld(dx, dy, true)
-	local camPos = Camera.current.pos
-	camPos.x, camPos.y = camPos.x - dx, camPos.y - dy
-end
-
-local function drag(self, dx, dy, dragType)
-	if dragType == "pan" then
-		pan(self, dx, dy)
-	end
-end
-
-local function scroll(self, dx, dy)
-	Camera.current:zoomIn(dy * SETTINGS.zoomRate, love.mouse.getPosition())
-	pan(self, 0, 0)
-end
-
-function script.init(self)
-	editScene = SceneTree(drawLayers, defaultLayer)
-	self.hoverList = {}
-	self.selection = Selection()
-	activeData.selection = self.selection
-	self.cmd = CommandHistory(allCommands)
-	activeData.commands = self.cmd
-	self.isDraggable = true
-	self.drag = drag
-	self.scroll = scroll
-end
-
-function script.parentResized(self, designW, designH, newW, newH)
-	local tlx, tly = self:toWorld(-self.w/2, -self.h/2)
-	local brx, bry = self:toWorld(self.w/2, self.h/2)
-	local w, h = brx - tlx, bry - tly
-	Camera.current:setViewport(tlx, tly, w, h)
-end
-
 local function hitCheckObjects(objects, x, y, list)
 	for i,object in ipairs(objects) do
 		local dist = collision.hitCheckObj(object, x, y)
@@ -98,6 +62,79 @@ local function hitCheckEditScene(self, x, y)
 	return hitList, closest
 end
 
+local function updateCursorCollision(self, mx, my)
+	self.hoverList, self.hoveredObj = hitCheckEditScene(self, mx, my)
+end
+
+local function pan(self, dx, dy)
+	dx, dy = Camera.current:screenToWorld(dx, dy, true)
+	local camPos = Camera.current.pos
+	camPos.x, camPos.y = camPos.x - dx, camPos.y - dy
+end
+
+local function drag(self, dx, dy, dragType)
+	if dragType == "pan" then
+		pan(self, dx, dy)
+	end
+end
+
+local function scroll(self, dx, dy)
+	Camera.current:zoomIn(dy * SETTINGS.zoomRate, love.mouse.getPosition())
+	pan(self, 0, 0)
+end
+
+local function press(self, mx, my, isKeyboard)
+	if isKeyboard then  return  end
+
+	updateCursorCollision(self, mx, my)
+
+	if self.hoveredObj then
+		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
+			self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
+		elseif not self.selection._[self.hoveredObj[PRIVATE_KEY]] then
+			self.cmd:perform("setSelectionTo", self.selection, self.hoveredObj[PRIVATE_KEY])
+		end
+	else -- hoverList is empty, clicked on nothing.
+		self.cmd:perform("clearSelection", self.selection)
+	end
+	self.dragging = true
+	if self.hoveredObj and self.selection._[self.hoveredObj[PRIVATE_KEY]] then
+		self.draggingSelection = "start"
+		local wx, wy = Camera.current:screenToWorld(love.mouse.getPosition())
+		for enclosure,data in pairs(self.selection._) do -- updateDragOffsets
+			local obj = enclosure[1]
+			data.dragOX, data.dragOY = obj._to_world.x - wx, obj._to_world.y - wy
+		end
+	end
+end
+
+local function release(self, mx, my, isKeyboard)
+	if isKeyboard then  return  end
+
+	self.dragging = false
+	self.draggingSelection = false
+end
+
+function script.init(self)
+	editScene = SceneTree(drawLayers, defaultLayer)
+	self.hoverList = {}
+	self.selection = Selection()
+	activeData.selection = self.selection
+	self.cmd = CommandHistory(allCommands)
+	activeData.commands = self.cmd
+	self.isDraggable = true
+	self.drag = drag
+	self.scroll = scroll
+	self.pressFunc, self.releaseFunc = press, release
+end
+
+function script.parentResized(self, designW, designH, newW, newH)
+	local tlx, tly = self:toWorld(-self.w/2, -self.h/2)
+	local brx, bry = self:toWorld(self.w/2, self.h/2)
+	local w, h = brx - tlx, bry - tly
+	Camera.current:setViewport(tlx, tly, w, h)
+end
+
 local function addMenuClosed(className, self, wx, wy)
 	if not className then  return  end -- Add object canceled.
 
@@ -119,11 +156,11 @@ local function addMenuClosed(className, self, wx, wy)
 		self.cmd:perform("addMultiple", multiAddArgs)
 	end
 
-	self.hoverList, self.hoveredObj = hitCheckEditScene(self, love.mouse.getPosition())
+	updateCursorCollision(self, love.mouse.getPosition())
 end
 
 function script.mouseMoved(self, x, y, dx, dy)
-	self.hoverList, self.hoveredObj = hitCheckEditScene(self, x, y)
+	updateCursorCollision(self, x, y)
 
 	if self.dragging then
 		if self.draggingSelection then
@@ -155,31 +192,7 @@ function script.mouseMoved(self, x, y, dx, dy)
 end
 
 function script.input(self, name, value, change)
-	if name == "left click" then
-		if change == 1 then
-			if self.hoveredObj then
-				if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-					self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
-				elseif not self.selection._[self.hoveredObj[PRIVATE_KEY]] then
-					self.cmd:perform("setSelectionTo", self.selection, self.hoveredObj[PRIVATE_KEY])
-				end
-			else -- hoverList is empty, clicked on nothing.
-				self.cmd:perform("clearSelection", self.selection)
-			end
-			self.dragging = true
-			if self.hoveredObj and self.selection._[self.hoveredObj[PRIVATE_KEY]] then
-				self.draggingSelection = "start"
-				local wx, wy = Camera.current:screenToWorld(love.mouse.getPosition())
-				for enclosure,data in pairs(self.selection._) do -- updateDragOffsets
-					local obj = enclosure[1]
-					data.dragOX, data.dragOY = obj._to_world.x - wx, obj._to_world.y - wy
-				end
-			end
-		elseif change == -1 then
-			self.dragging = false
-			self.draggingSelection = false
-		end
-	elseif name == "add object" and change == 1 then
+	if name == "add object" and change == 1 then
 		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
 			local sx, sy = love.mouse.getPosition()
 			local wx, wy = Camera.current:screenToWorld(sx, sy)
