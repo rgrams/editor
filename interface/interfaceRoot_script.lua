@@ -23,6 +23,7 @@ function script.init(self)
 	ruu:makePanel(leftPanel, true)
 	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
 	ruu:makePanel(viewport, true)
+	ruu:setFocus(viewport)
 	local rightPanel = scene:get("/root/mainColumn/mainRow/rightPanel")
 	ruu:makePanel(rightPanel, true)
 
