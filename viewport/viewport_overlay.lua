@@ -30,12 +30,12 @@ local function intersectLineWithBounds(ax, ay, cx, cy, tlx, tly, brx, bry)
 	local x, y = ax, ay -- intersect point.
 	if ax < tlx or ax > brx then
 		local edgeX = math.clamp(ax, tlx, brx)
-		local xOutDist = edgeX - ax
+		local xOutDist = math.abs(edgeX - ax)
 		y = ay + xOutDist * vy
 	end
 	if ay < tly or ay > bry then
 		local edgeY = math.clamp(ay, tly, bry)
-		local yOutDist = edgeY - ay
+		local yOutDist = math.abs(edgeY - ay)
 		x = ax + yOutDist * vx
 	end
 	x, y = math.clamp(x, tlx, brx), math.clamp(y, tly, bry)
@@ -80,27 +80,32 @@ function script.draw(self)
 	local camcx, camcy = (camtlx + cambrx)/2, (camtly + cambry)/2
 
 	-- For selection-out-of-bounds indicators.
-	local margin = SETTINGS.selectionOutOfBoundsLineMargin * scale
-	local length = SETTINGS.selectionOutOfBoundsLineLength * scale
+	local margin = SETTINGS.selectionOutOfBoundsMarkerMargin * scale
+	local length = SETTINGS.selectionOutOfBoundsMarkerLength * scale
+	local width = SETTINGS.selectionOutOfBoundsMarkerWidth * scale / 2
 
 	for enclosure,dat in pairs(selection._) do
 		local obj = enclosure[1]
 		local color = SETTINGS.selectedHighlightColor
-		local scale = scale
+		local thisScale = scale
 		if obj == latest then
 			color = SETTINGS.latestSelectedHighlightColor
-			scale = scale * 3 + 0.5
+			thisScale = scale * 3 + 0.5
 		end
 		love.graphics.setColor(color)
 
-		drawObjOutline(obj, scale)
+		drawObjOutline(obj, thisScale)
 
 		local wx, wy = obj._to_world.x, obj._to_world.y
 		if wx < camtlx or wx > cambrx or wy < camtly or wy > cambry then
 			local hitx, hity, vx, vy = intersectLineWithBounds(wx, wy, camcx, camcy, camtlx, camtly, cambrx, cambry)
 			hitx, hity = hitx + vx * margin, hity + vy * margin
 			local endx, endy = hitx + vx * length, hity + vy * length
-			love.graphics.line(hitx, hity, endx, endy)
+			local pvx, pvy = vector.perpendicular(vx, vy)
+			pvx, pvy = pvx * width, pvy * width
+			local endx1, endy1 = endx + pvx, endy + pvy
+			local endx2, endy2 = endx - pvx, endy - pvy
+			love.graphics.polygon("fill", hitx, hity, endx1, endy1, endx2, endy2)
 		end
 	end
 
