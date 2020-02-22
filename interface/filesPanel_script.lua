@@ -1,7 +1,6 @@
 
 local script = {}
 
-local fnt = require "theme.fonts"
 local FileWidget = require "theme.widgets.files.File"
 local FolderWidget = require "theme.widgets.files.Folder"
 local activeData = require "activeData"
@@ -47,7 +46,7 @@ local function toggleFolder(self)
 		self.isLoaded = true
 		local colIdx = self.parent:getChildIndex(self)
 		local files = love.filesystem.getDirectoryItems(self.filepath)
-		self.filesPanel:call("addFiles", self.filepath .. "/", files, self.indentLevel + 1, colIdx)
+		self.filesPanel:call("addFiles", files, self.filepath .. "/", self.indentLevel + 1, colIdx)
 
 		-- Convert file name list to a list of the corresponding widget objects, and store it.
 		local basePath = self.parent.path .. "/" .. self.filepath .. "/"
@@ -118,8 +117,9 @@ local function sortFoldersFirst(files, basePath)
 	end
 end
 
-function script.addFiles(self, basePath, files, indentLevel, columnIndex)
+function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 	shouldRedraw = true
+	basePath = basePath or "project/"
 	indentLevel = indentLevel or 0
 	sortFoldersFirst(files, basePath)
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
@@ -149,20 +149,11 @@ function script.addFiles(self, basePath, files, indentLevel, columnIndex)
 	self:call("reMapWidgets")
 end
 
-function script.folderDropped(self, path)
-	if self.projectPath then
-		love.filesystem.unmount(self.projectPath)
-		self:call("clearContents")
-	end
-	self.projectPath = path
-	love.filesystem.mount(self.projectPath, "project")
-	local files = love.filesystem.getDirectoryItems("project")
-	self:call("addFiles", "project/", files)
-end
-
-function love.directorydropped(path)
-	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
-	filesPanel:call("folderDropped", path)
+function script.setFolder(self, folderPath)
+	self.basePath = folderPath .. "/"
+	self:call("clearContents")
+	local files = love.filesystem.getDirectoryItems(folderPath)
+	self:call("addFiles", files, self.basePath)
 end
 
 return script

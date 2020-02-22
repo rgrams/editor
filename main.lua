@@ -78,3 +78,7 @@ function love.mousemoved(x, y, dx, dy, istouch)
 	end
 	inputStack.mouseMoved(x, y, dx, dy)
 end
+
+function love.directorydropped(path)
+	root:call("folderDropped", path)
+end
