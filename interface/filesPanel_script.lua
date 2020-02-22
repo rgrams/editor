@@ -122,8 +122,7 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 	basePath = basePath or "project/"
 	indentLevel = indentLevel or 0
 	sortFoldersFirst(files, basePath)
-	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
-	local contentsColumn = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files/contents")
+	local contentsColumn = self.contents
 
 	-- Expand contents Column to fit new files & update its transform stuff.
 	contentsColumn.h = contentsColumn.h + #files * 24
@@ -142,11 +141,11 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 		else
 			wgt = FileWidget(fileName, path, indentLevel)
 		end
-		wgt.filesPanel = filesPanel
+		wgt.filesPanel = self
 		scene:add(wgt, contentsColumn) -- Get added to the SceneTree at the center of the contentsColumn.
 		contentsColumn:add(wgt, nil, nil, columnIndex) -- Get their parentOffset set, W/H possibly changed.
 		wgt:updateTransform() -- May also do this during `parentResized` if their W or H has changed...
-		filesPanel:setMaskOnChildren()
+		self:setMaskOnChildren()
 
 		self.ruu:makeButton(wgt, true, fileBtnReleased, "FileWidget")
 	end
