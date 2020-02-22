@@ -201,6 +201,7 @@ function script.input(self, name, value, change)
 		local enclosureList = self.selection:getEnclosureList()
 		if #enclosureList > 0 then
 			self.cmd:perform("removeAllSelected", self.selection)
+			updateCursorCollision(self, love.mouse.getPosition())
 		end
 	elseif name == "rename" and change == 1 then
 		print("TEST")
@@ -213,10 +214,12 @@ function script.input(self, name, value, change)
 	elseif name == "cut" and change == 1 then
 		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
 			self.cmd:perform("cutSelection", self.selection)
+			updateCursorCollision(self, love.mouse.getPosition())
 		end
 	elseif name == "paste" and change == 1 then
 		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
 			self.cmd:perform("pasteOntoSelection", self.selection)
+			updateCursorCollision(self, love.mouse.getPosition())
 		end
 	elseif name == "save" and change == 1 then
 		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
