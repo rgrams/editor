@@ -174,7 +174,7 @@ function Panel.init(self)
 	self.panelIndex = 1
 	local draw = self.draw
 	self.draw = function(self)
-		-- draw(self)
+		if draw then  draw(self)  end
 		if self.isFocused then
 			local w, h = self.w, self.h
 			love.graphics.setColor(1, 1, 1, 1/self.panelIndex)

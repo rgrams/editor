@@ -12,7 +12,7 @@ local function doubleClickUpdate(self, dt)
 	end
 end
 
-local function new(text, path, indent)
+local function new(text, path, indent, isPopup)
 	local indentPos = indent * SETTINGS.filesIndentSize
 	local self = mod(gui.Slice(tex.Panel, nil, {2}, 0, 0, 0, 100, 24, -1, 0, -1, 0, {"fill", "none"}), {
 		filepath = path,
@@ -22,11 +22,11 @@ local function new(text, path, indent)
 		isOpen = false,
 		color = {0.75, 0.75, 0.75, 0.5},
 		name = path,
-		layer = "widgets",
+		layer = isPopup and "popupWidgets" or "widgets",
 		children = {
 			mod(gui.Text(text, fnt.files, 14 + indentPos, -1, 0, 4000, -1, 0, -1, 0, "left", "none"), {
 				name = "label",
-				layer = "text"
+				layer = isPopup and "popupText" or "text"
 			}),
 			gui.Sprite(tex.FolderArrow, 7+indentPos, 0, -math.pi/2, 1, 1, nil, 0, 0, -1, 0)
 		}

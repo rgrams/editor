@@ -22,14 +22,14 @@ function script.clear(self)
 	end
 end
 
-local function setContentsVisible(self, visible)
+local function setContentsVisible(self, visible, ruu)
 	for i,obj in ipairs(self.containedObjects) do
 		obj:setVisible(visible)
-		self.ruu:setWidgetEnabled(obj, visible)
+		ruu:setWidgetEnabled(obj, visible)
 		obj.originalH = visible and 24 or 0
 		if obj.containedObjects then
 			if (not visible) or (visible and obj.isOpen) then
-				setContentsVisible(obj, visible)
+				setContentsVisible(obj, visible, ruu)
 			end
 		end
 	end
@@ -56,10 +56,10 @@ local function toggleFolder(self)
 		end
 		self.containedObjects = files
 	elseif self.isOpen then -- Folder opened, show its contents.
-		setContentsVisible(self, true)
+		setContentsVisible(self, true, self.ruu)
 		self.filesPanel:call("reMapWidgets")
 	else
-		setContentsVisible(self, false)
+		setContentsVisible(self, false, self.ruu)
 		self.filesPanel:call("reMapWidgets")
 	end
 end
@@ -145,9 +145,10 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 		if columnIndex then  columnIndex = columnIndex + 1  end -- Don't bother unless we're starting in the middle.
 		local wgt
 		if info.type == "directory" then
-			wgt = FolderWidget(fileName, path, indentLevel)
+			wgt = FolderWidget(fileName, path, indentLevel, self.isPopup)
+			wgt.ruu = self.ruu -- Needs for show/hide contents.
 		else
-			wgt = FileWidget(fileName, path, indentLevel)
+			wgt = FileWidget(fileName, path, indentLevel, self.isPopup)
 		end
 		wgt.filesPanel = self
 		scene:add(wgt, contentsColumn) -- Get added to the SceneTree at the center of the contentsColumn.
@@ -187,7 +188,9 @@ function script.setFolder(self, folderPath)
 	self:call("clear")
 	local files = love.filesystem.getDirectoryItems(folderPath)
 	self:call("addFiles", files, self.basePath)
-	self.ruu:setFocus(self.contents.startChildren[1].obj)
+	local firstFileWidget = self.contents.startChildren[1]
+	firstFileWidget = firstFileWidget and firstFileWidget.obj
+	if firstFileWidget then  self.ruu:setFocus(firstFileWidget)  end -- Folder could be empty.
 end
 
 return script

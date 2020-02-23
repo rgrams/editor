@@ -19,7 +19,7 @@ function script.close(self, itemText)
 end
 
 function script.init(self)
-	inputStack.add(self, "top", false)
+	inputStack.add(self, "top")
 	self.ruu = RUU(theme)
 	local ruu = self.ruu
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }

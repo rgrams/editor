@@ -52,7 +52,7 @@ function love.draw()
 	end
 	scene:draw("viewportOverlay")
 	Camera.current:resetTransform()
-	-- scene:callRecursive("debugDraw", "gui debug")
+	scene:callRecursive("debugDraw", "gui debug")
 	scene:draw("gui")
 	scene.draw_order:clear("gui debug")
 end
