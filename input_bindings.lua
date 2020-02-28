@@ -17,8 +17,8 @@ local bindings = {
 	{ "button", "m:4", "back" },
 	{ "button", "m:5", "forward" },
 
-	{ "axis", "m:wheelx-", "m:wheelx+", "scroll x" },
-	{ "axis", "m:wheely-", "m:wheely+", "scroll y" },
+	{ "axis", "m:wheelx-", "m:wheelx+", "scrollx" },
+	{ "axis", "m:wheely-", "m:wheely+", "scrolly" },
 
 	{ "button", "ctrl k:z", "undo" },
 	{ "button", "ctrl shift k:z", "redo" },

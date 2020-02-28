@@ -478,12 +478,12 @@ local callbacks = {
 	end,
 	wheelmoved = function(x, y)
 		if x ~= 0 then
-			rawInput("mouse", "wheelx", sign(x), nil, x)
-			rawInput("mouse", "wheelx", 0, nil, x)
+			rawInput("mouse", "wheelx", sign(x), nil, nil, nil, x, 0) -- value, isRepeat, x, y, dx, dy
+			rawInput("mouse", "wheelx", 0, nil, nil, nil, x, 0)
 		end
 		if y ~= 0 then
-			rawInput("mouse", "wheely", sign(y), nil, nil, y)
-			rawInput("mouse", "wheely", 0, nil, nil, y)
+			rawInput("mouse", "wheely", sign(y), nil, nil, nil, 0, y)
+			rawInput("mouse", "wheely", 0, nil, nil, nil, 0, y)
 		end
 	end,
 	joystickpressed = function(joystick, button)

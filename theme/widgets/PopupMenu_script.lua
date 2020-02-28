@@ -2,6 +2,7 @@
 local script = {}
 
 local RUU = require "ruu.ruu"
+local ruuInputHandler = require "lib.ruuInputHandler"
 local theme = require "theme.theme"
 
 local function buttonFunc(self)
@@ -20,6 +21,7 @@ end
 function script.init(self)
 	Input.enable(self, "top")
 	self.ruu = RUU(theme)
+	self.ruuInput = ruuInputHandler(self.ruu)
 	local ruu = self.ruu
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }
 	ruu:registerLayers(layers)
@@ -38,35 +40,13 @@ function script.init(self)
 	ruu:mouseMoved(mx, my, 0, 0)
 end
 
-function script.mouseMoved(self, x, y, dx, dy)
-	self.ruu:mouseMoved(x, y, dx, dy)
-	return true -- consume all input
-end
-
-local dirs = { up = "up", down = "down", left = "left", right = "right" }
-
-function script.input(self, name, value, change, isRepeat, x, y, dx, dy)
-	if name == "mouseMoved" then
-		script.mouseMoved(self, x, y, dx, dy)
-	elseif name == "left click" then
-		self.ruu:input("click", nil, change)
-		-- Close menu if nothing is clicked on?
-	elseif name == "enter" then
-		self.ruu:input("enter", nil, change)
-	elseif dirs[name] then
-		self.ruu:input("direction", dirs[name], change)
-	elseif name == "scroll x" then
-		self.ruu:input("scroll x", nil, value)
-	elseif name == "scroll y" then
-		self.ruu:input("scroll y", nil, value)
-	elseif name == "text" then
-		self.ruu:input("text", nil, value)
-	elseif name == "backspace" and value == 1 then
-		self.ruu:input("backspace")
-	elseif name == "cancel" and change == 1 then
+function script.input(self, action, value, change, isRepeat, x, y, dx, dy)
+	if action == "cancel" and change == 1 then
 		self:call("close")
+	else
+		self.ruuInput:input(action, value, change, isRepeat, x, y, dx, dy)
 	end
-	return true -- consume all input
+	return true
 end
 
 return script

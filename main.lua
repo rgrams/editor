@@ -67,7 +67,7 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.resize(w, h)
-	root:parentResized(designW, designH, w, h, 1)
+	root:call("parentResized", designW, designH, w, h, 1)
 	shouldRedraw = true
 end
 
