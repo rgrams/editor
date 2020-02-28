@@ -64,7 +64,7 @@ local function drawObjectsParentLines(objects, scale)
 end
 
 function script.draw(self)
-	local viewport = scene:get("/root/mainColumn/mainRow/viewport")
+	local viewport = scene:get("/root/mainColumn/mainRow/editScenePanel/viewport")
 	local hoveredObj = viewport.hoveredObj
 	local selection = viewport.selection
 	local latest = selection.history[#selection.history]

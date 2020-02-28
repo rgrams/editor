@@ -4,10 +4,7 @@ local ListPanel = require "theme.widgets.ListPanel"
 local ResizeHandle = require "theme.widgets.ResizeHandle"
 
 local interfaceRoot = require "interface.interfaceRoot_script"
-local fileHandler = require "interface.fileHandler_script"
-local globalShortcuts = require "interface.globalShortcutHandler_script"
-local ruuInput = require "interface.ruuInputHandler_script"
-local filesInputPasser = require "interface.filesPanelInputPasser_script"
+local editScenePanel = require "interface.editScenePanel_script"
 local screencastInput = require "interface.screencastInput_script"
 local viewport = require "viewport.viewport"
 local viewport_background = require "viewport.viewport_background"
@@ -16,34 +13,33 @@ local propertiesPanel = require "interface.propertiesPanel_script"
 local filesPanel = require "interface.filesPanel_script"
 
 local function new(w, h)
-	local mainColumnChildren = {{1, "start"},{2, "start", true},{3, "end"}}
-	local mainRowChildren = mainColumnChildren
-
-	local rootScripts = { interfaceRoot, fileHandler, globalShortcuts, ruuInput, filesInputPasser }
-
 	-- Screen offset node.
-	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = rootScripts, children = {
-		mod(gui.Node(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill"), {name = "overlay", layer = "gui overlay", script = {screencastInput}}), -- Screencast keys on the overlay layer.
+	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = {interfaceRoot}, children = {
+		-- Key Screencaster - on the "gui overlay" layer.
+		mod(gui.Node(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill"), {name = "overlay", layer = "gui overlay", script = {screencastInput}}),
 		-- Main Column
-		mod(gui.Column(0, false, mainColumnChildren, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
+		mod(gui.Column(0, false, {{1},{2,nil,true},{3,"end"}}, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
 			-- Menu Bar
 			mod(gui.Row(1, false, nil, 0, 0, 0, w, 24, 0, 0, 0, 0, {"fill", "none"}), {name = "menuBar", children = {
 				mod(Panel(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill", "panel"), {layer = "panel backgrounds"})
 			}}),
 			-- Main Row
-			mod(gui.Row(0, false, mainRowChildren, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "mainRow", children = {
+			mod(gui.Row(0, false, {{1},{2,nil,true}}, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "mainRow", children = {
 				-- Left Panel
 				mod(gui.Row(nil, nil, {{1,"start",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "leftPanel", children = {
 					ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Files", nil, filesPanel),
 					ResizeHandle(0, 0, 0, 6, 10, 1, 0, 1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/leftPanel", -1, 7)
 				}}),
-				-- Viewport
-				mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "viewport", script = {viewport}}),
-				-- Right Panel
-				mod(gui.Row(nil, nil, {{1,"end",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "rightPanel", children = {
-					ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Properties", nil, propertiesPanel),
-					ResizeHandle(0, 0, 0, 6, 10, -1, 0, -1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/rightPanel", 1, 7)
-				}})
+				-- EditScene Panel
+				mod(gui.Row(0, false, {{1,nil,true},{2}}, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "editScenePanel", script = {editScenePanel}, children = {
+					-- Viewport
+					mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "viewport", script = {viewport}}),
+					-- Right Panel
+					mod(gui.Row(nil, nil, {{1,"end",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "rightPanel", children = {
+						ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Properties", nil, propertiesPanel),
+						ResizeHandle(0, 0, 0, 6, 10, -1, 0, -1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/editScenePanel/rightPanel", 1, 7)
+					}})
+				}}),
 			}}),
 			-- Status Bar
 			mod(gui.Row(1, false, nil, 0, 0, 0, w, 24, 0, 0, 0, 0, {"fill", "none"}), {name = "statusBar", children = {

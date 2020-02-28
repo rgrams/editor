@@ -190,9 +190,19 @@ local function addMenuClosed(className, self, wx, wy)
 	updateCursorCollision(self, love.mouse.getPosition())
 end
 
-function script.input(self, name, value, change, isRepeat, x, y, dx, dy, isTouch, presses)
+function script.ruuinput(self, name, value, change, isRepeat, x, y, dx, dy, isTouch, presses)
 	if name == "mouseMoved" then
 		mouseMoved(self, x, y, dx, dy)
+	elseif name == "pan" then
+		local ruu = activeData.ruu
+		if change == 1 then
+			local widget = ruu:focusAtCursor()
+			if widget then
+				ruu:startDrag(widget, "pan")
+			end
+		elseif change == -1 then
+			ruu:stopDrag("type", "pan")
+		end
 	elseif name == "add object" and change == 1 then
 		local sx, sy = love.mouse.getPosition()
 		local wx, wy = Camera.current:screenToWorld(sx, sy)
@@ -222,10 +232,10 @@ function script.input(self, name, value, change, isRepeat, x, y, dx, dy, isTouch
 		local root = scene:get("/root")
 		scene:add(dialog, root)
 
-		local enclosure = next(self.selection._)
-		if enclosure then
-			local str = encoder.encode(enclosure[1])
-		end
+		-- local enclosure = next(self.selection._)
+		-- if enclosure then
+			-- local str = encoder.encode(enclosure[1])
+		-- end
 	end
 end
 

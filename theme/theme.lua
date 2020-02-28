@@ -218,7 +218,8 @@ function Panel.init(self)
 		if draw then  draw(self)  end
 		if self.isFocused then
 			local w, h = self.w, self.h
-			love.graphics.setColor(1, 1, 1, 1/self.panelIndex)
+			local k = 1/self.panelIndex + 0.2
+			love.graphics.setColor(1, 1, (1+k)/2, k)
 			love.graphics.rectangle("line", -w/2, -h/2, w, h)
 		end
 	end

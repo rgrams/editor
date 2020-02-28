@@ -30,7 +30,7 @@ local function wrapMouse(self, x, y, dx, dy)
 end
 
 local hoverActions = {
-	scrollx = 1, scrolly = 1
+	pan = 1, scrollx = 1, scrolly = 1
 }
 -- Anything not a hover action is assumed to be a focus action.
 
@@ -40,7 +40,7 @@ local function input(self, action, value, change, isRepeat, x, y, dx, dy)
 		self.ruu:mouseMoved(x, y, dx, dy)
 	else
 		local actionType = hoverActions[action] and "hover" or "focus"
-		self.ruu:input(actionType, action, value, change, isRepeat, x, y, dx, dy)
+		return self.ruu:input(actionType, action, value, change, isRepeat, x, y, dx, dy)
 	end
 end
 

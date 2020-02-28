@@ -7,7 +7,8 @@ local objProp = require "object.object-properties"
 
 function script.init(self)
 	activeData.propertiesPanel = self
-	self.contents = scene:get(self.path .. "/contents")
+	self.contents = scene:get(self.path .. "/Column/Mask/contents")
+	self.scrollArea = scene:get(self.path .. "/Column/Mask")
 	self.isCleared = true
 	self.ruu = activeData.ruu
 end
@@ -105,18 +106,18 @@ function script.updateSelection(self)
 		local key, subKey, value = unpack(propData)
 
 		-- Make a PropertyWidget for each property and add it to the "contents" column.
-		local nodeName = subKey and (key .. "." .. subKey) or key
-		local node = PropertyWidget(nodeName, tostring(value))
-		self.contents.h = self.contents.h + node.h
+		local propName = subKey and (key .. "." .. subKey) or key
+		local superWidget = PropertyWidget(propName, tostring(value))
+		self.contents.h = self.contents.h + superWidget.h
 		self.contents:_updateInnerSize()
-		scene:add(node, self.contents)
-		self.contents:add(node)
+		scene:add(superWidget, self.contents)
+		self.contents:add(superWidget)
 
 		-- Make the Ruu widget.
-		local inputFld = scene:get(node.path .. "/Row/input")
-		local inputTxt = scene:get(node.path .. "/Row/input/text")
+		local inputFld = scene:get(superWidget.path .. "/Row/input")
+		local inputTxt = scene:get(superWidget.path .. "/Row/input/text")
 		self.ruu:makeInputField(inputFld, inputTxt, true, nil, propWidgetConfirmFunc)
-		node.ruuWidget = inputFld
+		superWidget.ruuWidget = inputFld
 		inputFld._propKey, inputFld._propSubKey = key, subKey
 		table.insert(widgetMap, inputFld)
 	end
@@ -124,7 +125,7 @@ function script.updateSelection(self)
 	if self.oldFocusedPath then
 		self.ruu:setFocus(scene:get(self.oldFocusedPath))
 	end
-	self:setMaskOnChildren()
+	self.scrollArea:setMaskOnChildren()
 	self.isCleared = false
 end
 

@@ -6,7 +6,8 @@ local FolderWidget = require "theme.widgets.files.Folder"
 local activeData = require "activeData"
 
 function script.init(self)
-	self.contents = scene:get(self.path .. "/contents")
+	self.contents = scene:get(self.path .. "/Column/Mask/contents")
+	self.scrollArea = scene:get(self.path .. "/Column/Mask")
 end
 
 function script.clear(self)
@@ -154,7 +155,7 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 		scene:add(wgt, contentsColumn) -- Get added to the SceneTree at the center of the contentsColumn.
 		contentsColumn:add(wgt, nil, nil, columnIndex) -- Get their parentOffset set, W/H possibly changed.
 		wgt:updateTransform() -- May also do this during `parentResized` if their W or H has changed...
-		self:setMaskOnChildren()
+		self.scrollArea:setMaskOnChildren()
 
 		self.ruu:makeButton(wgt, true, fileBtnReleased, "FileWidget")
 	end
@@ -170,7 +171,7 @@ function script.goUp(self)
 	if parentPath then  self:call("setFolder", parentPath)  end
 end
 
-function script.input(self, name, value, change)
+function script.ruuinput(self, name, value, change)
 	-- backspace for goUp, alt-up for goUp
 	if change == 1 then
 		if name == "backspace" or name == "back" then

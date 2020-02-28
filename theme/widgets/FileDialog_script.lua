@@ -52,7 +52,7 @@ end
 
 function script.input(self, action, value, change, isRepeat, x, y, dx, dy)
 	if action == "cancel" and change == 1 then
-		cancel(self)
+		self:call("close")
 	else
 		self.ruuInput:input(action, value, change, isRepeat, x, y, dx, dy)
 	end

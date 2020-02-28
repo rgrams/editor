@@ -5,10 +5,7 @@ local script = {}
 
 local activeData = require "activeData"
 
-function script.init(self)
-end
-
-function script.input(self, name, value, change)
+function script.ruuinput(self, name, value, change)
 	if name == "redo" and value == 1 then
 		local redoCommand, args = activeData.commands:redo()
 		print("Redo: " .. tostring(redoCommand))
