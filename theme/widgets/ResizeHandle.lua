@@ -8,8 +8,8 @@ local function drag(self, dx, dy, isLocal)
 		if not self.target then
 			return
 		end
-		if self.target.originalW then
-			self.target.originalW = math.max(self.minSize, self.target.originalW - dx * self.dir)
+		if self.target.designW then
+			self.target.designW = math.max(self.minSize, self.target.designW - dx * self.dir)
 			self.target.parent:refresh()
 		end
 	end

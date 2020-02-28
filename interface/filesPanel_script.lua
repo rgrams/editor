@@ -26,7 +26,7 @@ local function setContentsVisible(self, visible, ruu)
 	for i,obj in ipairs(self.containedObjects) do
 		obj:setVisible(visible)
 		ruu:setWidgetEnabled(obj, visible)
-		obj.originalH = visible and 24 or 0
+		obj.designH = visible and 24 or 0
 		if obj.containedObjects then
 			if (not visible) or (visible and obj.isOpen) then
 				setContentsVisible(obj, visible, ruu)
