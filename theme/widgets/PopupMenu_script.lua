@@ -20,7 +20,7 @@ end
 
 function script.init(self)
 	Input.enable(self, "top")
-	self.ruu = RUU(theme)
+	self.ruu = RUU(Input.get, theme)
 	self.ruuInput = ruuInputHandler(self.ruu)
 	local ruu = self.ruu
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }

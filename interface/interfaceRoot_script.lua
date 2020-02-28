@@ -14,7 +14,7 @@ function script.init(self)
 	love.keyboard.setKeyRepeat(true)
 	Input.enable(self)
 
-	local ruu = RUU(theme)
+	local ruu = RUU(Input.get, theme)
 	self.ruu, activeData.ruu = ruu, ruu
 	self.ruuInput = ruuInputHandler(ruu)
 
