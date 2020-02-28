@@ -10,7 +10,6 @@ local ruuInput = require "interface.ruuInputHandler_script"
 local filesInputPasser = require "interface.filesPanelInputPasser_script"
 local screencastInput = require "interface.screencastInput_script"
 local viewport = require "viewport.viewport"
-local input_getter = require "input_getter"
 local viewport_background = require "viewport.viewport_background"
 local viewport_overlay = require "viewport.viewport_overlay"
 local propertiesPanel = require "interface.propertiesPanel_script"
@@ -62,8 +61,7 @@ local function new(w, h)
 		name = "viewportOverlay", layer = "viewportOverlay",
 		script = { viewport_overlay }
 	})
-	local inputGetter = mod(Object(), {name = "input getter", script = input_getter})
-	return {root, viewportCamera, viewportBackground, viewportOverlay, inputGetter}
+	return {root, viewportCamera, viewportBackground, viewportOverlay}
 end
 
 return new

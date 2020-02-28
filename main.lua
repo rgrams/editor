@@ -7,7 +7,8 @@ gui = require "philtre.gui.all"
 SETTINGS = require "settings"
 PRIVATE_KEY = {}
 NIL = {}
-local inputStack = require "lib.input-stack"
+
+Input = require "lib.input.input"
 
 local Root = require "root"
 local root
@@ -27,7 +28,7 @@ function love.load()
 	io.stdout:setvbuf("no")
 
 	Input.init()
-	Input.bind(require("input_bindings"))
+	Input.bindMultiple(require("input_bindings"))
 	love.graphics.setBackgroundColor(SETTINGS.viewportBackgroundColor)
 	love.graphics.setFont(new.font("theme/font/OpenSans-Regular.ttf", 12))
 	scene = SceneTree(drawLayers, defaultLayer)
@@ -78,7 +79,6 @@ function love.mousemoved(x, y, dx, dy, istouch)
 	if love.window.hasFocus() then
 		shouldRedraw = true
 	end
-	inputStack.mouseMoved(x, y, dx, dy)
 end
 
 function love.directorydropped(path)

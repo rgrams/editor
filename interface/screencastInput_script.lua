@@ -47,7 +47,7 @@ local conversions = {
 local function rawInput(self, device, input, value, isRepeat)
 	if isRepeat then  return  end
 	if device ~= "mouse" and device ~= "key" then  return  end -- Ignore scancodes, joysticks, etc.
-	if input == "wheel y" or input == "wheel x" then  value = WHEEL -- Wheel is a special case - no release events.
+	if input == "wheely" or input == "wheelx" then  value = WHEEL -- Wheel is a special case - no release events.
 	elseif conversions[input] then  input = conversions[input]  end
 
 	local curVal = self.pressCount[device][input]
@@ -84,7 +84,7 @@ end
 
 function script.init(self)
 	self.input = rawInput
-	Input.enable(self, true)
+	Input.enableRaw(self)
 	self.keyList = {}
 	self.pressCount = { mouse = {}, key = {} }
 	self.keyFont = new.font(unpack(fnt.keyCast))

@@ -1,49 +1,48 @@
 
--- {name, type, device, input}
 local bindings = {
-	{ "quit", "button", "scancode", "`" },
-	{ "pause", "button", "key", "rshift" },
+	{ "button", "`", "quit" },
+	{ "button", "escape", "cancel" },
 
-	{ "up", "button", "scancode", "up" },
-	{ "down", "button", "scancode", "down" },
-	{ "left", "button", "scancode", "left" },
-	{ "right", "button", "scancode", "right" },
+	{ "mouseMoved", "mouseMoved" },
 
-	{ "next", "button", "key", "tab" },
+	{ "button", "m:1", "left click" },
+	{ "button", "enter", "enter" },
+	{ "button", "up", "up" },
+	{ "button", "down", "down" },
+	{ "button", "left", "left" },
+	{ "button", "right", "right" },
+	{ "button", "tab", "next" },
+	{ "button", "shift tab", "prev" },
 
-	{ "back", "button", "mouse", 4 },
+	{ "button", "m:4", "back" },
+	{ "button", "m:5", "forward" },
 
-	{ "scroll x", "axis", "mouse", "wheel x" },
-	{ "scroll y", "axis", "mouse", "wheel y" },
+	{ "axis", "m:wheelx-", "m:wheelx+", "scroll x" },
+	{ "axis", "m:wheely-", "m:wheely+", "scroll y" },
 
-	{ "lshift", "button", "scancode", "lshift" },
-	{ "rshift", "button", "scancode", "rshift" },
-	{ "lctrl", "button", "scancode", "lctrl" },
-	{ "rctrl", "button", "scancode", "rctrl" },
-	{ "lalt", "button", "scancode", "lalt" },
-	{ "ralt", "button", "scancode", "ralt" },
+	{ "button", "ctrl k:z", "undo" },
+	{ "button", "ctrl shift k:z", "redo" },
+	{ "button", "ctrl k:x", "cut" },
+	{ "button", "ctrl k:c", "copy" },
+	{ "button", "ctrl k:v", "paste" },
+	{ "button", "ctrl k:s", "save" },
+	{ "button", "ctrl k:o", "open" },
 
-	{ "undo/redo", "button", "key", "z" },
-	{ "copy", "button", "key", "c" },
-	{ "cut", "button", "key", "x" },
-	{ "paste", "button", "key", "v" },
+	{ "text", "text" },
+	{ "button", "backspace", "backspace" },
+	{ "button", "delete", "delete" },
 
-	{ "save", "button", "key", "s" },
-	{ "rename", "button", "scancode", "f2" },
-	{ "text", "text", "text", "text" },
-	{ "backspace", "button", "scancode", "backspace" },
-	{ "delete", "button", "scancode", "delete" },
-	{ "confirm", "button", "scancode", "return" },
-	{ "cancel", "button", "scancode", "escape" },
+	{ "button", "shift a", "add object" },
+	{ "button", "delete", "remove object" },
 
-	{ "add object", "button", "scancode", "a" },
-	{ "remove object", "button", "scancode", "delete" },
-	{ "reparent", "button", "scancode", "r" },
+	{ "button", "m:3", "pan" },
+	{ "axis", "m:wheely-", "m:wheely+", "zoom" },
 
-	{ "left click", "button", "mouse", 1 },
-	{ "snap", "button", "scancode", "lshift" },
-	{ "zoom", "axis", "mouse", "wheel y" },
-	{ "pan", "button", "mouse", 3 },
+	{ "button", "ctrl", "shift" },
+	{ "button", "shift", "shift" },
+	{ "button", "alt", "shift" },
+
+	{ "button", "f2", "test" },
 }
 
 return bindings

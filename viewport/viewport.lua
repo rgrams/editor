@@ -89,7 +89,7 @@ local function press(self, mx, my, isKeyboard)
 
 	updateCursorCollision(self, mx, my)
 	if self.hoveredObj then
-		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
+		if Input.get("shift") == 1 then
 			self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
 		elseif not self.selection._[self.hoveredObj[PRIVATE_KEY]] then
 			self.cmd:perform("setSelectionTo", self.selection, self.hoveredObj[PRIVATE_KEY])
@@ -190,49 +190,41 @@ local function addMenuClosed(className, self, wx, wy)
 	updateCursorCollision(self, love.mouse.getPosition())
 end
 
-function script.input(self, name, value, change)
-	if name == "add object" and change == 1 then
-		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-			local sx, sy = love.mouse.getPosition()
-			local wx, wy = Camera.current:screenToWorld(sx, sy)
-			local lx, ly = self:toLocal(sx, sy)
-			scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addMenuClosed, self, wx, wy), self)
-		end
+function script.input(self, name, value, change, isRepeat, x, y, dx, dy, isTouch, presses)
+	if name == "mouseMoved" then
+		mouseMoved(self, x, y, dx, dy)
+	elseif name == "add object" and change == 1 then
+		local sx, sy = love.mouse.getPosition()
+		local wx, wy = Camera.current:screenToWorld(sx, sy)
+		local lx, ly = self:toLocal(sx, sy)
+		scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addMenuClosed, self, wx, wy), self)
 	elseif name == "remove object" and change == 1 then
 		local enclosureList = self.selection:getEnclosureList()
 		if #enclosureList > 0 then
 			self.cmd:perform("removeAllSelected", self.selection)
 			updateCursorCollision(self, love.mouse.getPosition())
 		end
-	elseif name == "rename" and change == 1 then
+	elseif name == "test" and change == 1 then
 		print("TEST")
 		local enclosureList = self.selection:getEnclosureList()
 		self.cmd:perform("set", enclosureList, "pos", 0, "y")
 	elseif name == "copy" and change == 1 then
-		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
-			self.cmd:perform("copySelection", self.selection)
-		end
+		self.cmd:perform("copySelection", self.selection)
 	elseif name == "cut" and change == 1 then
-		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
-			self.cmd:perform("cutSelection", self.selection)
-			updateCursorCollision(self, love.mouse.getPosition())
-		end
+		self.cmd:perform("cutSelection", self.selection)
+		updateCursorCollision(self, love.mouse.getPosition())
 	elseif name == "paste" and change == 1 then
-		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
-			self.cmd:perform("pasteOntoSelection", self.selection)
-			updateCursorCollision(self, love.mouse.getPosition())
-		end
+		self.cmd:perform("pasteOntoSelection", self.selection)
+		updateCursorCollision(self, love.mouse.getPosition())
 	elseif name == "save" and change == 1 then
 		print("SAVE")
-		if Input.get("lctrl").value == 1 or Input.get("rctrl").value == 1 then
-			local dialog = FileDialog("project", "Save")
-			local root = scene:get("/root")
-			scene:add(dialog, root)
+		local dialog = FileDialog("project", "Save")
+		local root = scene:get("/root")
+		scene:add(dialog, root)
 
-			local enclosure = next(self.selection._)
-			if enclosure then
-				local str = encoder.encode(enclosure[1])
-			end
+		local enclosure = next(self.selection._)
+		if enclosure then
+			local str = encoder.encode(enclosure[1])
 		end
 	end
 end

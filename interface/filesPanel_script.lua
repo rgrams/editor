@@ -173,10 +173,10 @@ end
 function script.input(self, name, value, change)
 	-- backspace for goUp, alt-up for goUp
 	if change == 1 then
-		if name == "backspace" then
+		if name == "backspace" or name == "back" then
 			self:call("goUp")
 		elseif name == "up" then
-			if Input.get("lalt").value == 1 or Input.get("ralt").value == 1 then
+			if Input.get("alt") == 1 then
 				self:call("goUp")
 			end
 		end

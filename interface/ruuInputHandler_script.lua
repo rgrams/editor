@@ -4,59 +4,11 @@
 
 local script = {}
 
-local inputStack = require "lib.input-stack"
 local activeData = require "activeData"
 
 function script.init(self)
-	inputStack.add(self)
+	Input.enable(self)
 	self.ruu = activeData.ruu
-end
-
-local dirs = { up = "up", down = "down", left = "left", right = "right" }
-
-function script.input(self, name, value, change)
-	if name == "left click" then
-		self.ruu:input("click", nil, change)
-	elseif name == "pan" then
-		if change == 1 then
-			local widget = self.ruu:focusAtCursor()
-			if widget then
-				self.ruu:startDrag(widget, "pan")
-			end
-		elseif change == -1 then
-			self.ruu:stopDrag("type", "pan")
-		end
-	elseif name == "confirm" then
-		self.ruu:input("enter", nil, change)
-	elseif dirs[name] then
-		self.ruu:input("direction", dirs[name], value)
-	elseif name == "next" and value == 1 then
-		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
-			self.ruu:input("direction", "prev", value)
-		else
-			self.ruu:input("direction", "next", value)
-		end
-	elseif name == "scroll x" then
-		self.ruu:input("scroll x", nil, value)
-	elseif name == "scroll y" then
-		self.ruu:input("scroll y", nil, value)
-	elseif name == "text" then
-		self.ruu:input("text", nil, value)
-	elseif name == "backspace" and value == 1 then
-		self.ruu:input("backspace")
-	elseif name == "delete" and value == 1 then
-		self.ruu:input("delete")
-	elseif name == "back" and value == 1 then
-		local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
-		if filesPanel.isHovered then
-			filesPanel:call("goUp")
-		end
-	end
-
-	local basePanel = self.ruu.focusedPanels[1] or self.ruu.focusedWidget
-	if basePanel then
-		basePanel:call("input", name, value, change)
-	end
 end
 
 function script.mouseMoved(self, x, y, dx, dy)
@@ -84,6 +36,53 @@ function script.mouseMoved(self, x, y, dx, dy)
 		end
 	end
 	self.ruu:mouseMoved(x, y, dx, dy)
+end
+
+local dirs = { up = "up", down = "down", left = "left", right = "right" }
+
+function script.input(self, name, value, change, isRepeat, x, y, dx, dy)
+	if name == "mouseMoved" then
+		script.mouseMoved(self, x, y, dx, dy)
+	elseif name == "left click" then
+		self.ruu:input("click", nil, change)
+	elseif name == "pan" then
+		if change == 1 then
+			local widget = self.ruu:focusAtCursor()
+			if widget then
+				self.ruu:startDrag(widget, "pan")
+			end
+		elseif change == -1 then
+			self.ruu:stopDrag("type", "pan")
+		end
+	elseif name == "enter" then
+		self.ruu:input("enter", nil, change)
+	elseif dirs[name] then
+		self.ruu:input("direction", dirs[name], value)
+	elseif name == "next" and value == 1 then
+		self.ruu:input("direction", "prev", value)
+	elseif name == "prev" and value == 1 then
+		self.ruu:input("direction", "next", value)
+	elseif name == "scroll x" then
+		self.ruu:input("scroll x", nil, value)
+	elseif name == "scroll y" then
+		self.ruu:input("scroll y", nil, value)
+	elseif name == "text" then
+		self.ruu:input("text", nil, value)
+	elseif name == "backspace" and value == 1 then
+		self.ruu:input("backspace")
+	elseif name == "delete" and value == 1 then
+		self.ruu:input("delete")
+	elseif name == "back" and value == 1 then
+		local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
+		if filesPanel.isHovered then
+			filesPanel:call("goUp")
+		end
+	end
+
+	local basePanel = self.ruu.focusedPanels[1] or self.ruu.focusedWidget
+	if basePanel then
+		basePanel:call("input", name, value, change, isRepeat, x, y, dx, dy)
+	end
 end
 
 return script

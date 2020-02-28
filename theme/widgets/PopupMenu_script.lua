@@ -1,7 +1,6 @@
 
 local script = {}
 
-local inputStack = require "lib.input-stack"
 local RUU = require "ruu.ruu"
 local theme = require "theme.theme"
 
@@ -11,7 +10,7 @@ local function buttonFunc(self)
 end
 
 function script.close(self, itemText)
-	inputStack.remove(self)
+	Input.disable(self)
 	if self.callback then
 		self.callback(itemText, unpack(self.callbackArgs))
 	end
@@ -19,7 +18,7 @@ function script.close(self, itemText)
 end
 
 function script.init(self)
-	inputStack.add(self, "top")
+	Input.enable(self, "top")
 	self.ruu = RUU(theme)
 	local ruu = self.ruu
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }
@@ -39,13 +38,20 @@ function script.init(self)
 	ruu:mouseMoved(mx, my, 0, 0)
 end
 
+function script.mouseMoved(self, x, y, dx, dy)
+	self.ruu:mouseMoved(x, y, dx, dy)
+	return true -- consume all input
+end
+
 local dirs = { up = "up", down = "down", left = "left", right = "right" }
 
-function script.input(self, name, value, change)
-	if name == "left click" then
+function script.input(self, name, value, change, isRepeat, x, y, dx, dy)
+	if name == "mouseMoved" then
+		script.mouseMoved(self, x, y, dx, dy)
+	elseif name == "left click" then
 		self.ruu:input("click", nil, change)
 		-- Close menu if nothing is clicked on?
-	elseif name == "confirm" then
+	elseif name == "enter" then
 		self.ruu:input("enter", nil, change)
 	elseif dirs[name] then
 		self.ruu:input("direction", dirs[name], change)
@@ -60,11 +66,6 @@ function script.input(self, name, value, change)
 	elseif name == "cancel" and change == 1 then
 		self:call("close")
 	end
-	return true -- consume all input
-end
-
-function script.mouseMoved(self, x, y, dx, dy)
-	self.ruu:mouseMoved(x, y, dx, dy)
 	return true -- consume all input
 end
 

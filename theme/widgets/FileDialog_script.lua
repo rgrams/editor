@@ -1,7 +1,6 @@
 
 local script = {}
 
-local inputStack = require "lib.input-stack"
 local RUU = require "ruu.ruu"
 local theme = require "theme.theme"
 
@@ -14,7 +13,7 @@ local function cancel(self)
 end
 
 function script.init(self)
-	inputStack.add(self, "top", false)
+	Input.enable(self, "top")
 	self.ruu = RUU(theme)
 
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels" }
@@ -42,40 +41,11 @@ function script.init(self)
 end
 
 function script.close(self, itemText)
-	inputStack.remove(self)
+	Input.disable(self)
 	-- if self.callback then
 		-- self.callback(itemText, unpack(self.callbackArgs))
 	-- end
 	scene:remove(self)
-end
-
-local dirs = { up = "up", down = "down", left = "left", right = "right" }
-
-function script.input(self, name, value, change)
-	if name == "left click" then
-		self.ruu:input("click", nil, change)
-	elseif name == "confirm" then
-		self.ruu:input("enter", nil, change)
-	elseif dirs[name] then
-		self.ruu:input("direction", dirs[name], change)
-	elseif name == "scroll x" then
-		self.ruu:input("scroll x", nil, value)
-	elseif name == "scroll y" then
-		self.ruu:input("scroll y", nil, value)
-	elseif name == "text" then
-		self.ruu:input("text", nil, value)
-	elseif name == "backspace" and value == 1 then
-		self.ruu:input("backspace")
-	elseif name == "cancel" and change == 1 then
-		self:call("close")
-	end
-
-	local basePanel = self.filesBox --self.ruu.focusedPanels[1] or self.ruu.focusedWidget
-	if basePanel and basePanel ~= self then
-		basePanel:call("input", name, value, change)
-		self.basePathLabel.text = self.filesBox.basePath
-	end
-	return true -- Consume all input.
 end
 
 function script.mouseMoved(self, x, y, dx, dy)
@@ -103,6 +73,37 @@ function script.mouseMoved(self, x, y, dx, dy)
 		end
 	end
 	self.ruu:mouseMoved(x, y, dx, dy)
+	return true -- Consume all input.
+end
+
+local dirs = { up = "up", down = "down", left = "left", right = "right" }
+
+function script.input(self, name, value, change, isRepeat, x, y, dx, dy)
+	if name == "mouseMoved" then
+		script.mouseMoved(self, x, y, dx, dy)
+	elseif name == "left click" then
+		self.ruu:input("click", nil, change)
+	elseif name == "enter" then
+		self.ruu:input("enter", nil, change)
+	elseif dirs[name] then
+		self.ruu:input("direction", dirs[name], change)
+	elseif name == "scroll x" then
+		self.ruu:input("scroll x", nil, value)
+	elseif name == "scroll y" then
+		self.ruu:input("scroll y", nil, value)
+	elseif name == "text" then
+		self.ruu:input("text", nil, value)
+	elseif name == "backspace" and value == 1 then
+		self.ruu:input("backspace")
+	elseif name == "cancel" and change == 1 then
+		self:call("close")
+	end
+
+	local basePanel = self.filesBox --self.ruu.focusedPanels[1] or self.ruu.focusedWidget
+	if basePanel and basePanel ~= self then
+		basePanel:call("input", name, value, change)
+		self.basePathLabel.text = self.filesBox.basePath
+	end
 	return true -- Consume all input.
 end
 
