@@ -13,6 +13,8 @@ local bindings = {
 	{ "button", "right", "right" },
 	{ "button", "tab", "next" },
 	{ "button", "shift tab", "prev" },
+	{ "button", "home", "home" },
+	{ "button", "end", "end" },
 
 	{ "button", "m:4", "back" },
 	{ "button", "m:5", "forward" },
