@@ -29,7 +29,13 @@ function script.input(self, name, value, change)
 	elseif name == "confirm" then
 		self.ruu:input("enter", nil, change)
 	elseif dirs[name] then
-		self.ruu:input("direction", dirs[name], change)
+		self.ruu:input("direction", dirs[name], value)
+	elseif name == "next" and value == 1 then
+		if Input.get("lshift").value == 1 or Input.get("rshift").value == 1 then
+			self.ruu:input("direction", "prev", value)
+		else
+			self.ruu:input("direction", "next", value)
+		end
 	elseif name == "scroll x" then
 		self.ruu:input("scroll x", nil, value)
 	elseif name == "scroll y" then
@@ -38,6 +44,8 @@ function script.input(self, name, value, change)
 		self.ruu:input("text", nil, value)
 	elseif name == "backspace" and value == 1 then
 		self.ruu:input("backspace")
+	elseif name == "delete" and value == 1 then
+		self.ruu:input("delete")
 	elseif name == "back" and value == 1 then
 		local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/panel/Column/Files")
 		if filesPanel.isHovered then

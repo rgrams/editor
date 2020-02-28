@@ -2,13 +2,14 @@
 -- {name, type, device, input}
 local bindings = {
 	{ "quit", "button", "scancode", "`" },
-	{ "reset", "button", "scancode", "delete" },
 	{ "pause", "button", "key", "rshift" },
 
 	{ "up", "button", "scancode", "up" },
 	{ "down", "button", "scancode", "down" },
 	{ "left", "button", "scancode", "left" },
 	{ "right", "button", "scancode", "right" },
+
+	{ "next", "button", "key", "tab" },
 
 	{ "back", "button", "mouse", 4 },
 
@@ -31,6 +32,7 @@ local bindings = {
 	{ "rename", "button", "scancode", "f2" },
 	{ "text", "text", "text", "text" },
 	{ "backspace", "button", "scancode", "backspace" },
+	{ "delete", "button", "scancode", "delete" },
 	{ "confirm", "button", "scancode", "return" },
 	{ "cancel", "button", "scancode", "escape" },
 

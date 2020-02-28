@@ -118,9 +118,9 @@ function script.updateSelection(self)
 		self.ruu:makeInputField(inputFld, inputTxt, true, nil, propWidgetConfirmFunc)
 		node.ruuWidget = inputFld
 		inputFld._propKey, inputFld._propSubKey = key, subKey
-		table.insert(widgetMap, {inputFld})
+		table.insert(widgetMap, inputFld)
 	end
-	self.ruu:mapNeighbors(widgetMap)
+	self.ruu:mapNextPrev(widgetMap)
 	if self.oldFocusedPath then
 		self.ruu:setFocus(scene:get(self.oldFocusedPath))
 	end
