@@ -24,6 +24,8 @@ local drawLayers = {
 local defaultLayer = "panels"
 
 function love.load()
+	io.stdout:setvbuf("no")
+
 	Input.init()
 	Input.bind(require("input_bindings"))
 	love.graphics.setBackgroundColor(SETTINGS.viewportBackgroundColor)
