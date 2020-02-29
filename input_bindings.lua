@@ -16,6 +16,8 @@ local bindings = {
 	{ "button", "home", "home" },
 	{ "button", "end", "end" },
 
+	{ "button", "ctrl a", "select all" },
+
 	{ "button", "m:4", "back" },
 	{ "button", "m:5", "forward" },
 

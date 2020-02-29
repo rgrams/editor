@@ -172,16 +172,16 @@ function InputField.init(self)
 			love.graphics.setColor(1, 1, 1, 1)
 			love.graphics.rectangle("line", -w/2, -h/2, w, h, 4, 4, 3)
 
-			local left, top = -w/2 + self.padX, -h/2 + self.padY
+			local top = -h/2 + self.padY
 
 			if self.selection.i1 and self.selection.i2 then
 				love.graphics.setColor(0, 0.4, 1, 0.7)
 				local x1, x2 = self.selection.x1, self.selection.x2
-				love.graphics.rectangle("fill", left + x1, top - 1, x2 - x1, self.innerH + 2)
+				love.graphics.rectangle("fill", x1, top - 1, x2 - x1, self.innerH + 2)
 			end
 
 			love.graphics.setColor(1, 1, 1, 1)
-			love.graphics.rectangle("fill", left + self.cursorX - 1, top, 1, self.innerH)
+			love.graphics.rectangle("fill", self.cursorX - 1, top, 1, self.innerH)
 		end
 	end
 end

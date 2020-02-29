@@ -115,8 +115,11 @@ function script.updateSelection(self)
 
 		-- Make the Ruu widget.
 		local inputFld = scene:get(superWidget.path .. "/Row/input")
-		local inputTxt = scene:get(superWidget.path .. "/Row/input/text")
-		self.ruu:makeInputField(inputFld, inputTxt, true, nil, propWidgetConfirmFunc)
+		local inputMask = scene:get(superWidget.path .. "/Row/input/Mask")
+		local inputTxt = scene:get(superWidget.path .. "/Row/input/Mask/text")
+		inputTxt:updateTransform()
+		local scrollToRight = propName == "image"
+		self.ruu:makeInputField(inputFld, inputTxt, inputMask, true, nil, propWidgetConfirmFunc, scrollToRight)
 		superWidget.ruuWidget = inputFld
 		inputFld._propKey, inputFld._propSubKey = key, subKey
 		table.insert(widgetMap, inputFld)
