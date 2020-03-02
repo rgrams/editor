@@ -23,10 +23,9 @@ function script.init(self)
 
 	self.ruu:makePanel(self, true)
 
-	self.filesBox = scene:get(self.path .. "/Column/Mask")
-	self.ruu:makeScrollArea(self.filesBox, true)
-	self.filesBox.ruu = self.ruu
-	self.filesBox.showSingleFolder = true
+	local filesBox = scene:get(self.path .. "/Column/Mask")
+	self.ruu:makeScrollArea(filesBox, true)
+	self.showSingleFolder = true
 
 	local confirmButton = scene:get(self.path .. "/confirmButton")
 	local cancelButton = scene:get(self.path .. "/cancelButton")
@@ -39,7 +38,7 @@ function script.init(self)
 	local mx, my = love.mouse.getPosition()
 	self.ruu:mouseMoved(mx, my, 0, 0)
 
-	self.filesBox:call("setFolder", self.basePath)
+	self:call("setFolder", self.basePath)
 end
 
 function script.close(self, itemText)
