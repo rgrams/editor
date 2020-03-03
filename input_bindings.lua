@@ -20,6 +20,9 @@ local bindings = {
 
 	{ "button", "m:4", "back" },
 	{ "button", "m:5", "forward" },
+	{ "button", "k:appback", "back" },
+	{ "button", "k:appforward", "forward" },
+	{ "button", "alt up", "back" },
 
 	{ "axis", "m:wheelx-", "m:wheelx+", "scrollx" },
 	{ "axis", "m:wheely-", "m:wheely+", "scrolly" },
