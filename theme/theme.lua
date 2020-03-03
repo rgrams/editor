@@ -202,9 +202,8 @@ function InputField.unfocus(self)
 	setValue(self.label, 0.75)
 end
 
-function InputField.setText(self, isPlaceholder)
-	local alpha = isPlaceholder and 0.5 or 1
-	self.label.color[4] = alpha
+function InputField.setText(self)
+	self.label.color[4] = 1
 end
 
 --##############################  PANEL  ##############################
