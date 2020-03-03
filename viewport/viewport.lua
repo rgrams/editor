@@ -25,6 +25,29 @@ local objClasses = {
 	World = World
 }
 
+local function saveSceneFile(obj, mountedPath, absFilepath)
+	if absFilepath then
+		print("Saving to Path: "..absFilepath)
+		-- Use `mountedPath` to check the file.
+		local info = love.filesystem.getInfo(mountedPath)
+		print(info)
+		if info then  for k,v in pairs(info) do  print(k,v)  end  end
+
+		-- Use `absFilepath` to create and write the file.
+		if not info then
+			local file, errorMsg = io.open(absFilepath, "w")
+			if file then
+				local data = encoder.encode(obj)
+				file:write(data)
+				file:close()
+				print("  Success!")
+			else
+				print(errorMsg)
+			end
+		end
+	end
+end
+
 local function shallowCopy(t)
 	local t2 = {}
 	for k,v in pairs(t) do
@@ -227,15 +250,11 @@ function script.ruuinput(self, name, value, change, isRepeat, x, y, dx, dy, isTo
 		self.cmd:perform("pasteOntoSelection", self.selection)
 		updateCursorCollision(self, love.mouse.getPosition())
 	elseif name == "save" and change == 1 then
-		print("SAVE")
-		local dialog = FileDialog("project", "Save")
+		local obj = editScene.children[1]
+		local saveFunc = function(...)  saveSceneFile(obj, ...)  end
+		local dialog = FileDialog("project", "Save", saveFunc)
 		local root = scene:get("/root")
 		scene:add(dialog, root)
-
-		-- local enclosure = next(self.selection._)
-		-- if enclosure then
-			-- local str = encoder.encode(enclosure[1])
-		-- end
 	end
 end
 

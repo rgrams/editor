@@ -13,6 +13,7 @@ M.stringToClass = {
 }
 M.constructArgs = {}
 M.minimumConstructArgs = {}
+M.isConstructArg = {} -- Dictionary of construct args for each class.
 
 function M.areValuesEqual(a, b)
 	if a == b then  return true  end
@@ -58,6 +59,10 @@ M.universalProps = {
 	path = { nil, "read-only" },
 	layer = { nil, "string" }, -- Should be multiple-choice at some point.
 	script = { nil, "list" },
+}
+
+M.modKeys = {
+	children = true
 }
 
 M.Object = {
@@ -143,6 +148,7 @@ M.constructArgs.World = {
 	{"xg"}, {"yg"}, {"sleep"}, {"disableBegin"}, {"disableEnd"}, {"disablePre"}, {"disablePost"},
 }
 
+-- Pre-compute the minimum required constructor args for spawning objects.
 for i,className in ipairs(M.classList) do
 	local argList = M.constructArgs[className]
 	local minArgs = {}
@@ -157,6 +163,16 @@ for i,className in ipairs(M.classList) do
 			foundARequiredArg = true
 			minArgs[i] = placeholder
 		end
+	end
+end
+
+-- Make dictionaries of constructor arg keys for each class, for encoder to check against.
+for i,className in ipairs(M.classList) do
+	local argList = M.constructArgs[className]
+	local argKeys = {}
+	M.isConstructArg[className] = argKeys
+	for i,v in ipairs(argList) do
+		argKeys[v[1]] = true
 	end
 end
 

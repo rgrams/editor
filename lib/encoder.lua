@@ -7,13 +7,22 @@ local M = {}
 local objToString = require "philtre.lib.object-to-string"
 local objProp = require "object.object-properties"
 
+local function quotifyString(s)
+	return "\"" .. s .. "\""
+end
+
 local function stringifyTable(t)
-	return "{" .. table.concat(t, ", ") .. "}"
+	local _t = {unpack(t)}
+	for i,v in ipairs(_t) do
+		if type(v) == "string" then  _t[i] = quotifyString(v)  end
+	end
+	return "{" .. table.concat(_t, ", ") .. "}"
 end
 
 local function encodeObject(obj, indentLevel)
 	indentLevel = indentLevel or 0
 	local indent = string.rep("\t", indentLevel)
+	if not obj then  return indent .. "nil"  end
 
 	local className = obj.className
 	local constructArgs = objProp.constructArgs[className]
@@ -25,7 +34,8 @@ local function encodeObject(obj, indentLevel)
 		local defaultVal = objProp.getDefault(className, key, subKey)
 		local val = objProp.getValue(obj, key, subKey)
 		if objProp.areValuesEqual(val, defaultVal) then  val = "nil"
-		elseif type(val) == "table" then  val = stringifyTable(val)  end
+		elseif type(val) == "table" then  val = stringifyTable(val)
+		elseif type(val) == "string" then  val = quotifyString(val)  end
 		table.insert(args, val)
 	end
 	-- Remove excess args at the end that are default values.
@@ -38,16 +48,16 @@ local function encodeObject(obj, indentLevel)
 	-- Add args list to string.
 	s = s .. table.concat(args, ", ") .. ")"
 
-	--[[
-	local conArgKeys = classConstructorArgs.keys[className] or classConstructorArgs.keys.Object
-	local modKeys = classConstructorArgs.modKeys
+	-- Make a list of extra properties to mod() onto the object.
+	local isConstructArg = objProp.isConstructArg[className]
+	local modKeys = objProp.modKeys
 	local mods
 	for k,v in pairs(obj) do
-		if not conArgKeys[k] and modKeys[k] then
-			if k == "name" and v == className then
+		if modKeys[k] and not isConstructArg[k] then
+			if k == "children" and #v < 1 then
+				-- Ignore child list if it's empty (if it had a child and it was removed).
+			elseif k == "name" and v == className then
 				-- Don't include name if it hasn't changed.
-			elseif k == "children" and #v < 1 then
-				-- Forget child list if it's empty (if it had a child and it was removed).
 			else
 				mods = mods or {}
 				mods[k] = v
@@ -72,19 +82,17 @@ local function encodeObject(obj, indentLevel)
 		end
 		s = string.sub(s, 1, -3) .. " })"
 	end
-	--]]
 	s = indent .. s
 	return s
 end
 
-local prefix = "\nlocal function new()\n"
+local prefix = "\nlocal function new()\n\tlocal self = "
 
-local suffix = "\nend\n\nreturn new\n"
+local suffix = "\n\treturn self\nend\n\nreturn new\n"
 
 function M.encode(root)
 	local str = encodeObject(root, 1)
-	str = prefix .. str .. suffix
-	print(str)
+	str = prefix .. string.sub(str, 2) .. suffix -- cut off first indent, it's already in the prefix.
 	return str
 end
 
