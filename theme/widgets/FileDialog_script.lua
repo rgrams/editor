@@ -96,14 +96,14 @@ end
 
 function script.close(self, wasCanceled)
 	Input.disable(self)
-	local text = self.inputFieldText.text
+	local filename = self.inputFieldText.text
 	if wasCanceled then  print("  Canceled.")
-	else	print("  FileDialog confirmed with path: "..self.realBasePath..text)  end
+	else	print("  FileDialog confirmed with path: "..self.realBasePath..filename)  end
 	if self.callback then
 		if wasCanceled then
-			self.callback(self.callbackObj, unpack(self.callbackArgs))
+			self.callback(self.callbackObj, nil, nil, nil, unpack(self.callbackArgs))
 		else
-			self.callback(self.callbackObj, self.basePath..text, self.realBasePath..text, unpack(self.callbackArgs))
+			self.callback(self.callbackObj, self.basePath, self.realBasePath, filename, unpack(self.callbackArgs))
 		end
 	end
 	scene:remove(self)
