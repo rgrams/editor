@@ -4,19 +4,46 @@ local script = {}
 local RUU = require "ruu.ruu"
 local ruuInputHandler = require "lib.ruuInputHandler"
 local theme = require "theme.theme"
+local PopupConfirm = require "theme.widgets.PopupConfirm"
 
-local function inputConfirm(self, fromUnfocus)
-	if not fromUnfocus then
-		print("Close File Dialog - "..self.text)
-		self.dialog:call("close")
+local function confirmOverwrite(self, wasConfirmed)
+	if wasConfirmed then
+		self:call("close")
 	end
 end
 
-local function confirm(self, fromUnfocus)
-	self.dialog:call("close")
+local function checkForOverwrite(self)
+	local mountedPath = self.basePath..self.inputFieldText.text
+	local fileExists = love.filesystem.getInfo(mountedPath)
+	if fileExists then
+		local popup = PopupConfirm(
+			"Confirm Overwrite",
+			mountedPath.." already exists.\nDo you want to replace it?",
+			"yes", "no",
+			confirmOverwrite, self
+		)
+		local root = scene:get("/root")
+		scene:add(popup, root)
+	end
+	return fileExists
+end
+
+local function inputConfirm(self, fromUnfocus)
+	if not fromUnfocus then
+		print("Input Confirmed - Save File - "..self.text)
+		local isOverwrite = checkForOverwrite(self.dialog)
+		if not isOverwrite then  self.dialog:call("close")  end
+	end
+end
+
+local function confirm(self)
+	print("Confirm Button Pressed - Save File")
+	local isOverwrite = checkForOverwrite(self.dialog)
+	if not isOverwrite then  self.dialog:call("close")  end
 end
 
 local function cancel(self)
+	print("Cancel Button Pressed")
 	self.dialog:call("close", true)
 end
 
@@ -63,17 +90,21 @@ end
 
 function script.fileDoubleClicked(self, fileWgt)
 	self.inputFieldText.text = fileWgt.filename
-	self:call("close")
+	local isOverwrite = checkForOverwrite(self)
+	if not isOverwrite then  self:call("close")  end
 end
 
 function script.close(self, wasCanceled)
 	Input.disable(self)
 	local text = self.inputFieldText.text
 	if wasCanceled then  print("  Canceled.")
-	else	print("  "..self.realBasePath..text)  end
+	else	print("  FileDialog confirmed with path: "..self.realBasePath..text)  end
 	if self.callback then
-		if wasCanceled then  self.callback()
-		else  self.callback(self.basePath..text, self.realBasePath..text)  end
+		if wasCanceled then
+			self.callback(self.callbackObj, unpack(self.callbackArgs))
+		else
+			self.callback(self.callbackObj, self.basePath..text, self.realBasePath..text, unpack(self.callbackArgs))
+		end
 	end
 	scene:remove(self)
 end

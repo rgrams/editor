@@ -25,25 +25,33 @@ local objClasses = {
 	World = World
 }
 
-local function saveSceneFile(obj, mountedPath, absFilepath)
+local function saveToAbsolutePath(data, absPath)
+	local file, errorMsg = io.open(absPath, "w")
+	if file then
+		file:write(data)
+		file:close()
+		print("    Success!")
+	else
+		print(errorMsg)
+	end
+	return file, errorMsg
+end
+
+local function saveSceneFile(self, mountedPath, absFilepath, obj)
 	if absFilepath then
 		print("Saving to Path: "..absFilepath)
+		-- Filepath has already been checked, if it's an overwrite then it's already been confirmed.
+		local data = encoder.encode(obj)
 		-- Use `mountedPath` to check the file.
+		-- Use `absFilepath` to write the file.
 		local info = love.filesystem.getInfo(mountedPath)
-		print(info)
-		if info then  for k,v in pairs(info) do  print(k,v)  end  end
-
-		-- Use `absFilepath` to create and write the file.
+		if info then
+			print("  Saving over existing file "..mountedPath)
+			saveToAbsolutePath(data, absFilepath)
+		end
 		if not info then
-			local file, errorMsg = io.open(absFilepath, "w")
-			if file then
-				local data = encoder.encode(obj)
-				file:write(data)
-				file:close()
-				print("  Success!")
-			else
-				print(errorMsg)
-			end
+			print("  Writing new file "..absFilepath)
+			saveToAbsolutePath(data, absFilepath)
 		end
 	end
 end
@@ -251,8 +259,7 @@ function script.ruuinput(self, name, value, change, isRepeat, x, y, dx, dy, isTo
 		updateCursorCollision(self, love.mouse.getPosition())
 	elseif name == "save" and change == 1 then
 		local obj = editScene.children[1]
-		local saveFunc = function(...)  saveSceneFile(obj, ...)  end
-		local dialog = FileDialog("project", "Save", saveFunc)
+		local dialog = FileDialog("project", "Save", saveSceneFile, self, obj)
 		local root = scene:get("/root")
 		scene:add(dialog, root)
 	end
