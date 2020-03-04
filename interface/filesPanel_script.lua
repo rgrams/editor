@@ -72,6 +72,8 @@ local function activateFile(self)
 		else
 			toggleFolder(self)
 		end
+	else
+		self.filesPanel:call("fileDoubleClicked", self)
 	end
 end
 
@@ -83,6 +85,7 @@ local function fileBtnReleased(self, mx, my, isKeyboard)
 			self.doubleClickT = SETTINGS.doubleClickTime
 			activateFile(self)
 		else
+			if not self.isFolder then  self.filesPanel:call("fileClicked", self)  end
 			self.doubleClickT = SETTINGS.doubleClickTime
 			self.update = self.doubleClickUpdate
 		end

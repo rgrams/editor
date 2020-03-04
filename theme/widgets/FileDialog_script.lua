@@ -57,6 +57,15 @@ function script.init(self)
 	self.ruu:setFocus(inputField)
 end
 
+function script.fileClicked(self, fileWgt)
+	self.inputFieldText.text = fileWgt.filename
+end
+
+function script.fileDoubleClicked(self, fileWgt)
+	self.inputFieldText.text = fileWgt.filename
+	self:call("close")
+end
+
 function script.close(self, wasCanceled)
 	Input.disable(self)
 	local text = self.inputFieldText.text
