@@ -7,8 +7,18 @@ local M = {}
 local objToString = require "philtre.lib.object-to-string"
 local objProp = require "object.object-properties"
 
+local matches = {
+	['"'] = '\\"',
+	["'"] = "\\'",
+	["\\"] = "\\\\",
+}
+
+local function escape(s)
+	return (s:gsub(".", matches))
+end
+
 local function quotifyString(s)
-	return "\"" .. s .. "\""
+	return "\"" .. escape(s) .. "\""
 end
 
 local function stringifyTable(t)
