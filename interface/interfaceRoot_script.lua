@@ -1,11 +1,12 @@
 
 -- Sets up base Ruu stuff.
--- Sends input to main Ruu instance.
+-- Sends Input to Ruu.
 -- Gets .folderDropped callback and sends the path to the files panel.
 
 local script = {}
 
 local activeData = require "activeData"
+local globalShortcuts = require "interface.global-shortcuts"
 local ruuInputHandler = require "lib.ruuInputHandler"
 local RUU = require "ruu.ruu"
 local theme = require "theme.theme"
@@ -71,6 +72,7 @@ function script.parentResized(self, designW, designH, newW, newH, scale, ox, oy)
 end
 
 function script.input(self, action, value, change, isRepeat, x, y, dx, dy)
+	globalShortcuts.input(self, action, value, change, isRepeat, x, y, dx, dy)
 	return self.ruuInput:input(action, value, change, isRepeat, x, y, dx, dy)
 end
 
