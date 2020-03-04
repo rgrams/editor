@@ -188,9 +188,11 @@ function script.setFolder(self, folderPath)
 	self.basePath = folderPath .. "/"
 	-- love.filesystem.getRealDirectory only gets the base mounted path...or something?
 	self.realBasePath = love.filesystem.getRealDirectory(self.basePath)
+	if not self.realBasePath then
+		self.realBasePath = love.filesystem.getWorkingDirectory()
+	end
 	local relFolder = string.sub(folderPath, ("project/"):len())
-	if not self.realBasePath then  self.realBasePath = folderPath .. "/"
-	else  self.realBasePath = self.realBasePath .. relFolder .. "/"  end
+	self.realBasePath = self.realBasePath .. relFolder .. "/"
 	self:call("clear")
 	local files = love.filesystem.getDirectoryItems(folderPath)
 	self:call("addFiles", files, self.basePath)
