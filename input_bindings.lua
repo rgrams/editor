@@ -17,6 +17,7 @@ local bindings = {
 	{ "button", "end", "end" },
 
 	{ "button", "ctrl a", "select all" },
+	{ "button", "lctrl", "wordJumpModifier" },
 
 	{ "button", "m:4", "back" },
 	{ "button", "m:5", "forward" },
@@ -45,9 +46,9 @@ local bindings = {
 	{ "button", "m:3", "pan" },
 	{ "axis", "m:wheely-", "m:wheely+", "zoom" },
 
-	{ "button", "ctrl", "shift" },
+	{ "button", "ctrl", "ctrl" },
 	{ "button", "shift", "shift" },
-	{ "button", "alt", "shift" },
+	{ "button", "alt", "alt" },
 
 	{ "button", "f2", "test" },
 }
