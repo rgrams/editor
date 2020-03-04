@@ -10,6 +10,7 @@ local viewport = require "viewport.viewport"
 local viewport_background = require "viewport.viewport_background"
 local viewport_overlay = require "viewport.viewport_overlay"
 local propertiesPanel = require "interface.propertiesPanel_script"
+local fileBrowser = require "interface.FileBrowser_script"
 local filesPanel = require "interface.filesPanel_script"
 
 local function new(w, h)
@@ -27,7 +28,7 @@ local function new(w, h)
 			mod(gui.Row(0, false, {{1},{2,nil,true}}, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "mainRow", children = {
 				-- Left Panel
 				mod(gui.Row(nil, nil, {{1,"start",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "leftPanel", children = {
-					ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Files", nil, filesPanel),
+					mod(ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Files"), {script = {fileBrowser, filesPanel}}),
 					ResizeHandle(0, 0, 0, 6, 10, 1, 0, 1, 0, {"none", "fill"}, "/root/mainColumn/mainRow/leftPanel", -1, 7)
 				}}),
 				-- EditScene Panel

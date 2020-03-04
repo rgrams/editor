@@ -4,10 +4,10 @@ local Panel = require "theme.widgets.Panel"
 local Button = require "theme.widgets.PopupButton"
 local InputField = require "theme.widgets.InputField"
 local dialogScript = require "theme.widgets.FileDialog_script"
-local filesPanelScript = require "interface.filesPanel_script"
+local fileBrowser = require "interface.FileBrowser_script"
 
 local function new(basePath, btnText, callback, callbackObj, ...)
-	local self = mod(Panel(0, 0, 0, 700, 500, 0, 0, 0, 0, "fit", nil, 16), {name = "FileDialog", layer = "popupPanels", script = {filesPanelScript, dialogScript}, children = {
+	local self = mod(Panel(0, 0, 0, 700, 500, 0, 0, 0, 0, "fit", nil, 16), {name = "FileDialog", layer = "popupPanels", script = {fileBrowser, dialogScript}, children = {
 		mod(gui.Column(6, nil, {{1},{2},{3,nil,true},{4}}, 0, 0, 0, 670, 400, 0, -1, 0, -1, {"stretch", "fit"}), {children = {
 			mod(gui.Text(btnText, fonts.panelTitle, 30, 0, 0, 700, -1, 0, -1, 0), {layer = "popupText", name = "title"}),
 			mod(gui.Text(basePath, fonts.default, 10, 0, 0, 700, -1, 0, -1, 0), {layer = "popupText", name = "basePath"}),
