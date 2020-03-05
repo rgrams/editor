@@ -2,6 +2,7 @@
 local script = {}
 
 local collision = require "viewport.viewport-collision"
+local active = require "activeData"
 
 local function applyObjectTransform(obj)
 	-- Don't need to reset to origin, overlay obj is at 0, 0 and drawn inside camera transform.
@@ -66,7 +67,7 @@ end
 function script.draw(self)
 	local viewport = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/Viewport")
 	local hoveredObj = viewport.hoveredObj
-	local selection = viewport.selection
+	local selection = active.selection
 	local latest = selection.history[#selection.history]
 	latest = latest and latest[1] or nil
 	local cam = Camera.current
@@ -116,7 +117,7 @@ function script.draw(self)
 
 	love.graphics.setLineWidth(scale)
 	love.graphics.setColor(SETTINGS.parenthoodLineColor)
-	drawObjectsParentLines(editScene.children, scale)
+	drawObjectsParentLines(active.scene.children, scale)
 
 	love.graphics.setLineWidth(1)
 end

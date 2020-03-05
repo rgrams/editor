@@ -1,6 +1,7 @@
 
 local M = {}
 
+local active = require "activeData"
 local encoder = require "lib.encoder"
 local FileDialog = require "theme.widgets.FileDialog"
 
@@ -40,7 +41,7 @@ end
 
 function M.input(self, action, value, change, isRepeat, x, y, dx, dy)
 	if action == "save" and change == 1 then
-		local obj = editScene.children[1]
+		local obj = active.scene.children[1]
 		local dialog = FileDialog(self.lastSaveFolder or "project", "Save", saveSceneFile, self, obj)
 		scene:add(dialog, self)
 	end

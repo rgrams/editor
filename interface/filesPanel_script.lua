@@ -1,7 +1,7 @@
 
 local script = {}
 
-local activeData = require "activeData"
+local active = require "activeData"
 
 local objProp = require "object.object-properties"
 
@@ -65,9 +65,9 @@ function script.fileDoubleClicked(self, fileWgt)
 			local obj = val()
 			if type(obj) == "table" and obj.is and obj:is(Object) then
 				print("      Successfully loaded a scene file, adding to edit scene...")
-				recursiveSetTree(obj, editScene)
+				recursiveSetTree(obj, active.scene)
 				local addData = getChildrenReCreationData({obj})
-				local cmd = activeData.commands
+				local cmd = active.commands
 				cmd:perform("addObject", unpack(addData[1]))
 			end
 		end

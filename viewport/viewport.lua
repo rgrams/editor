@@ -1,7 +1,7 @@
 
 local script = {}
 
-local activeData = require "activeData"
+local active = require "activeData"
 local CommandHistory = require "philtre.commands"
 local allCommands = require "commands.all-commands"
 local Selection = require "Selection"
@@ -56,7 +56,7 @@ end
 local function hitCheckEditScene(self, x, y)
 	local hitList = {}
 	x, y = Camera.current:screenToWorld(x, y)
-	hitCheckObjects(editScene.children, x, y, hitList)
+	hitCheckObjects(active.scene.children, x, y, hitList)
 	local closest = getClosestHovered(hitList)
 	return hitList, closest
 end
@@ -87,19 +87,21 @@ local function press(self, mx, my, isKeyboard)
 
 	updateCursorCollision(self, mx, my)
 	if self.hoveredObj then
+		local enclosure = self.hoveredObj[PRIVATE_KEY]
 		if Input.get("shift") == 1 then
-			self.cmd:perform("toggleObjSelection", self.selection, self.hoveredObj[PRIVATE_KEY])
-		elseif not self.selection._[self.hoveredObj[PRIVATE_KEY]] then
-			self.cmd:perform("setSelectionTo", self.selection, self.hoveredObj[PRIVATE_KEY])
+			active.commands:perform("toggleObjSelection", active.selection, enclosure)
+		elseif not active.selection._[enclosure] then
+			local enclosure = self.hoveredObj[PRIVATE_KEY]
+			active.commands:perform("setSelectionTo", active.selection, enclosure)
 		end
 	else -- hoverList is empty, clicked on nothing.
-		self.cmd:perform("clearSelection", self.selection)
+		active.commands:perform("clearSelection", active.selection)
 	end
 	self.dragging = true
-	if self.hoveredObj and self.selection._[self.hoveredObj[PRIVATE_KEY]] then
+	if self.hoveredObj and active.selection._[self.hoveredObj[PRIVATE_KEY]] then
 		self.draggingSelection = "start"
 		local wx, wy = Camera.current:screenToWorld(love.mouse.getPosition())
-		for enclosure,data in pairs(self.selection._) do -- updateDragOffsets
+		for enclosure,data in pairs(active.selection._) do -- updateDragOffsets
 			local obj = enclosure[1]
 			data.dragOX, data.dragOY = obj._to_world.x - wx, obj._to_world.y - wy
 		end
@@ -123,7 +125,7 @@ local function mouseMoved(self, x, y, dx, dy)
 			local roundTo = SETTINGS.roundAllNumbersTo
 
 			local args = {}
-			for enclosure,dat in pairs(self.selection._) do
+			for enclosure,dat in pairs(active.selection._) do
 				local obj = enclosure[1]
 				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
 				local lx, ly = obj.parent:toLocal(wx, wy)
@@ -134,23 +136,21 @@ local function mouseMoved(self, x, y, dx, dy)
 				table.insert(args, {enclosure, "pos", ly, "y"})
 			end
 			if isStart then
-				self.cmd:perform("setSeparate", args)
+				active.commands:perform("setSeparate", args)
 				self.draggingSelection = "not start"
 			else
-				self.cmd:update(args)
-				activeData.propertiesPanel:call("updateSelection")
+				active.commands:update(args)
+				active.propertiesPanel:call("updateSelection")
 			end
 		end
 	end
 end
 
 function script.init(self)
-	editScene = SceneTree(drawLayers, defaultLayer)
+	active.scene = SceneTree(drawLayers, defaultLayer)
+	active.selection = Selection()
+	active.commands = CommandHistory(allCommands)
 	self.hoverList = {}
-	self.selection = Selection()
-	activeData.selection = self.selection
-	self.cmd = CommandHistory(allCommands)
-	activeData.commands = self.cmd
 	self.isDraggable = true
 	self.drag, self.scroll = drag, scroll
 	self.pressFunc, self.releaseFunc = press, release
@@ -167,22 +167,23 @@ end
 local function addMenuClosed(className, self, wx, wy)
 	if not className then  return  end -- Add object canceled.
 
-	if not next(self.selection._) then -- Add a single object in world space.
+	if not next(active.selection._) then -- Add a single object in world space.
 		local roundTo = SETTINGS.roundAllNumbersTo
 		wx, wy = math.round(wx, roundTo), math.round(wy, roundTo)
-		self.cmd:perform("addObject", className, {}, editScene, false, { pos = {x=wx, y=wy} })
+		local modProp = { pos = { x = wx, y = wy } }
+		active.commands:perform("addObject", className, {}, active.scene, false, modProp)
 	else -- Have something selected - Add duplicate objects as children to each of them.
 		local multiAddArgs = {}
-		local enclosureList = self.selection:getEnclosureList()
+		local enclosureList = active.selection:getEnclosureList()
 		for i,enclosure in ipairs(enclosureList) do
 			local parent = enclosure[1]
 			local lx, ly = parent:toLocal(wx, wy)
 			local roundTo = SETTINGS.roundAllNumbersTo
 			lx, ly = math.round(lx, roundTo), math.round(ly, roundTo)
-			local addArgs = {className, {}, editScene, enclosure, { pos = {x=lx, y=ly} }}
+			local addArgs = {className, {}, active.scene, enclosure, { pos = {x=lx, y=ly} }}
 			table.insert(multiAddArgs, addArgs)
 		end
-		self.cmd:perform("addMultiple", multiAddArgs)
+		active.commands:perform("addMultiple", multiAddArgs)
 	end
 
 	updateCursorCollision(self, love.mouse.getPosition())
@@ -192,7 +193,7 @@ function script.ruuinput(self, name, value, change, isRepeat, x, y, dx, dy, isTo
 	if name == "mouseMoved" then
 		mouseMoved(self, x, y, dx, dy)
 	elseif name == "pan" then
-		local ruu = activeData.ruu
+		local ruu = active.ruu
 		if change == 1 then
 			local widget = ruu:focusAtCursor()
 			if widget then
@@ -207,22 +208,22 @@ function script.ruuinput(self, name, value, change, isRepeat, x, y, dx, dy, isTo
 		local lx, ly = self:toLocal(sx, sy)
 		scene:add(PopupMenu(lx - 50, ly - 12, "Add Object...", objList, addMenuClosed, self, wx, wy), self)
 	elseif name == "remove object" and change == 1 then
-		local enclosureList = self.selection:getEnclosureList()
+		local enclosureList = active.selection:getEnclosureList()
 		if #enclosureList > 0 then
-			self.cmd:perform("removeAllSelected", self.selection)
+			active.commands:perform("removeAllSelected", active.selection)
 			updateCursorCollision(self, love.mouse.getPosition())
 		end
 	elseif name == "test" and change == 1 then
 		print("TEST")
-		local enclosureList = self.selection:getEnclosureList()
-		self.cmd:perform("set", enclosureList, "pos", 0, "y")
+		local enclosureList = active.selection:getEnclosureList()
+		active.commands:perform("set", enclosureList, "pos", 0, "y")
 	elseif name == "copy" and change == 1 then
-		self.cmd:perform("copySelection", self.selection)
+		active.commands:perform("copySelection", active.selection)
 	elseif name == "cut" and change == 1 then
-		self.cmd:perform("cutSelection", self.selection)
+		active.commands:perform("cutSelection", active.selection)
 		updateCursorCollision(self, love.mouse.getPosition())
 	elseif name == "paste" and change == 1 then
-		self.cmd:perform("pasteOntoSelection", self.selection)
+		active.commands:perform("pasteOntoSelection", active.selection)
 		updateCursorCollision(self, love.mouse.getPosition())
 	end
 end

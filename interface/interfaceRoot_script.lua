@@ -5,7 +5,7 @@
 
 local script = {}
 
-local activeData = require "activeData"
+local active = require "activeData"
 local globalShortcuts = require "interface.global-shortcuts"
 local ruuInputHandler = require "lib.ruuInputHandler"
 local RUU = require "ruu.ruu"
@@ -16,7 +16,7 @@ function script.init(self)
 	Input.enable(self)
 
 	local ruu = RUU(Input.get, theme)
-	self.ruu, activeData.ruu = ruu, ruu
+	self.ruu, active.ruu = ruu, ruu
 	self.ruuInput = ruuInputHandler(ruu)
 
 	local layers = { "gui debug", "popupText", "popupWidgets", "popupPanels", "text", "widgets", "panels", "panel backgrounds" }

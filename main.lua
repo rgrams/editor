@@ -10,6 +10,7 @@ NIL = {}
 
 Input = require "lib.input.input"
 
+local active = require "activeData"
 local Root = require "root"
 local root
 
@@ -47,6 +48,7 @@ end
 function love.draw()
 	Camera.current:applyTransform()
 	scene:draw("viewportBackground")
+	local editScene = active.scene
 	if editScene then
 		editScene:draw("editScene")
 		editScene:callRecursive("debugDraw", "viewportDebug")
