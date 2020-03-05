@@ -8,8 +8,6 @@ SETTINGS = require "settings"
 PRIVATE_KEY = {}
 NIL = {}
 
-Input = require "lib.input.input"
-
 local active = require "activeData"
 local Root = require "root"
 local root
