@@ -31,7 +31,11 @@ local function propWidgetConfirmFunc(widget)
 	local isValid = true
 	local validator = validators[widget._valType]
 	if validator then  isValid = validator(value)  end
-	if not isValid then  return true  end -- Rejected!
+	if not isValid then
+		local messager = scene:get("/root/overlay")
+		messager:call("message", "Invalid "..widget._propName.." value: '"..tostring(value).."'", "warning")
+		return true
+	end
 
 	local key, subKey = widget._propKey, widget._propSubKey
 	if not ignoreThisKeyForNow[key] then
@@ -205,7 +209,7 @@ function script.updateSelection(self)
 		self.ruu:makeInputField(inputFld, inputTxt, inputMask, true, nil, propWidgetConfirmFunc, scrollToRight)
 		superWidget.ruuWidget = inputFld
 		inputFld._propKey, inputFld._propSubKey = key, subKey
-		inputFld._valType = valType
+		inputFld._propName, inputFld._valType = propName, valType
 	end
 	-- Make sure "-multiple-" values get set.
 	for i,propData in ipairs(newPropDataList) do
