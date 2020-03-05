@@ -79,6 +79,19 @@ function setters.imgOffsetFraction(obj, key, val)
 	else  obj[key] = imgH * val  end
 end
 
+function getters.quadOffsetFraction(obj, key, val)
+	local pixelOffset = obj[key]
+	local t, l, w, h = obj.quad:getViewport()
+	if key == "ox" then  return pixelOffset / w
+	else  return pixelOffset / h  end
+end
+
+function setters.quadOffsetFraction(obj, key, val)
+	local t, l, w, h = obj.quad:getViewport()
+	if key == "ox" then  obj[key] = w * val
+	else  obj[key] = h * val  end
+end
+
 function getters.quadParams(obj, key)
 	return { obj[key]:getViewport() }
 end

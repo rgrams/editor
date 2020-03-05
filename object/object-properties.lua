@@ -124,8 +124,8 @@ M.Quad = {
 	sx = { 1, "number" },
 	sy = { 1, "number" },
 	color = { {1,1,1,1}, "color"},
-	ox = { 0.5, "number", set.imgOffsetFraction, get.imgOffsetFraction },
-	oy = { 0.5, "number", set.imgOffsetFraction, get.imgOffsetFraction },
+	ox = { 0.5, "number", set.quadOffsetFraction, get.quadOffsetFraction },
+	oy = { 0.5, "number", set.quadOffsetFraction, get.quadOffsetFraction },
 	kx = { 0, "number" },
 	ky = { 0, "number" }
 }
