@@ -68,7 +68,7 @@ end
 local function activateFile(self)
 	if self.isFolder then
 		if self.filesPanel.showSingleFolder then
-			self.filesPanel:call("setFolder", self.filepath)
+			self.filesPanel:call("setFolder", self.filepath .. "/")
 		else
 			toggleFolder(self)
 		end
@@ -169,7 +169,7 @@ end
 function script.goUp(self)
 	if not self.showSingleFolder or not self.basePath then  return  end
 	local path = self.basePath
-	local pattern = "(.+)/.+$"
+	local pattern = "(.+/).+$"
 	local parentPath = string.match(path, pattern)
 	if parentPath then  self:call("setFolder", parentPath)  end
 end
@@ -188,14 +188,14 @@ function script.ruuinput(self, name, value, change)
 end
 
 function script.setFolder(self, folderPath)
-	self.basePath = folderPath .. "/"
+	self.basePath = folderPath
 	-- love.filesystem.getRealDirectory only gets the base mounted path...or something?
 	self.realBasePath = love.filesystem.getRealDirectory(self.basePath)
 	if not self.realBasePath then
 		self.realBasePath = love.filesystem.getWorkingDirectory()
 	end
 	local relFolder = string.sub(folderPath, ("project/"):len())
-	self.realBasePath = self.realBasePath .. relFolder .. "/"
+	self.realBasePath = self.realBasePath .. relFolder
 	self:call("clear")
 	local files = love.filesystem.getDirectoryItems(folderPath)
 	self:call("addFiles", files, self.basePath)

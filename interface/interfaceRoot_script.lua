@@ -54,7 +54,7 @@ function script.init(self)
 	ruu:setFocus(viewport)
 end
 
-local projectMountName = "project"
+local projectMountName = "project/"
 
 function script.folderDropped(self, absPath)
 	if self.projectPath then

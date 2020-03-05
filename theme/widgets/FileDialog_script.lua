@@ -30,20 +30,17 @@ end
 
 local function inputConfirm(self, fromUnfocus)
 	if not fromUnfocus then
-		print("Input Confirmed - Save File - "..self.text)
 		local isOverwrite = checkForOverwrite(self.dialog)
 		if not isOverwrite then  self.dialog:call("close")  end
 	end
 end
 
 local function confirm(self)
-	print("Confirm Button Pressed - Save File")
 	local isOverwrite = checkForOverwrite(self.dialog)
 	if not isOverwrite then  self.dialog:call("close")  end
 end
 
 local function cancel(self)
-	print("Cancel Button Pressed")
 	self.dialog:call("close", true)
 end
 
@@ -97,8 +94,6 @@ end
 function script.close(self, wasCanceled)
 	Input.disable(self)
 	local filename = self.inputFieldText.text
-	if wasCanceled then  print("  Canceled.")
-	else	print("  FileDialog confirmed with path: "..self.realBasePath..filename)  end
 	if self.callback then
 		if wasCanceled then
 			self.callback(self.callbackObj, nil, nil, nil, unpack(self.callbackArgs))

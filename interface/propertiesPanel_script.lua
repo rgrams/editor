@@ -2,15 +2,15 @@
 local script = {}
 
 local PropertyWidget = require "theme.widgets.properties.Basic"
-local activeData = require "activeData"
+local active = require "activeData"
 local objProp = require "object.object-properties"
 
 function script.init(self)
-	activeData.propertiesPanel = self
+	active.propertiesPanel = self
 	self.contents = scene:get(self.path .. "/Column/Mask/contents")
 	self.scrollArea = scene:get(self.path .. "/Column/Mask")
 	self.isCleared = true
-	self.ruu = activeData.ruu
+	self.ruu = active.ruu
 end
 
 local function stringtobool(v)
@@ -27,9 +27,9 @@ local function propWidgetConfirmFunc(widget)
 	value = value or widget.text
 	local key, subKey = widget._propKey, widget._propSubKey
 	if not ignoreThisKeyForNow[key] then
-		local selection = activeData.selection
+		local selection = active.selection
 		local enclosureList = selection:getEnclosureList()
-		activeData.commands:perform("setSame", enclosureList, key, value, subKey)
+		active.commands:perform("setSame", enclosureList, key, value, subKey)
 	end
 end
 
@@ -56,8 +56,8 @@ local function clearContents(self)
 end
 
 function script.updateSelection(self)
-	self.ruu = activeData.ruu
-	local selection = activeData.selection
+	self.ruu = active.ruu
+	local selection = active.selection
 	clearContents(self)
 
 	if not next(selection._) then
