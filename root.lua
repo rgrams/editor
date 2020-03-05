@@ -6,6 +6,7 @@ local ResizeHandle = require "theme.widgets.ResizeHandle"
 local interfaceRoot = require "interface.interfaceRoot_script"
 local editScenePanel = require "interface.editScenePanel_script"
 local screencastInput = require "interface.screencastInput_script"
+local msgOverlay = require "interface.messageOverlay_script"
 local viewport = require "viewport.viewport"
 local viewport_background = require "viewport.viewport_background"
 local viewport_overlay = require "viewport.viewport_overlay"
@@ -17,7 +18,7 @@ local function new(w, h)
 	-- Screen offset node.
 	local root = mod(gui.Node(0, 0, 0, w, h, -1, -1, 0, 0, "fill"), {name = "root", layer = "panels", script = {interfaceRoot}, children = {
 		-- Key Screencaster - on the "gui overlay" layer.
-		mod(gui.Node(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill"), {name = "overlay", layer = "gui overlay", script = {screencastInput}}),
+		mod(gui.Node(0, 0, 0, 1, 1, 0, 0, 0, 0, "fill"), {name = "overlay", layer = "gui overlay", script = {screencastInput, msgOverlay}}),
 		-- Main Column
 		mod(gui.Column(0, false, {{1},{2,nil,true},{3,"end"}}, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {name = "mainColumn", children = {
 			-- Menu Bar
