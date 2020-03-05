@@ -2,7 +2,7 @@
 local script = {}
 
 local active = require "activeData"
-
+local sceneManager = require "sceneManager"
 local objProp = require "object.object-properties"
 
 local function getModifiedProperties(obj)
@@ -65,6 +65,8 @@ function script.fileDoubleClicked(self, fileWgt)
 			local obj = val()
 			if type(obj) == "table" and obj.is and obj:is(Object) then
 				print("      Successfully loaded a scene file, adding to edit scene...")
+				local isAlreadyOpen = sceneManager.newScene(localPath)
+				if isAlreadyOpen then  return  end
 				recursiveSetTree(obj, active.scene)
 				local addData = getChildrenReCreationData({obj})
 				local cmd = active.commands
