@@ -30,8 +30,9 @@ end
 
 -- Clear and then add - So it's one command instead of two.
 local function setTo(self, enclosure)
-	local _, oldList, oldHistory = clear(self)
-	add(self, enclosure)
+	local oldList, oldHistory = self._, self.history
+	self._, self.history = {}, {}
+	add(self, enclosure) -- Will update properties panel.
 	return self, oldList, oldHistory -- Undo with _set
 end
 
