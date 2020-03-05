@@ -3,7 +3,7 @@ local tex = require "theme.textures"
 local fnt = require "theme.fonts"
 
 local function new(text, x, y, angle, w, h, px, py, ax, ay, resizeMode, name)
-	w, h = w or 100, h or 100
+	w, h = w or 70, h or 24
 	local self = gui.Slice(
 		tex.Button_Normal, nil, {5, 6}, x, y, angle, w, h, px, py, ax, ay, resizeMode
 	)
