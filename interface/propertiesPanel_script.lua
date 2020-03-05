@@ -4,6 +4,7 @@ local script = {}
 local PropertyWidget = require "theme.widgets.properties.Basic"
 local active = require "activeData"
 local objProp = require "object.object-properties"
+local validators = require "object.object-prop-validators"
 
 function script.init(self)
 	active.propertiesPanel = self
@@ -26,6 +27,12 @@ local function propWidgetConfirmFunc(widget)
 	value = tonumber(value) or value
 	value = stringtobool(value) or value
 	value = value or widget.text
+
+	local isValid = true
+	local validator = validators[widget._valType]
+	if validator then  isValid = validator(value)  end
+	if not isValid then  return true  end -- Rejected!
+
 	local key, subKey = widget._propKey, widget._propSubKey
 	if not ignoreThisKeyForNow[key] then
 		local selection = active.selection
@@ -67,13 +74,15 @@ local function getPropDataList(enclosureDict)
 	local masterPropList
 	for enclosure,_ in pairs(enclosureDict) do
 		local obj = enclosure[1]
-		local objPropList = objProp.constructArgs[obj.className]
+		local objConstructArgList = objProp.constructArgs[obj.className]
+		local objPropDict = objProp[obj.className]
 		if not masterPropList then
 			-- Init master list with all of the first object`s properties (and values).
 			masterPropList = {}
-			for i,v in ipairs(objPropList) do
+			for i,v in ipairs(objConstructArgList) do
 				local val = objProp.getValue(obj, v[1], v[2])
-				masterPropList[i] = { v[1], v[2], val }
+				local propType = objPropDict[v[1]][2]
+				masterPropList[i] = { v[1], v[2], val, propType }
 			end
 		else
 			-- Compare master list to object for any missing properties or non-matching values.
@@ -81,7 +90,7 @@ local function getPropDataList(enclosureDict)
 				local mv = masterPropList[i]
 				local mKey, mSubKey = mv[1], mv[2]
 				local found = false
-				for i,ov in ipairs(objPropList) do
+				for i,ov in ipairs(objConstructArgList) do
 					local oKey, oSubKey = ov[1], ov[2]
 					if oKey == mKey and oSubKey == mSubKey then
 						found = true
@@ -177,7 +186,7 @@ function script.updateSelection(self)
 		removeChildByName(self, propName)
 	end
 	for i,propData in ipairs(toAdd) do
-		local key, subKey, value = unpack(propData)
+		local key, subKey, value, valType = unpack(propData)
 
 		-- Make a PropertyWidget for each property and add it to the "contents" column.
 		local propName = subKey and (key .. "." .. subKey) or key
@@ -196,6 +205,7 @@ function script.updateSelection(self)
 		self.ruu:makeInputField(inputFld, inputTxt, inputMask, true, nil, propWidgetConfirmFunc, scrollToRight)
 		superWidget.ruuWidget = inputFld
 		inputFld._propKey, inputFld._propSubKey = key, subKey
+		inputFld._valType = valType
 	end
 	-- Make sure "-multiple-" values get set.
 	for i,propData in ipairs(newPropDataList) do

@@ -81,7 +81,7 @@ M.constructArgs.Object = {
 
 M.Sprite = {
 	-- key = { defaultVal, type, setter, getter }
-	image = { NO_DEFAULT, "string", set.imageData, get.assetParams, defAssets.image},
+	image = { NO_DEFAULT, "image", set.imageData, get.assetParams, defAssets.image},
 	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
 	sx = { 1, "number" },
@@ -117,7 +117,7 @@ M.constructArgs.Text = {
 
 M.Quad = {
 	-- key = { defaultVal, type, setter, getter }
-	image = { NO_DEFAULT, "string", set.imageData, get.assetParams, defAssets.image },
+	image = { NO_DEFAULT, "image", set.imageData, get.assetParams, defAssets.image },
 	quad = { NO_DEFAULT, "quad", set.quadParams, get.quadParams, defAssets.quad },
 	pos = { {x=0,y=0}, "vector2", set.pos, get.pos },
 	angle = { 0, "number" },
