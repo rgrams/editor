@@ -2,18 +2,10 @@
 local script = {}
 
 local active = require "activeData"
-local CommandHistory = require "philtre.commands"
-local allCommands = require "commands.all-commands"
-local Selection = require "Selection"
 require "object.object-debugDraw-overrides"
 local collision = require "viewport.viewport-collision"
 local PopupMenu = require "theme.widgets.PopupMenu"
 
-local drawLayers = {
-	editScene = { "entities" },
-	viewportDebug = { "viewportDebug" }
-}
-defaultLayer = "entities"
 local objList = { "Object", "Sprite", "Quad", "Text", "World" }
 local objClasses = {
 	Object = Object,
@@ -147,9 +139,6 @@ local function mouseMoved(self, x, y, dx, dy)
 end
 
 function script.init(self)
-	active.scene = SceneTree(drawLayers, defaultLayer)
-	active.selection = Selection()
-	active.commands = CommandHistory(allCommands)
 	self.hoverList = {}
 	self.isDraggable = true
 	self.drag, self.scroll = drag, scroll

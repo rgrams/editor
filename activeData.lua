@@ -3,9 +3,10 @@
 
 local M = {}
 
+-- M.sceneName
 -- M.selection
 -- M.commands
--- M.filePath
+-- M.filepath
 -- M.scene
 -- M.propertiesPanel
 -- M.clipboard

@@ -10,6 +10,7 @@ local globalShortcuts = require "interface.global-shortcuts"
 local ruuInputHandler = require "lib.ruuInputHandler"
 local RUU = require "ruu.ruu"
 local theme = require "theme.theme"
+local sceneManager = require "sceneManager"
 
 function script.init(self)
 	love.keyboard.setKeyRepeat(true)
@@ -52,6 +53,8 @@ function script.init(self)
 	filesPanel.ruu = ruu
 
 	ruu:setFocus(viewport)
+
+	sceneManager.newScene() -- Make a default scene.
 end
 
 local projectMountName = "project/"
