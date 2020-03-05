@@ -68,6 +68,7 @@ function script.draw(self)
 	local viewport = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/Viewport")
 	local hoveredObj = viewport.hoveredObj
 	local selection = active.selection
+	if not selection then  return  end
 	local latest = selection.history[#selection.history]
 	latest = latest and latest[1] or nil
 	local cam = Camera.current

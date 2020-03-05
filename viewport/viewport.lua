@@ -48,7 +48,9 @@ end
 local function hitCheckEditScene(self, x, y)
 	local hitList = {}
 	x, y = Camera.current:screenToWorld(x, y)
-	hitCheckObjects(active.scene.children, x, y, hitList)
+	if active.scene then
+		hitCheckObjects(active.scene.children, x, y, hitList)
+	end
 	local closest = getClosestHovered(hitList)
 	return hitList, closest
 end
