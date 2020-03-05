@@ -15,12 +15,23 @@ defaultLayer = "entities"
 M.scenes = {}
 
 function M.setActiveScene(name)
-	print("sceneManager.setActiveScene "..tostring(name))
 	local sceneData = M.scenes[name]
 	if not sceneData then
 		print("sceneManager.setActiveScene: No scene by then name '"..tostring(name).."' exists.")
 		return
 	end
+	local cam = scene:get("/ViewportCamera")
+	if cam then
+		if active.scene then
+			local oldSceneData = M.scenes[active.sceneName]
+			oldSceneData.camX, oldSceneData.camY = cam.pos.x, cam.pos.y
+			oldSceneData.camZoom = cam.zoom
+		end
+		local x, y = sceneData.camX or 0, sceneData.camY or 0
+		local zoom = sceneData.camZoom or 1
+		cam.pos.x, cam.pos.y, cam.zoom = x, y, zoom
+	end
+
 	active.sceneName = sceneData.name
 	active.scene = sceneData.scene  active.selection = sceneData.selection
 	active.commands = sceneData.commands  active.filepath = sceneData.filepath
@@ -43,7 +54,7 @@ function M.newScene(filepath, inBackground)
 		local idx = tonumber(string.sub(name, -1))
 		name = baseName .. idx + 1
 	end
-	
+
 	local scn = SceneTree(drawLayers, defaultLayer) -- Don't shadow global `scene`.
 	local selection = Selection()
 	local commands = Commands(allCommands)

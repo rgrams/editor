@@ -61,7 +61,7 @@ local function new(w, h)
 			}})
 		}})
 	}})
-	local viewportCamera = Camera(0, 0, 0, 1, "expand view")
+	local viewportCamera = mod(Camera(0, 0, 0, 1, "expand view"), {name = "ViewportCamera"})
 	local viewportBackground = mod(Object(0, 0), {
 		name = "viewportBackground",
 		layer = "viewportBackground",
