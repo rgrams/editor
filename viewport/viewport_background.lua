@@ -13,7 +13,7 @@ local gridNumberColor = SETTINGS.gridNumberColor
 local yAxisColor = SETTINGS.yAxisColor
 local xAxisColor = SETTINGS.xAxisColor
 
-local viewportPath = "/root/mainColumn/mainRow/editScenePanel/viewport"
+local viewportPath = "/root/mainColumn/mainRow/editScenePanel/VPColumn/Viewport"
 
 function script.init(self)
 	self.vpNode = scene:get(viewportPath)

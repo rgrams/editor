@@ -33,8 +33,19 @@ local function new(w, h)
 				}}),
 				-- EditScene Panel
 				mod(gui.Row(0, false, {{1,nil,true},{2}}, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "editScenePanel", script = {editScenePanel}, children = {
-					-- Viewport
-					mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "viewport", script = {viewport}}),
+					-- Viewport Column
+					mod(gui.Column(0, nil, {{1},{2,nil,true}}, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "VPColumn", children = {
+						-- Tab Bar
+						mod(Panel(0, 0, 0, 10, 20, 0, 0, 0, 0, {"fill", "none"}, "TabBar"), {layer = "panel backgrounds", children = {
+							-- Mask
+							mod(gui.Mask(nil, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {children = {
+								-- Contents Row
+								mod(gui.Row(nil, nil, nil, 0, 0, 0, 10, 10, 0, -1, 0, -1, {"none", "fill"}), {layer = "widgets", name = "contents"})
+							}})
+						}}),
+						-- Viewport
+						mod(gui.Node(0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "Viewport", script = {viewport}}),
+					}}),
 					-- Right Panel
 					mod(gui.Row(nil, nil, {{1,"end",true},{2}}, 0, 0, 0, 200, 10, -1, 0, -1, 0, "fill"), {name = "rightPanel", children = {
 						ListPanel(0, 0, 0, 10, 10, -1, 0, -1, 0, "fill", "Properties", nil, propertiesPanel),
