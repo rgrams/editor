@@ -13,6 +13,7 @@ local viewport_overlay = require "viewport.viewport_overlay"
 local propertiesPanel = require "interface.propertiesPanel_script"
 local fileBrowser = require "interface.FileBrowser_script"
 local filesPanel = require "interface.filesPanel_script"
+local tabBar = require "interface.tabBar_script"
 
 local function new(w, h)
 	-- Screen offset node.
@@ -37,11 +38,11 @@ local function new(w, h)
 					-- Viewport Column
 					mod(gui.Column(0, nil, {{1},{2,nil,true}}, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {name = "VPColumn", children = {
 						-- Tab Bar
-						mod(Panel(0, 0, 0, 10, 20, 0, 0, 0, 0, {"fill", "none"}, "TabBar"), {layer = "panel backgrounds", children = {
+						mod(Panel(0, 0, 0, 10, 20, 0, 0, 0, 0, {"fill", "none"}, "TabBar"), {layer = "panel backgrounds", script = {tabBar}, children = {
 							-- Mask
 							mod(gui.Mask(nil, 0, 0, 0, 10, 10, 0, 0, 0, 0, "fill"), {children = {
 								-- Contents Row
-								mod(gui.Row(nil, nil, nil, 0, 0, 0, 10, 10, 0, -1, 0, -1, {"none", "fill"}), {layer = "widgets", name = "contents"})
+								mod(gui.Row(nil, nil, nil, 0, 0, 0, 1000, 10, -1, 0, -1, 0, {"none", "none"}), {layer = "widgets", name = "contents"})
 							}})
 						}}),
 						-- Viewport

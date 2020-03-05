@@ -23,10 +23,13 @@ function M.setActiveScene(name)
 	active.sceneName = sceneData.name
 	active.scene = sceneData.scene  active.selection = sceneData.selection
 	active.commands = sceneData.commands  active.filepath = sceneData.filepath
+
+	local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
+	tabBar:call("setActiveScene", name)
 end
 
-function M.newScene(filepath)
-	local scene = SceneTree(drawLayers, defaultLayer)
+function M.newScene(filepath, inBackground)
+	local scn = SceneTree(drawLayers, defaultLayer) -- Don't shadow global `scene`.
 	local selection = Selection()
 	local commands = Commands(allCommands)
 
@@ -38,14 +41,13 @@ function M.newScene(filepath)
 
 	local sceneData = {
 		name = name,
-		scene = scene, selection = selection,
+		scene = scn, selection = selection,
 		commands = commands, filepath = filepath
 	}
-	active.sceneName = name
-	active.scene = scene  active.selection = selection
-	active.commands = commands  active.filepath = filepath
-
 	M.scenes[name] = sceneData
+	local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
+	tabBar:call("newScene", name)
+	if not inBackground then  M.setActiveScene(name)  end
 end
 
 function M.removeScene(name)
