@@ -14,7 +14,8 @@ local function saveToAbsolutePath(data, absPath)
 		print("    Success!")
 	else
 		print(errorMsg)
-		messager:call("message", "Error: "..errorMsg)
+		messager:call("message", "ERROR: "..errorMsg, "error")
+		messager:call("message", "failed to save", "error")
 	end
 	return file, errorMsg
 end
