@@ -2,6 +2,15 @@
 local tex = require "theme.textures"
 local fnt = require "theme.fonts"
 
+local script = {}
+
+function script.focus(self, isKeyboard)
+	if isKeyboard then
+		self:releaseFunc()
+		self:setChecked(true)
+	end
+end
+
 local function ruuinput(self, action, value, change, isRepeat)
 	if action == "close tab button" and change == 1 then
 		local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
@@ -19,6 +28,7 @@ local function new(sceneName, x, y, angle, w, h, px, py, ax, ay, resizeMode)
 	label.name = "label"
 	self.label = label
 	self.children = { label }
+	self.script = { script }
 	self.name = sceneName
 	self.layer = "widgets"
 	self.ruuinput = ruuinput

@@ -9,12 +9,22 @@ local function tabBtnReleased(tabBtn)
 	sceneManager.setActiveScene(tabBtn._sceneName)
 end
 
+local function mapTabNeighbors(self)
+	local contents = scene:get(self.path .. "/Mask/contents")
+	local xMap = {}
+	for i,rowChildData in ipairs(contents.startChildren) do
+		table.insert(xMap, rowChildData.obj)
+	end
+	active.ruu:mapNeighbors({ xMap })
+end
+
 local function removeTab(self, sceneName)
 	local contents = scene:get(self.path .. "/Mask/contents")
 	local tabBtn = scene:get(self.path .. "/Mask/contents/" .. sceneName)
 	contents:remove(tabBtn)
 	scene:remove(tabBtn)
 	active.ruu:destroyWidget(tabBtn)
+	mapTabNeighbors(self)
 end
 
 local function loopIndex(listLength, start, by)
@@ -63,6 +73,7 @@ function M.newScene(self, sceneName)
 		active.ruu:makeRadioButton(tabBtn, sib, true, true, tabBtnReleased, "Tab")
 	end
 	contents:add(tabBtn)
+	mapTabNeighbors(self)
 	mask:setMaskOnChildren()
 end
 
