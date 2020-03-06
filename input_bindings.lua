@@ -34,6 +34,7 @@ local bindings = {
 	{ "button", "ctrl k:c", "copy" },
 	{ "button", "ctrl k:v", "paste" },
 	{ "button", "ctrl k:s", "save" },
+	{ "button", "ctrl shift k:s", "save as" },
 	{ "button", "ctrl k:o", "open" },
 
 	{ "text", "text" },
