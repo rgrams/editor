@@ -121,8 +121,9 @@ function Tab.init(self)
 		if self.isFocused then
 			local w, h = self.w, self.h
 			love.graphics.setColor(1, 1, 1, 1)
-			-- TODO: Change to a fitting polygon. -- only a line over the top 3 sides
-			love.graphics.rectangle("line", -w/2, -h/2, w, h, 4, 4, 3)
+			love.graphics.setLineWidth(1)
+			local inset = 4
+			love.graphics.line(-w/2, h/2, -w/2+inset, -h/2+1, w/2-inset, -h/2+1, w/2, h/2)
 		end
 	end
 end
