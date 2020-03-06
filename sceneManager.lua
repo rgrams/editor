@@ -17,7 +17,7 @@ M.scenes = {}
 function M.setActiveScene(name)
 	local sceneData = M.scenes[name]
 	if not sceneData then
-		print("sceneManager.setActiveScene: No scene by then name '"..tostring(name).."' exists.")
+		print("sceneManager.setActiveScene: No scene by the name '"..tostring(name).."' exists.")
 		return
 	end
 	local cam = scene:get("/ViewportCamera")
@@ -72,13 +72,14 @@ end
 
 function M.removeScene(name)
 	if not M.scenes[name] then
-		print("sceneManager.removeScene: No scene by then name '"..tostring(name).."' exists.")
+		print("sceneManager.removeScene: No scene by the name '"..tostring(name).."' exists.")
 		return
 	end
 	M.scenes[name] = nil
 	if active.sceneName == name then
-		local sceneData = next(M.scenes)
-		if sceneData then  M.setActiveScene(sceneData.name)
+		active.scene, active.selection, active.commands = nil, nil, nil
+		local sceneName, sceneData = next(M.scenes)
+		if sceneData then  M.setActiveScene(sceneName)
 		else  M.newScene()  end
 	end
 end

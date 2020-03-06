@@ -30,7 +30,8 @@ local function wrapMouse(self, x, y, dx, dy)
 end
 
 local hoverActions = {
-	pan = 1, scrollx = 1, scrolly = 1
+	pan = 1, scrollx = 1, scrolly = 1, ["add object"] = true,
+	["close tab"] = true
 }
 -- Anything not a hover action is assumed to be a focus action.
 

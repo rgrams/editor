@@ -3,23 +3,32 @@ local M = {}
 
 local active = require "activeData"
 local sceneManager = require "sceneManager"
-local Button = require "theme.widgets.Button"
+local Tab = require "theme.widgets.Tab"
 
-local function setActiveScene(self)
+-- Tab Button release function.
+local function setActiveScene(tabBtn)
 	local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
-	tabBar:call("setActiveScene", self._sceneName)
+	tabBar:call("setActiveScene", tabBtn._sceneName)
+end
+
+function M.closeScene(self, sceneName)
+	local contents = scene:get(self.path .. "/Mask/contents")
+	local tabBtn = scene:get(self.path .. "/Mask/contents/" .. sceneName)
+	contents:remove(tabBtn)
+	scene:remove(tabBtn)
+	active.ruu:destroyWidget(tabBtn)
+	sceneManager.removeScene(sceneName)
 end
 
 function M.newScene(self, sceneName)
-	print("TabBar.newScene "..tostring(sceneName))
-	local button = Button(sceneName, 0, 0, 0, 100, 18, 0, 0, 0, 0, {"zoom", "none"})
-	button._sceneName = sceneName
+	local tabBtn = Tab(sceneName, 0, 0, 0, 100, 18, 0, 0, 0, 0, {"zoom", "none"})
+	tabBtn._sceneName = sceneName
 	local mask = scene:get(self.path .. "/Mask")
 	local contents = scene:get(self.path .. "/Mask/contents")
-	scene:add(button, contents)
-	contents:add(button)
+	scene:add(tabBtn, contents)
+	contents:add(tabBtn)
 	mask:setMaskOnChildren()
-	active.ruu:makeButton(button, true, setActiveScene)
+	active.ruu:makeButton(tabBtn, true, setActiveScene)
 end
 
 function M.setActiveScene(self, sceneName)
