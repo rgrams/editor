@@ -39,14 +39,29 @@ end
 
 function M.getValue(obj, key, subKey)
 	local propList = M[obj.className] or M.Object
-	local getter = propList[key][4] or get.default
+	local getter
+	if not propList[key] then
+		if not M.Object[key] then
+			error("Obj-Prop.getValue - No data for property: '"..tostring(key).."' found.")
+		end
+		getter = M.Object[key][4] or get.default
+	else
+		getter = propList[key][4] or get.default
+	end
 	return getter(obj, key, subKey)
 end
 
 function M.setValue(obj, key, val, subKey)
 	local propList = M[obj.className] or M.Object
-	assert(propList[key], "Obj-Properties.setValue - No property: '" .. tostring(key) .. "' for object of class '" .. obj.className .. "'.")
-	local setter = propList[key][3] or set.default
+	local setter
+	if not propList[key] then
+		if not M.Object[key] then
+			error("Obj-Prop.setValue - No data for property: '"..tostring(key).."' for object of class '"..obj.className.."'.")
+		end
+		setter = M.Object[key][4] or get.default
+	else
+		setter = propList[key][3] or set.default
+	end
 	setter(obj, key, val, subKey)
 end
 
