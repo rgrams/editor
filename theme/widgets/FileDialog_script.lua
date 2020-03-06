@@ -13,7 +13,7 @@ local function confirmOverwrite(self, wasConfirmed)
 end
 
 local function checkForOverwrite(self)
-	local mountedPath = self.basePath..self.inputFieldText.text
+	local mountedPath = self.mountFolderPath..self.inputFieldText.text
 	local fileExists = love.filesystem.getInfo(mountedPath)
 	if fileExists then
 		local popup = PopupConfirm(
@@ -71,12 +71,10 @@ function script.init(self)
 	inputField.dialog = self
 	self.inputFieldText = inputText
 
-	self.basePathLabel = scene:get(self.path .. "/Column/basePath")
-
 	local mx, my = love.mouse.getPosition()
 	self.ruu:mouseMoved(mx, my, 0, 0)
 
-	self:call("setFolder", self.basePath)
+	self:call("setFolder", self.mountFolderPath)
 
 	self.ruu:setFocus(inputField)
 end
@@ -98,7 +96,7 @@ function script.close(self, wasCanceled)
 		if wasCanceled then
 			self.callback(self.callbackObj, nil, nil, nil, unpack(self.callbackArgs))
 		else
-			self.callback(self.callbackObj, self.basePath, self.realBasePath, filename, unpack(self.callbackArgs))
+			self.callback(self.callbackObj, self.mountFolderPath, self.absFolderPath, filename, unpack(self.callbackArgs))
 		end
 	end
 	scene:remove(self)

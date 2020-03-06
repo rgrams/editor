@@ -34,15 +34,15 @@ function M.setActiveScene(name)
 
 	active.sceneName = sceneData.name
 	active.scene = sceneData.scene  active.selection = sceneData.selection
-	active.commands = sceneData.commands  active.filepath = sceneData.filepath
+	active.commands = sceneData.commands  active.absFilePath = sceneData.absFilePath
 end
 
 function M.sceneExists(name)
 	return M.scenes[name]
 end
 
-function M.newScene(filepath, inBackground)
-	local name = filepath or "untitled_0"
+function M.newScene(name, absFilePath, inBackground)
+	name = name or "untitled_0"
 	while M.scenes[name] do
 		local baseName = string.sub(name, 0, -2)
 		if baseName ~= "untitled_" then
@@ -62,7 +62,7 @@ function M.newScene(filepath, inBackground)
 	local sceneData = {
 		name = name,
 		scene = scn, selection = selection,
-		commands = commands, filepath = filepath
+		commands = commands, absFilePath = absFilePath
 	}
 	M.scenes[name] = sceneData
 	local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")

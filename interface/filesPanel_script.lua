@@ -50,22 +50,20 @@ local function recursiveSetTree(obj, tree)
 end
 
 function script.fileDoubleClicked(self, fileWgt)
-	print("FilesPanel - Attepmting to load file: "..fileWgt.filepath)
+	print("FilesPanel - Attepmting to load file: "..fileWgt.mountFilePath)
 	local extension = string.match(fileWgt.filename, "%.(%w-)$")
 	print("  file extension = "..tostring(extension))
 
 	if extension == "lua" then
 		print("  loading file...")
-		local localPath = string.sub(fileWgt.filepath, ("project/"):len())
-		local absPath = fileWgt.realBasePath..localPath
-		local success, val = pcall(dofile, absPath)
-		if success then  print("    Success!")
-		else  print("    Failed! "..val)  end
+		local localMountPath = string.sub(fileWgt.mountFilePath, ("project/"):len())
+		local absFilePath = fileWgt.absFolderPath..localMountPath
+		local success, val = pcall(dofile, absFilePath)
 		if success and type(val) == "function" then
 			local obj = val()
 			if type(obj) == "table" and obj.is and obj:is(Object) then
-				print("      Successfully loaded a scene file, adding to edit scene...")
-				local isAlreadyOpen = sceneManager.newScene(localPath)
+				print("    Successfully loaded a scene file, adding to edit scene...")
+				local isAlreadyOpen = sceneManager.newScene(localMountPath, absFilePath)
 				if isAlreadyOpen then  return  end
 				recursiveSetTree(obj, active.scene)
 				local addData = getChildrenReCreationData({obj})

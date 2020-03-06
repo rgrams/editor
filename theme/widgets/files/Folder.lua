@@ -12,17 +12,17 @@ local function doubleClickUpdate(self, dt)
 	end
 end
 
-local function new(filename, path, indent, isPopup)
+local function new(filename, mountFilePath, indent, isPopup)
 	local indentPos = indent * SETTINGS.filesIndentSize
 	local self = mod(gui.Slice(tex.Panel, nil, {2}, 0, 0, 0, 100, 24, -1, 0, -1, 0, {"fill", "none"}), {
 		filename = filename,
-		filepath = path,
+		mountFilePath = mountFilePath, -- Includes the ending "/"
 		doubleClickUpdate = doubleClickUpdate,
 		indentLevel = indent,
 		isFolder = true,
 		isOpen = false,
 		color = {0.75, 0.75, 0.75, 0.5},
-		name = path,
+		name = mountFilePath,
 		layer = isPopup and "popupWidgets" or "widgets",
 		children = {
 			mod(gui.Text(filename, fnt.files, 14 + indentPos, -1, 0, 4000, -1, 0, -1, 0, "left", "none"), {

@@ -6,7 +6,7 @@ local M = {}
 -- M.sceneName
 -- M.selection
 -- M.commands
--- M.filepath
+-- M.absFilePath
 -- M.scene
 -- M.propertiesPanel
 -- M.clipboard

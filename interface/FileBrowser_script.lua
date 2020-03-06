@@ -37,57 +37,58 @@ local function setContentsVisible(self, visible, ruu)
 	self.parent:refresh()
 end
 
-local function toggleFolder(self)
-	self.isOpen = not self.isOpen
-	self.arrow.angle = self.isOpen and 0 or -math.pi/2
+local function toggleFolder(folder)
+	folder.isOpen = not folder.isOpen
+	folder.arrow.angle = folder.isOpen and 0 or -math.pi/2
 
 	-- The first time the folder gets opened, load its contents.
-	if self.isOpen and not self.isLoaded then
-		self.isLoaded = true
-		local colIdx = self.parent:getChildIndex(self)
-		local files = love.filesystem.getDirectoryItems(self.filepath)
-		self.filesPanel:call("addFiles", files, self.filepath .. "/", self.indentLevel + 1, colIdx)
+	if folder.isOpen and not folder.isLoaded then
+		folder.isLoaded = true
+		local colIdx = folder.parent:getChildIndex(folder)
+		local files = love.filesystem.getDirectoryItems(folder.mountFilePath)
+		local mountPath, indent = folder.mountFilePath, folder.indentLevel + 1
+		folder.filesPanel:call("addFiles", files, mountPath, indent, colIdx)
 
 		-- Convert file name list to a list of the corresponding widget objects, and store it.
-		local basePath = self.parent.path .. "/" .. self.filepath .. "/"
-		for i,fileName in ipairs(files) do
-			local scenePath = basePath .. fileName
+		local mountFolderPath = folder.parent.path .. "/" .. folder.mountFilePath
+		for i,filename in ipairs(files) do
+			local scenePath = mountFolderPath .. filename
 			local obj = scene:get(scenePath)
 			files[i] = obj
 		end
-		self.containedObjects = files
-	elseif self.isOpen then -- Folder opened, show its contents.
-		setContentsVisible(self, true, self.ruu)
-		self.filesPanel:call("reMapWidgets")
+		folder.containedObjects = files
+	elseif folder.isOpen then -- Folder opened, show its contents.
+		setContentsVisible(folder, true, folder.ruu)
+		folder.filesPanel:call("reMapWidgets")
 	else
-		setContentsVisible(self, false, self.ruu)
-		self.filesPanel:call("reMapWidgets")
+		setContentsVisible(folder, false, folder.ruu)
+		folder.filesPanel:call("reMapWidgets")
 	end
 end
 
-local function activateFile(self)
-	if self.isFolder then
-		if self.filesPanel.showSingleFolder then
-			self.filesPanel:call("setFolder", self.filepath .. "/")
+local function activateFile(file)
+	if file.isFolder then
+		if file.filesPanel.showSingleFolder then
+			file.filesPanel:call("setFolder", file.mountFilePath)
 		else
-			toggleFolder(self)
+			toggleFolder(file)
 		end
 	else
-		self.filesPanel:call("fileDoubleClicked", self)
+		file.filesPanel:call("fileDoubleClicked", file)
 	end
 end
 
-local function fileBtnReleased(self, mx, my, isKeyboard)
+local function fileBtnReleased(file, mx, my, isKeyboard)
 	if isKeyboard then
-		activateFile(self)
+		activateFile(file)
 	else
-		if self.doubleClickT then
-			self.doubleClickT = SETTINGS.doubleClickTime
-			activateFile(self)
+		if file.doubleClickT then
+			file.doubleClickT = SETTINGS.doubleClickTime
+			activateFile(file)
 		else
-			if not self.isFolder then  self.filesPanel:call("fileClicked", self)  end
-			self.doubleClickT = SETTINGS.doubleClickTime
-			self.update = self.doubleClickUpdate
+			if not file.isFolder then  file.filesPanel:call("fileClicked", file)  end
+			file.doubleClickT = SETTINGS.doubleClickTime
+			file.update = file.doubleClickUpdate
 		end
 	end
 end
@@ -107,18 +108,18 @@ function script.reMapWidgets(self)
 	end
 end
 
-local function sortFoldersFirst(files, basePath)
+local function sortFoldersFirst(files, mountFolderPath)
 	local folders
 	for i=#files,1,-1 do
-		local fileName = files[i]
-		local info = love.filesystem.getInfo(basePath .. fileName)
+		local filename = files[i]
+		local info = love.filesystem.getInfo(mountFolderPath .. filename)
 		if not info then
 			table.remove(files, i)
 		else
 			if info.type == "directory" then
 				table.remove(files, i)
 				folders = folders or {}
-				table.insert(folders, fileName)
+				table.insert(folders, filename)
 			end
 		end
 	end
@@ -129,11 +130,11 @@ local function sortFoldersFirst(files, basePath)
 	end
 end
 
-function script.addFiles(self, files, basePath, indentLevel, columnIndex)
+function script.addFiles(self, files, mountFolderPath, indentLevel, columnIndex)
 	shouldRedraw = true
-	basePath = basePath or "project/"
+	mountFolderPath = mountFolderPath or "project/"
 	indentLevel = indentLevel or 0
-	sortFoldersFirst(files, basePath)
+	sortFoldersFirst(files, mountFolderPath)
 	local contentsColumn = self.contents
 
 	-- Expand contents Column to fit new files & update its transform stuff.
@@ -141,20 +142,20 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 	contentsColumn:_updateInnerSize() -- Update innerH based on new H - padY.
 	contentsColumn:updateTransform()
 
-	for i,fileName in ipairs(files) do
-		local path = basePath .. fileName
-		local info = love.filesystem.getInfo(path)
-		assert(info, "Failed to load file at path: " .. path)
+	for i,filename in ipairs(files) do
+		local mountFilePath = mountFolderPath .. filename
+		local info = love.filesystem.getInfo(mountFilePath)
+		assert(info, "Failed to load file at path: " .. mountFilePath)
 
 		if columnIndex then  columnIndex = columnIndex + 1  end -- Don't bother unless we're starting in the middle.
 		local wgt
 		if info.type == "directory" then
-			wgt = FolderWidget(fileName, path, indentLevel, self.isPopup)
+			wgt = FolderWidget(filename, mountFilePath .. "/", indentLevel, self.isPopup)
 			wgt.ruu = self.ruu -- Needs for show/hide contents.
 		else
-			wgt = FileWidget(fileName, path, indentLevel, self.isPopup)
+			wgt = FileWidget(filename, mountFilePath, indentLevel, self.isPopup)
 		end
-		wgt.filesPanel, wgt.realBasePath = self, self.realBasePath
+		wgt.filesPanel, wgt.absFolderPath = self, self.absFolderPath
 		scene:add(wgt, contentsColumn) -- Get added to the SceneTree at the center of the contentsColumn.
 		contentsColumn:add(wgt, nil, nil, columnIndex) -- Get their parentOffset set, W/H possibly changed.
 		wgt:updateTransform() -- May also do this during `parentResized` if their W or H has changed...
@@ -167,8 +168,8 @@ function script.addFiles(self, files, basePath, indentLevel, columnIndex)
 end
 
 function script.goUp(self)
-	if not self.showSingleFolder or not self.basePath then  return  end
-	local path = self.basePath
+	if not self.showSingleFolder or not self.mountFolderPath then  return  end
+	local path = self.mountFolderPath
 	local pattern = "(.+/).+$"
 	local parentPath = string.match(path, pattern)
 	if parentPath then  self:call("setFolder", parentPath)  end
@@ -187,18 +188,17 @@ function script.ruuinput(self, name, value, change)
 	end
 end
 
-function script.setFolder(self, folderPath)
-	self.basePath = folderPath
-	-- love.filesystem.getRealDirectory only gets the base mounted path...or something?
-	self.realBasePath = love.filesystem.getRealDirectory(self.basePath)
-	if not self.realBasePath then
-		self.realBasePath = love.filesystem.getWorkingDirectory()
-	end
-	local relFolder = string.sub(folderPath, ("project/"):len())
-	self.realBasePath = self.realBasePath .. relFolder
+function script.setFolder(self, newMountFolderPath)
+	self.mountFolderPath = newMountFolderPath
+	local relFolder = string.sub(newMountFolderPath, ("project/"):len())
+	-- love.filesystem.getRealDirectory only gets the path to the root folder that was mounted.
+	local rootAbsFolderPath = love.filesystem.getRealDirectory(self.mountFolderPath)
+	-- Use editor directory if nothing is mounted.
+	rootAbsFolderPath = rootAbsFolderPath or love.filesystem.getWorkingDirectory()
+	self.absFolderPath = rootAbsFolderPath .. relFolder
 	self:call("clear")
-	local files = love.filesystem.getDirectoryItems(folderPath)
-	self:call("addFiles", files, self.basePath)
+	local files = love.filesystem.getDirectoryItems(self.mountFolderPath)
+	self:call("addFiles", files, self.mountFolderPath)
 	local firstFileWidget = self.contents.startChildren[1]
 	firstFileWidget = firstFileWidget and firstFileWidget.obj
 	if firstFileWidget then  self.ruu:setFocus(firstFileWidget)  end -- Folder could be empty.

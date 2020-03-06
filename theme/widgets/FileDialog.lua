@@ -19,7 +19,7 @@ local function new(basePath, btnText, callback, callbackObj, ...)
 		Button(btnText, -100, -12, 0, 70, 24, 1, 1, 1, 1, "none", "confirmButton"),
 		Button("Cancel", -15, -12, 0, 70, 24, 1, 1, 1, 1, "none", "cancelButton")
 	}})
-	self.basePath = basePath
+	self.mountFolderPath = basePath
 	self.isPopup = true
 	self.callback, self.callbackObj = callback, callbackObj
 	self.callbackArgs = {...}
