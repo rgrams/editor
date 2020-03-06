@@ -4,6 +4,7 @@ local M = {}
 local active = require "activeData"
 local encoder = require "lib.encoder"
 local FileDialog = require "theme.widgets.FileDialog"
+local sceneManager = require "sceneManager"
 
 local function saveToAbsolutePath(data, absFilePath)
 	local messager = scene:get("/root/overlay")
@@ -67,6 +68,10 @@ function M.input(self, action, value, change, isRepeat, x, y, dx, dy)
 		if active.absFilePath then  save(self)
 		else  saveAs(self)  end
 		return true
+	elseif action == "close tab" and change == 1 then
+		local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
+		tabBar:call("sceneClosed", active.sceneName)
+		sceneManager.removeScene(active.sceneName)
 	end
 end
 

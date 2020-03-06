@@ -11,13 +11,21 @@ local function setActiveScene(tabBtn)
 	tabBar:call("setActiveScene", tabBtn._sceneName)
 end
 
-function M.closeScene(self, sceneName)
+local function removeTab(self, sceneName)
 	local contents = scene:get(self.path .. "/Mask/contents")
 	local tabBtn = scene:get(self.path .. "/Mask/contents/" .. sceneName)
 	contents:remove(tabBtn)
 	scene:remove(tabBtn)
 	active.ruu:destroyWidget(tabBtn)
+end
+
+function M.closeScene(self, sceneName)
+	removeTab(self, sceneName)
 	sceneManager.removeScene(sceneName)
+end
+
+function M.sceneClosed(self, sceneName)
+	removeTab(self, sceneName)
 end
 
 function M.newScene(self, sceneName)

@@ -38,6 +38,7 @@ local bindings = {
 	{ "button", "ctrl k:o", "open" },
 
 	{ "button", "m:3", "close tab" },
+	{ "button", "ctrl k:w", "close tab" },
 
 	{ "text", "text" },
 	{ "button", "backspace", "backspace" },
