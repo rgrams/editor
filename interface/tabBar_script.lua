@@ -19,6 +19,19 @@ local function removeTab(self, sceneName)
 	active.ruu:destroyWidget(tabBtn)
 end
 
+local function loopIndex(listLength, start, by)
+	return (start - 1 + by) % listLength + 1
+end
+
+function M.switchScenes(self, toPrev)
+	local contents = scene:get(self.path .. "/Mask/contents")
+	local tabBtn = scene:get(self.path .. "/Mask/contents/" .. active.sceneName)
+	local i = contents:getChildIndex(tabBtn)
+	i = loopIndex(#contents.startChildren, i, toPrev and -1 or 1)
+	local nextTabBtn = contents.startChildren[i].obj
+	M.setActiveScene(self, nextTabBtn._sceneName)
+end
+
 function M.closeScene(self, sceneName)
 	removeTab(self, sceneName)
 	sceneManager.removeScene(sceneName)

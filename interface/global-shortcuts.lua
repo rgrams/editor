@@ -1,4 +1,7 @@
 
+-- A Module, with one public method: input.
+-- Gets passed input by Interface Root Script, before Ruu.
+
 local M = {}
 
 local active = require "activeData"
@@ -72,6 +75,14 @@ function M.input(self, action, value, change, isRepeat, x, y, dx, dy)
 		local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
 		tabBar:call("sceneClosed", active.sceneName)
 		sceneManager.removeScene(active.sceneName)
+	elseif action == "next tab" and value == 1 then
+		local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
+		tabBar:call("switchScenes")
+		return true
+	elseif action == "prev tab" and value == 1 then
+		local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
+		tabBar:call("switchScenes", true)
+		return true
 	end
 end
 

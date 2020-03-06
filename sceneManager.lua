@@ -15,6 +15,7 @@ defaultLayer = "entities"
 M.scenes = {}
 
 function M.setActiveScene(name)
+	shouldRedraw = true
 	local sceneData = M.scenes[name]
 	if not sceneData then
 		print("sceneManager.setActiveScene: No scene by the name '"..tostring(name).."' exists.")

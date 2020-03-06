@@ -39,6 +39,8 @@ local bindings = {
 
 	{ "button", "m:3", "close tab button" },
 	{ "button", "ctrl k:w", "close tab" },
+	{ "button", "ctrl shift tab", "prev tab" },
+	{ "button", "ctrl tab", "next tab" },
 
 	{ "text", "text" },
 	{ "button", "backspace", "backspace" },
