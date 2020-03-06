@@ -64,7 +64,17 @@ function script.fileDoubleClicked(self, fileWgt)
 			if type(obj) == "table" and obj.is and obj:is(Object) then
 				print("    Successfully loaded a scene file, adding to edit scene...")
 				local isAlreadyOpen = sceneManager.newScene(localMountPath, absFilePath)
-				if isAlreadyOpen then  return  end
+				if isAlreadyOpen then
+					local messager = scene:get("/root/overlay")
+					if active.sceneName == localMountPath then
+						messager:call("message", "That's the file you have open right now.")
+					else
+						messager:call("message", "File is already open, switching to it now.")
+						local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
+						tabBar:call("switchToScene", localMountPath)
+					end
+					return
+				end
 				recursiveSetTree(obj, active.scene)
 				local addData = getChildrenReCreationData({obj})
 				local cmd = active.commands

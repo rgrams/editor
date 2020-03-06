@@ -46,10 +46,7 @@ function M.newScene(name, absFilePath, inBackground)
 	name = name or "untitled_0"
 	while M.scenes[name] do
 		local baseName = string.sub(name, 0, -2)
-		if baseName ~= "untitled_" then
-			-- Tried to open a file that is already open.
-			local messager = scene:get("/root/overlay")
-			messager:call("message", "That file is already open.", "warning")
+		if baseName ~= "untitled_" then -- Tried to open a file that is already open.
 			return true
 		end
 		local idx = tonumber(string.sub(name, -1))
