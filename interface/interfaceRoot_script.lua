@@ -75,7 +75,8 @@ function script.parentResized(self, designW, designH, newW, newH, scale, ox, oy)
 end
 
 function script.input(self, action, value, change, isRepeat, x, y, dx, dy)
-	globalShortcuts.input(self, action, value, change, isRepeat, x, y, dx, dy)
+	local r = globalShortcuts.input(self, action, value, change, isRepeat, x, y, dx, dy)
+	if r then  return r  end
 	return self.ruuInput:input(action, value, change, isRepeat, x, y, dx, dy)
 end
 
