@@ -192,14 +192,16 @@ local function undoCutSelection(oldClipboard, undoRemoveData, selection, oldList
 	activeData.clipboard = oldClipboard
 end
 
--- Recursively makes new object enclosures and updates parent enclosure references
--- for the `addObject` argument data for one object and its descendants.
-local function setEnclosuresForPaste(addDataList, parentEnclosure)
+-- Takes the `addObject` argument data for one object and its descendants.
+-- Recursively makes new obj enclosures, updates parent enclosure refs, and
+-- sets the current SceneTree.
+local function updateDataForPaste(addDataList, parentEnclosure, tree)
 	for i,addData in ipairs(addDataList) do
 		addData[2] = {} -- Make new enclosure.
+		addData[3] = tree
 		addData[4] = parentEnclosure
 		if addData[6] then -- Has children
-			setEnclosuresForPaste(addData[6], addData[2])
+			updateDataForPaste(addData[6], addData[2], tree)
 		end
 	end
 end
@@ -209,12 +211,12 @@ local function pasteOntoSelection(selection)
 	local enclosureList = selection:getEnclosureList()
 	local undoData
 	if #enclosureList == 0 then -- Nothing selected, add to SceneTree (no parent).
-		setEnclosuresForPaste(clipboard, false)
+		updateDataForPaste(clipboard, false, activeData.scene)
 		undoData = addMultiple(clipboard)
 	else
 		undoData = {}
 		for i,parentEnclosure in ipairs(enclosureList) do
-			setEnclosuresForPaste(clipboard, parentEnclosure)
+			updateDataForPaste(clipboard, parentEnclosure, activeData.scene)
 			local data = addMultiple(clipboard)
 			for i,v in ipairs(data) do
 				table.insert(undoData, v)
