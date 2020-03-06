@@ -11,7 +11,11 @@ local extents = {
 	end,
 	Quad = function(obj)
 		return obj.w/2, obj.h/2
-	end
+	end,
+	World = function(obj)
+		local r = SETTINGS.ObjectHitRadius * 3
+		return r, r
+	end,
 }
 
 local function getExtents(obj)
