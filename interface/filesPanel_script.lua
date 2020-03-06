@@ -4,6 +4,7 @@ local script = {}
 local active = require "activeData"
 local sceneManager = require "sceneManager"
 local objProp = require "object.object-properties"
+local sceneCommands = require "commands.scene-commands"
 
 local function getModifiedProperties(obj)
 	local modProps
@@ -77,8 +78,8 @@ function script.fileDoubleClicked(self, fileWgt)
 				end
 				recursiveSetTree(obj, active.scene)
 				local addData = getChildrenReCreationData({obj})
-				local cmd = active.commands
-				cmd:perform("addObject", unpack(addData[1]))
+				local addObject = sceneCommands.addObject[1]
+				addObject(unpack(addData[1]))
 			end
 		end
 	end
