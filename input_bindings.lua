@@ -37,7 +37,7 @@ local bindings = {
 	{ "button", "ctrl shift k:s", "save as" },
 	{ "button", "ctrl k:o", "open" },
 
-	{ "button", "m:3", "close tab" },
+	{ "button", "m:3", "close tab button" },
 	{ "button", "ctrl k:w", "close tab" },
 
 	{ "text", "text" },

@@ -3,7 +3,7 @@ local tex = require "theme.textures"
 local fnt = require "theme.fonts"
 
 local function ruuinput(self, action, value, change, isRepeat)
-	if action == "close tab" and change == 1 then
+	if action == "close tab button" and change == 1 then
 		local tabBar = scene:get("/root/mainColumn/mainRow/editScenePanel/VPColumn/TabBar")
 		tabBar:call("closeScene", self._sceneName)
 	end
