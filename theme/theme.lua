@@ -219,7 +219,7 @@ function InputField.init(self)
 		if self.isFocused then
 			local w, h = self.w, self.h
 			love.graphics.setColor(1, 1, 1, 1)
-			love.graphics.rectangle("line", -w/2, -h/2, w, h, 4, 4, 3)
+			love.graphics.rectangle("line", -w/2, -h/2, w, h, 1, 1, 2)
 
 			local top = -h/2 + self.padY
 
@@ -235,24 +235,30 @@ function InputField.init(self)
 	end
 end
 
-function InputField.hover(self)
-	self.image = tex.Button_Hovered
-end
+function InputField.hover(self)  self.image = tex.InputField_Hovered  end
 
-function InputField.unhover(self)
-	self.image = tex.Button_Normal
-end
+function InputField.unhover(self)  self.image = tex.InputField_Normal  end
 
 function InputField.focus(self)
 	setValue(self.label, 1)
+	setValue(self, 0.75)
 end
 
 function InputField.unfocus(self)
 	setValue(self.label, 0.75)
+	setValue(self, 1)
 end
 
-function InputField.setText(self)
-	self.label.color[4] = 1
+function InputField.setText(self)  self.label.color[4] = 1  end
+
+function InputField.press(self)
+	self.label.pos.y = self.label.pos.y + 1
+	self.image = tex.InputField_Pressed
+end
+
+function InputField.release(self)
+	self.label.pos.y = self.label.pos.y - 1
+	self.image = self.isHovered and tex.InputField_Hovered or tex.InputField_Normal
 end
 
 --##############################  PANEL  ##############################

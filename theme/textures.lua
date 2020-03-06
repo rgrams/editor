@@ -21,6 +21,9 @@ local tex = {
 	Tab_Normal = new.image("theme/tex/Tab_Normal.png"),
 	Tab_Hovered = new.image("theme/tex/Tab_Hovered.png"),
 	Tab_Pressed = new.image("theme/tex/Tab_Pressed.png"),
+	InputField_Normal = new.image("theme/tex/InputField_Normal.png"),
+	InputField_Hovered = new.image("theme/tex/InputField_Hovered.png"),
+	InputField_Pressed = new.image("theme/tex/InputField_Pressed.png"),
 }
 
 return tex
