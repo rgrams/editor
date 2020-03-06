@@ -6,14 +6,14 @@ local M = {}
 
 local tex = require(basePath .. "textures")
 
---##############################  BUTTON  ##############################
-local Button = Class:extend()
-M.Button = Button
-
 local function setValue(self, val)
 	local c = self.color
 	c[1], c[2], c[3] = val, val, val
 end
+
+--##############################  BUTTON  ##############################
+local Button = Class:extend()
+M.Button = Button
 
 function Button.init(self)
 	if self.label then  setValue(self.label, 0.75)  end
@@ -99,9 +99,57 @@ function RadioButton.release(self)
 	self.check.image = self.isChecked and tex.RadioButton_Checked or tex.RadioButton_Unchecked
 end
 
+function RadioButton.setChecked(self)
+	self.check.image = self.isChecked and tex.RadioButton_Checked or tex.RadioButton_Unchecked
+end
 
-function RadioButton.uncheck(self)
-	self.check.image = tex.RadioButton_Unchecked
+--##############################  TAB  ##############################
+local Tab = Button:extend()
+M.Tab = Tab
+
+local activeTabVal, inactiveTabVal = 0.85, 0.4
+local activeLabelVal, inactiveLabelVal = 1, 0.75
+
+function Tab.init(self)
+	setValue(self, self.isChecked and activeTabVal or inactiveTabVal)
+	setValue(self.label, self.isChecked and activeLabelVal or inactiveLabelVal)
+	self.labelBaseY = self.label.pos.y
+
+	local draw = self.draw
+	self.draw = function(self)
+		draw(self)
+		if self.isFocused then
+			local w, h = self.w, self.h
+			love.graphics.setColor(1, 1, 1, 1)
+			-- TODO: Change to a fitting polygon. -- only a line over the top 3 sides
+			love.graphics.rectangle("line", -w/2, -h/2, w, h, 4, 4, 3)
+		end
+	end
+end
+
+function Tab.hover(self)
+	self.image = tex.Tab_Hovered
+end
+
+function Tab.unhover(self)
+	self.image = tex.Tab_Normal
+end
+
+function Tab.press(self)
+	self.label.pos.y = self.labelBaseY + 1
+	self.image = tex.Tab_Pressed
+end
+
+function Tab.release(self)
+	self.label.pos.y = self.labelBaseY
+	self.image = self.isHovered and tex.Tab_Hovered or tex.Tab_Normal
+	setValue(self, self.isChecked and activeTabVal or inactiveTabVal)
+	setValue(self.label, self.isChecked and activeLabelVal or inactiveLabelVal)
+end
+
+function Tab.setChecked(self)
+	setValue(self, self.isChecked and activeTabVal or inactiveTabVal)
+	setValue(self.label, self.isChecked and activeLabelVal or inactiveLabelVal)
 end
 
 --##############################  SLIDER - BAR  ##############################

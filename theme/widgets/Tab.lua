@@ -10,16 +10,15 @@ local function ruuinput(self, action, value, change, isRepeat)
 end
 
 local function new(sceneName, x, y, angle, w, h, px, py, ax, ay, resizeMode)
-	w, h = w or 70, h or 24
+	w, h = w or 70, h or 18
 	local self = gui.Slice(
-		tex.Button_Normal, nil, {5, 6}, x, y, angle, w, h, px, py, ax, ay, resizeMode
+		tex.Tab_Normal, nil, {6, 0}, x, y, angle, w, h, px, py, ax, ay, resizeMode
 	)
 	local label = gui.Text(sceneName, fnt.default, 0, -1, 0, w, -1, 0, -1, 0, "center", "fill")
 	label.layer = "text"
 	label.name = "label"
 	self.label = label
 	self.children = { label }
-	self.color[1], self.color[2], self.color[3] = 0.75, 0.75, 0.75
 	self.name = sceneName
 	self.layer = "widgets"
 	self.ruuinput = ruuinput
