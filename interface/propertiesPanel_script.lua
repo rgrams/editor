@@ -227,4 +227,15 @@ function script.updateSelection(self)
 	self.isCleared = false
 end
 
+function script.parentResized(self)
+	if self.contents and self.contents.children then
+		for i,child in ipairs(self.contents.children) do
+			if child.name ~= "deletedMarker" then
+				local inputFld = scene:get(child.path .. "/Row/input")
+				inputFld:updateScroll()
+			end
+		end
+	end
+end
+
 return script
