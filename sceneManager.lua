@@ -36,6 +36,8 @@ function M.setActiveScene(name)
 	active.sceneName = sceneData.name
 	active.scene = sceneData.scene  active.selection = sceneData.selection
 	active.commands = sceneData.commands  active.absFilePath = sceneData.absFilePath
+
+	active.propertiesPanel:call("updateSelection")
 end
 
 function M.sceneExists(name)
