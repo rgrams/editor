@@ -68,16 +68,20 @@ local function recursiveSetTree(obj, tree)
 end
 
 function script.fileDoubleClicked(self, fileWgt)
-	print("FilesPanel - Attepmting to load file: "..fileWgt.mountFilePath)
+	local messager = scene:get("/root/overlay")
+
+	print("FilesPanel - Attempting to load file: "..fileWgt.mountFilePath)
 	local extension = string.match(fileWgt.filename, "%.(%w-)$")
 	print("  file extension = "..tostring(extension))
-
 	if extension == "lua" then
 		print("  loading file...")
 		local localMountPath = string.sub(fileWgt.mountFilePath, PROJECT_PATH:len())
 		local absFilePath = fileWgt.absFolderPath..localMountPath
 		local success, val = pcall(dofile, absFilePath)
-		if success and type(val) == "function" then
+		if not success then
+			messager:call("message", "Loading failed - Module crashed on load.", "warning")
+			return
+		elseif success and type(val) == "function" then
 
 			changeNewForLoading() -- To convert file paths to their mounted versions.
 			local obj = val()
@@ -87,7 +91,6 @@ function script.fileDoubleClicked(self, fileWgt)
 				print("    Successfully loaded a scene file, adding to edit scene...")
 				local isAlreadyOpen = sceneManager.newScene(localMountPath, absFilePath)
 				if isAlreadyOpen then
-					local messager = scene:get("/root/overlay")
 					if active.sceneName == localMountPath then
 						messager:call("message", "That's the file you have open right now.")
 					else
@@ -101,9 +104,12 @@ function script.fileDoubleClicked(self, fileWgt)
 				local addData = getChildrenReCreationData({obj})
 				local addObject = sceneCommands.addObject[1]
 				addObject(unpack(addData[1]))
+				messager:call("message", "Loaded scene file: "..localMountPath)
+				return
 			end
 		end
 	end
+	messager:call("message", "Loading failed, that's not a valid scene file.", "warning")
 end
 
 return script
