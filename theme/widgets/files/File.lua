@@ -16,7 +16,7 @@ local function new(filename, mountFilePath, indent, isPopup)
 	local indentPos = indent * SETTINGS.filesIndentSize
 	local self = mod(gui.Slice(tex.Panel, nil, {2}, 0, 0, 0, 100, 24, -1, 0, -1, 0, {"fill", "none"}), {
 		filename = filename,
-		mountFilePath = mountFilePath,
+		mountFilePath = mountFilePath, -- Full path including `filename`.
 		doubleClickUpdate = doubleClickUpdate,
 		color = {0.75, 0.75, 0.75, 0.5},
 		name = mountFilePath,

@@ -44,16 +44,17 @@ local function toggleFolder(folder)
 	-- The first time the folder gets opened, load its contents.
 	if folder.isOpen and not folder.isLoaded then
 		folder.isLoaded = true
-		local colIdx = folder.parent:getChildIndex(folder)
+		local columnIndex = folder.parent:getChildIndex(folder)
 		local files = love.filesystem.getDirectoryItems(folder.mountFilePath)
 		local mountPath, indent = folder.mountFilePath, folder.indentLevel + 1
-		folder.filesPanel:call("addFiles", files, mountPath, indent, colIdx)
+		folder.filesPanel:call("addFiles", files, mountPath, indent, columnIndex)
 
 		-- Convert file name list to a list of the corresponding widget objects, and store it.
-		local mountFolderPath = folder.parent.path .. "/" .. folder.mountFilePath
 		for i,filename in ipairs(files) do
-			local scenePath = mountFolderPath .. filename
-			local obj = scene:get(scenePath)
+			local info = love.filesystem.getInfo(folder.mountFilePath .. filename)
+			if info.type == "directory" then  filename = filename .. "/"  end
+			local objPath = folder.path .. filename -- NOT a filepath, the path to the object.
+			local obj = scene:get(objPath)
 			files[i] = obj
 		end
 		folder.containedObjects = files
