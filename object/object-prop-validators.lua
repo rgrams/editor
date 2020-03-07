@@ -15,6 +15,7 @@ function M.image(val)
 end
 
 function M.color(val)
+	return type(val) == "number"
 end
 
 function M.string(val)

@@ -21,7 +21,7 @@ local function stringtobool(v)
 	return v
 end
 
-local ignoreThisKeyForNow = { quad = true, font = true, color = true }
+local ignoreThisKeyForNow = { quad = true, font = true }
 
 local function propWidgetConfirmFunc(widget)
 	local value = widget.text
@@ -56,10 +56,6 @@ local function clearContents(self)
 			if child.name ~= "deletedMarker" then
 				scene:remove(child)
 				self.contents:remove(child)
-				if child.ruuWidget.isFocused then
-					self.oldFocusedPath = child.ruuWidget.path
-				end
-				self.ruu:destroyWidget(child.ruuWidget)
 			end
 		end
 		self.contents.h = 10
@@ -149,10 +145,6 @@ local function removeChildByName(self, name)
 		if child.name == name then
 			scene:remove(child)
 			self.contents:remove(child)
-			if child.ruuWidget.isFocused then
-				self.oldFocusedPath = child.ruuWidget.path
-			end
-			self.ruu:destroyWidget(child.ruuWidget)
 			self.contents.h = (#self.contents.children - 1) * child.h + 10
 			self.contents:_updateInnerSize()
 			return
@@ -206,8 +198,8 @@ function script.updateSelection(self)
 	for i,propData in ipairs(newPropDataList) do
 		local key, subKey, value = unpack(propData)
 		local propName = subKey and (key .. "." .. subKey) or key
-		local inputFld = scene:get(self.contents.path .. "/" .. propName .. "/Row/input")
-		inputFld:setText(tostring(value))
+		local superWidget = scene:get(self.contents.path .. "/" .. propName)
+		superWidget:setValue(value)
 	end
 	self.propDataList = newPropDataList
 	remapChildren(self)
@@ -222,8 +214,7 @@ function script.parentResized(self)
 	if self.contents and self.contents.children then
 		for i,child in ipairs(self.contents.children) do
 			if child.name ~= "deletedMarker" then
-				local inputFld = scene:get(child.path .. "/Row/input")
-				inputFld:updateScroll()
+				child:updateScroll()
 			end
 		end
 	end

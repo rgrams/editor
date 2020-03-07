@@ -1,9 +1,10 @@
 
 local Number = require "theme.widgets.properties.Number"
+local Color = require "theme.widgets.properties.Color"
 
 local M = {
 	bool = Number,
-	color = Number,
+	color = Color,
 	font = Number,
 	image = Number,
 	number = Number,
