@@ -61,7 +61,7 @@ function M.sceneClosed(self, sceneName)
 end
 
 function M.newScene(self, sceneName)
-	local tabBtn = Tab(sceneName, 0, 0, 0, 100, 17, 0, 0, 0, 0, {"zoom", "none"})
+	local tabBtn = Tab(sceneName)
 	tabBtn._sceneName = sceneName
 	local mask = scene:get(self.path .. "/Mask")
 	local contents = scene:get(self.path .. "/Mask/contents")

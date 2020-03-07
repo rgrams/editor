@@ -18,21 +18,17 @@ local function ruuinput(self, action, value, change, isRepeat)
 	end
 end
 
-local function new(sceneName, x, y, angle, w, h, px, py, ax, ay, resizeMode)
-	w, h = w or 70, h or 18
-	local self = gui.Slice(
-		tex.Tab_Normal, nil, {6, 0}, x, y, angle, w, h, px, py, ax, ay, resizeMode
-	)
-	local label = gui.Text(sceneName, fnt.default, 0, -1, 0, w, -1, 0, -1, 0, "center", "fill")
-	label.layer = "text"
-	label.name = "label"
-	self.label = label
-	self.children = { label }
-	self.script = { script }
-	self.name = sceneName
-	self.layer = "widgets"
-	self.ruuinput = ruuinput
+local function _new(sceneName)
+	w, h = 100, 17
+	local font = new.font(unpack(fnt.default))
+	local w = math.min(font:getWidth(sceneName) + 12, w)
+	local self = mod(gui.Slice(tex.Tab_Normal, nil, {6, 0}, 0, 0, 0, w, h, 0, 0, 0, 0, {"zoom", "none"}, 6, 0), {children = {
+		mod(gui.Mask(nil, 0, 0, 0, w, h, 0, 0, 0, 0, "fill"), {children = {
+			mod(gui.Text(sceneName, fnt.default, 0, -1, 0, 1000, 1, 0, 1, 0, "right"), {layer = "text", name = "label"})
+		}})
+	}, script = { script }, name = sceneName, layer = "widgets", ruuinput = ruuinput})
+	self.label = self.children[1].children[1]
 	return self
 end
 
-return new
+return _new
