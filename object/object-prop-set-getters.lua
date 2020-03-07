@@ -1,14 +1,29 @@
 
 local getters, setters = {}, {}
 
+local function shallowCopy(t)
+	local t2 = {}
+	for k,v in pairs(t) do  t2[k] = v  end
+	return t2
+end
+
 function getters.default(obj, key, subKey)
-	if subKey then  return obj[key][subKey]
-	else  return obj[key]  end
+	local val
+	if subKey then  val = obj[key][subKey]
+	else  val =obj[key]  end
+	if type(val) == "table" then  val = shallowCopy(val)  end
+	return val
 end
 
 function setters.default(obj, key, val, subKey)
-	if subKey then  obj[key][subKey] = val
-	else  obj[key] = val  end
+	local oldVal = subKey and obj[key][subKey] or obj[key]
+	if type(oldVal) == "table" and type(val) == "table" then
+		for k,v in pairs(val) do  oldVal[k] = v  end
+	elseif subKey then
+		obj[key][subKey] = val
+	else
+		obj[key] = val
+	end
 end
 
 -- Don't mess with the `pos` table reference.
