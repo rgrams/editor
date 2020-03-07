@@ -18,6 +18,7 @@ end
 local function stringtobool(v)
 	if v == "false" then  return false  end
 	if v == "true" then  return true  end
+	return v
 end
 
 local ignoreThisKeyForNow = { quad = true, font = true, color = true }
@@ -25,8 +26,7 @@ local ignoreThisKeyForNow = { quad = true, font = true, color = true }
 local function propWidgetConfirmFunc(widget)
 	local value = widget.text
 	value = tonumber(value) or value
-	value = stringtobool(value) or value
-	value = value or widget.text
+	value = stringtobool(value) -- can't do `or value` because the correct value might be `false`.
 
 	local isValid = true
 	local validator = validators[widget._valType]
