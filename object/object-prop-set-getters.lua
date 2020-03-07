@@ -140,10 +140,10 @@ local function emptyFn()  end
 
 function setters.worldCallbackEnabled(obj, key, val)
 	local beginContact, endContact, preSolve, postSolve = obj.world:getCallbacks()
-	if key == "disableBegin" then  beginContact = val and emptyFn or nil
-	elseif key == "disableEnd" then  endContact = val and emptyFn or nil
-	elseif key == "disablePre" then  preSolve = val and emptyFn or nil
-	elseif key == "disablePost" then  postSolve = val and emptyFn or nil
+	if key == "disableBegin" then  beginContact = not val and emptyFn or nil
+	elseif key == "disableEnd" then  endContact = not val and emptyFn or nil
+	elseif key == "disablePre" then  preSolve = not val and emptyFn or nil
+	elseif key == "disablePost" then  postSolve = not val and emptyFn or nil
 	end
 	obj.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 end
