@@ -76,8 +76,19 @@ function setters.imageData(obj, key, val)
 	obj[key] = image
 end
 
-function setters.font(obj, key, val)
-	local font = new.font(val[1], val[2])
+function setters.font(obj, key, val, subKey)
+	local path, size
+	if not subKey then
+		path, size = val[1], val[2]
+	else
+		local params = getters.assetParams(obj, key)
+		if subKey == 1 then
+			path, size = val, params[2]
+		elseif subKey == 2 then
+			path, size = params[1], val
+		end
+	end
+	local font = new.font(path, size)
 	obj[key] = font
 end
 
@@ -111,11 +122,20 @@ function getters.quadParams(obj, key)
 	return { obj[key]:getViewport() }
 end
 
-function setters.quadParams(obj, key, val)
+function setters.quadParams(obj, key, val, subKey)
 	-- TODO: Probably need to recalculate ox and oy for the new quad size.
 	local imgW, imgH = obj.image:getDimensions()
 	local quad = obj[key]
-	local x, y, w, h = unpack(val)
+	local x, y, w, h
+	if not subKey then
+		x, y, w, h = unpack(val)
+	else
+		x, y, w, h = obj.quad:getViewport()
+		if subKey == 1 then  x = val
+		elseif subKey == 2 then  y = val
+		elseif subKey == 3 then  w = val
+		elseif subKey == 4 then  h = val  end
+	end
 	quad:setViewport(x, y, w, h, imgW, imgH)
 end
 

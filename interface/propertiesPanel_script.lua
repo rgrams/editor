@@ -21,28 +21,25 @@ local function stringtobool(v)
 	return v
 end
 
-local ignoreThisKeyForNow = { quad = true, font = true }
-
 local function propWidgetConfirmFunc(widget)
 	local value = widget.text
 	value = tonumber(value) or value
 	value = stringtobool(value) -- can't do `or value` because the correct value might be `false`.
 
+	local key, subKey = widget._propKey, widget._propSubKey
+
 	local isValid = true
 	local validator = validators[widget._valType]
-	if validator then  isValid = validator(value)  end
+	if validator then  isValid = validator(value, subKey)  end
 	if not isValid then
 		local messager = scene:get("/root/overlay")
 		messager:call("message", "Invalid "..widget._propName.." value: '"..tostring(value).."'", "warning")
 		return true
 	end
 
-	local key, subKey = widget._propKey, widget._propSubKey
-	if not ignoreThisKeyForNow[key] then
-		local selection = active.selection
-		local enclosureList = selection:getEnclosureList()
-		active.commands:perform("setSame", enclosureList, key, value, subKey)
-	end
+	local selection = active.selection
+	local enclosureList = selection:getEnclosureList()
+	active.commands:perform("setSame", enclosureList, key, value, subKey)
 end
 
 local function clearContents(self)
