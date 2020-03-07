@@ -88,14 +88,22 @@ local function getPropDataList(enclosureDict)
 			-- Compare master list to object for any missing properties or non-matching values.
 			for i=#masterPropList,1,-1 do
 				local mv = masterPropList[i]
-				local mKey, mSubKey = mv[1], mv[2]
+				local mKey, mSubKey, mVal = mv[1], mv[2], mv[3]
 				local found = false
 				for i,ov in ipairs(objConstructArgList) do
 					local oKey, oSubKey = ov[1], ov[2]
 					if oKey == mKey and oSubKey == mSubKey then
 						found = true
 						local oVal = objProp.getValue(obj, oKey, oSubKey)
-						if oVal ~= mv[3] then  mv[3] = "-multiple-"  end
+						if not objProp.areValuesEqual(oVal, mVal) then
+							if type(oVal) == "table" and type(mVal) == "table" then
+								for k,v in pairs(mVal) do
+									if oVal[k] ~= v then  mVal[k] = "-multiple"  end
+								end
+							else
+								mv[3] = "-multiple-"
+							end
+						end
 						break
 					end
 				end
