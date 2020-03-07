@@ -1,7 +1,7 @@
 
 local script = {}
 
-local PropertyWidget = require "theme.widgets.properties.Number"
+local propWidgets = require "theme.widgets.properties.all"
 local active = require "activeData"
 local objProp = require "object.object-properties"
 local validators = require "object.object-prop-validators"
@@ -193,8 +193,9 @@ function script.updateSelection(self)
 		local key, subKey, value, valType = unpack(propData)
 
 		-- Make a PropertyWidget for each property and add it to the "contents" column.
+		local widgetConstructor = propWidgets[valType]
 		local propName = subKey and (key .. "." .. subKey) or key
-		local superWidget = PropertyWidget(propName, tostring(value))
+		local superWidget = widgetConstructor(propName, tostring(value))
 		self.contents.h = self.contents.h + superWidget.h
 		self.contents:_updateInnerSize()
 		scene:add(superWidget, self.contents)
