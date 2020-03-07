@@ -1,7 +1,7 @@
 
 local script = {}
 
-local PropertyWidget = require "theme.widgets.properties.Basic"
+local PropertyWidget = require "theme.widgets.properties.Number"
 local active = require "activeData"
 local objProp = require "object.object-properties"
 local validators = require "object.object-prop-validators"
@@ -199,17 +199,7 @@ function script.updateSelection(self)
 		self.contents:_updateInnerSize()
 		scene:add(superWidget, self.contents)
 		self.contents:add(superWidget)
-
-		-- Make the Ruu widget.
-		local inputFld = scene:get(superWidget.path .. "/Row/input")
-		local inputMask = scene:get(superWidget.path .. "/Row/input/Mask")
-		local inputTxt = scene:get(superWidget.path .. "/Row/input/Mask/Text")
-		inputTxt:updateTransform()
-		local scrollToRight = propName == "image"
-		self.ruu:makeInputField(inputFld, inputTxt, inputMask, true, nil, propWidgetConfirmFunc, scrollToRight)
-		superWidget.ruuWidget = inputFld
-		inputFld._propKey, inputFld._propSubKey = key, subKey
-		inputFld._propName, inputFld._valType = propName, valType
+		superWidget:ruuInit(self.ruu, key, subKey, valType, propWidgetConfirmFunc)
 	end
 	-- Make sure "-multiple-" values get set.
 	for i,propData in ipairs(newPropDataList) do
