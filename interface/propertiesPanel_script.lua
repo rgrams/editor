@@ -165,8 +165,9 @@ local function remapChildren(self)
 	local widgetMap = {}
 	for i,child in ipairs(self.contents.children) do
 		if child.name ~= "deletedMarker" then
-			local inputFld = scene:get(child.path .. "/Row/input")
-			table.insert(widgetMap, inputFld)
+			for i,field in ipairs(child.ruuWidgets) do
+				table.insert(widgetMap, field)
+			end
 		end
 	end
 	self.ruu:mapNextPrev(widgetMap)
