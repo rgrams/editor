@@ -58,7 +58,7 @@ end
 
 local function saveAs(self)
 	local obj = active.scene.children[1]
-	local dialog = FileDialog(self.lastSaveFolder or "project/", "Save As...", saveScene, self, obj)
+	local dialog = FileDialog(self.lastSaveFolder or PROJECT_PATH, "Save As...", saveScene, self, obj)
 	scene:add(dialog, self)
 end
 

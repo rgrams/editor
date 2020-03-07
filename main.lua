@@ -7,6 +7,7 @@ gui = require "philtre.gui.all"
 SETTINGS = require "settings"
 PRIVATE_KEY = {}
 NIL = {}
+PROJECT_PATH = "project/"
 
 local active = require "activeData"
 local Root = require "root"

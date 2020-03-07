@@ -5,6 +5,23 @@ local active = require "activeData"
 local sceneManager = require "sceneManager"
 local objProp = require "object.object-properties"
 local sceneCommands = require "commands.scene-commands"
+local setget = require "object.object-prop-set-getters"
+local projectPath, displayPath = setget.projectPath, setget.displayPath
+
+local original_new = { image = new.image, font = new.font, audio = new.audio }
+
+-- Temporarily patch onto the `new` functions to convert paths to "project/" paths.
+local function changeNewForLoading()
+	for k,fn in pairs(original_new) do
+		new[k] = function(filePath, ...)
+			return fn(projectPath(filePath), ...)
+		end
+	end
+end
+-- Reset the `new` functions to their originals.
+local function resetNewAfterLoading()
+	for k,fn in pairs(original_new) do  new[k] = fn  end
+end
 
 local function getModifiedProperties(obj)
 	local modProps
@@ -57,11 +74,15 @@ function script.fileDoubleClicked(self, fileWgt)
 
 	if extension == "lua" then
 		print("  loading file...")
-		local localMountPath = string.sub(fileWgt.mountFilePath, ("project/"):len())
+		local localMountPath = string.sub(fileWgt.mountFilePath, PROJECT_PATH:len())
 		local absFilePath = fileWgt.absFolderPath..localMountPath
 		local success, val = pcall(dofile, absFilePath)
 		if success and type(val) == "function" then
+
+			changeNewForLoading() -- To convert file paths to their mounted versions.
 			local obj = val()
+			resetNewAfterLoading()
+
 			if type(obj) == "table" and obj.is and obj:is(Object) then
 				print("    Successfully loaded a scene file, adding to edit scene...")
 				local isAlreadyOpen = sceneManager.newScene(localMountPath, absFilePath)

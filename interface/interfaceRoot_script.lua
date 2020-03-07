@@ -57,17 +57,15 @@ function script.init(self)
 	sceneManager.newScene() -- Make a default scene.
 end
 
-local projectMountName = "project/"
-
 function script.folderDropped(self, absPath)
 	if self.projectPath then
 		love.filesystem.unmount(self.projectPath)
 	end
 	self.projectPath = absPath
-	love.filesystem.mount(self.projectPath, projectMountName)
+	love.filesystem.mount(self.projectPath, PROJECT_PATH)
 
 	local filesPanel = scene:get("/root/mainColumn/mainRow/leftPanel/Files")
-	filesPanel:call("setFolder", projectMountName)
+	filesPanel:call("setFolder", PROJECT_PATH)
 end
 
 function script.parentResized(self, designW, designH, newW, newH, scale, ox, oy)

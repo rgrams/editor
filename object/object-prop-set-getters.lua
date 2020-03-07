@@ -7,6 +7,21 @@ local function shallowCopy(t)
 	return t2
 end
 
+local editorFallbackPattern = "^_editorFallbackAssets/"
+-- Add project mount name to a filePath -- IF it's not an editor fallback asset.
+local function projectPath(path)
+	if not string.match(path, editorFallbackPattern) then
+		return PROJECT_PATH..path
+	end
+	return path
+end
+
+local displayPattern = "^"..PROJECT_PATH
+-- Remove the project mount name from the start of a filePath.
+local function displayPath(path)
+	return string.gsub(path, displayPattern, "")
+end
+
 function getters.default(obj, key, subKey)
 	local val
 	if subKey then  val = obj[key][subKey]
@@ -62,6 +77,7 @@ function getters.assetParams(obj, key)
 		print("Couldn't get parameters for asset: '" .. tostring(asset) .. "'.")
 		return
 	end
+	params[1] = displayPath(params[1])
 	if #params == 1 then  params = params[1]  end
 	return params
 end
@@ -70,7 +86,7 @@ function setters.imageData(obj, key, val)
 	-- Have to update offset for new image size.
 	local oldImgW, oldImgH = obj.image:getDimensions()
 	local ox, oy = obj.ox / oldImgW, obj.oy / oldImgH
-	local image = new.image(val)
+	local image = new.image(projectPath(val))
 	local imgW, imgH = image:getDimensions()
 	obj.ox, obj.oy = ox * imgW, oy * imgH
 	obj[key] = image
@@ -88,7 +104,7 @@ function setters.font(obj, key, val, subKey)
 			path, size = params[1], val
 		end
 	end
-	local font = new.font(path, size)
+	local font = new.font(projectPath(path), size)
 	obj[key] = font
 end
 
@@ -183,4 +199,7 @@ function setters.worldCallbackEnabled(obj, key, val)
 	obj.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 end
 
-return { get = getters, set = setters }
+return {
+	get = getters, set = setters,
+	projectPath = projectPath, displayPath = displayPath
+}

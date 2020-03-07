@@ -133,7 +133,7 @@ end
 
 function script.addFiles(self, files, mountFolderPath, indentLevel, columnIndex)
 	shouldRedraw = true
-	mountFolderPath = mountFolderPath or "project/"
+	mountFolderPath = mountFolderPath or PROJECT_PATH
 	indentLevel = indentLevel or 0
 	sortFoldersFirst(files, mountFolderPath)
 	local contentsColumn = self.contents
@@ -191,7 +191,7 @@ end
 
 function script.setFolder(self, newMountFolderPath)
 	self.mountFolderPath = newMountFolderPath
-	local relFolder = string.sub(newMountFolderPath, ("project/"):len())
+	local relFolder = string.sub(newMountFolderPath, PROJECT_PATH:len())
 	-- love.filesystem.getRealDirectory only gets the path to the root folder that was mounted.
 	local rootAbsFolderPath = love.filesystem.getRealDirectory(self.mountFolderPath)
 	-- Use editor directory if nothing is mounted.

@@ -3,7 +3,7 @@ local M = {}
 
 local setget = require "object.object-prop-set-getters"
 local set, get = setget.set, setget.get
-local defAssets = require "defaultAssets.list"
+local defAssets = require "_editorFallbackAssets.list"
 
 local NO_DEFAULT = {}
 M.NO_DEFAULT = NO_DEFAULT
