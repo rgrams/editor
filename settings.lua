@@ -4,6 +4,7 @@ local M = {}
 M.zoomRate = 0.1
 
 M.roundAllNumbersTo = 0.001
+M.translateSnapIncrement = 4
 
 M.doubleClickTime = 0.2
 
