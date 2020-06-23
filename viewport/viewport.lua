@@ -117,12 +117,14 @@ local function mouseMoved(self, x, y, dx, dy)
 			local isStart = self.draggingSelection == "start"
 			local mwx, mwy = Camera.current:screenToWorld(x, y)
 			local roundTo = SETTINGS.roundAllNumbersTo
+			local snapTo = SETTINGS.translateSnapIncrement
 
 			local args = {}
 			for enclosure,dat in pairs(active.selection._) do
 				local obj = enclosure[1]
 				local wx, wy = mwx + dat.dragOX, mwy + dat.dragOY
 				local lx, ly = obj.parent:toLocal(wx, wy)
+				if Input.get("snap") == 1 then  roundTo = snapTo  end
 				lx, ly = math.round(lx, roundTo), math.round(ly, roundTo)
 				obj.pos.x, obj.pos.y = lx, ly
 				obj:updateTransform()

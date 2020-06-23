@@ -56,6 +56,8 @@ local bindings = {
 	{ "button", "shift", "shift" },
 	{ "button", "alt", "alt" },
 
+	{ "button", "shift", "snap" },
+
 	{ "button", "f2", "test" },
 }
 
